@@ -1,0 +1,18 @@
+[package]
+name = "rinimp3"
+description = "An attempt to make a pure-Rust MP3 decoder, based on `minimp3`."
+version = "0.1.0"
+authors = ["Simon Heath <icefoxen@gmail.com>"]
+license = "Apache-2.0/MIT"
+documentation = "https://docs.rs/rinimp3/"
+repository = "https://github.com/icefoxen/rinimp3"
+readme = "README.md"
+
+keywords = []
+categories = []
+
+
+[badges]
+maintenance = { status = "experimental" }
+
+[dependencies]

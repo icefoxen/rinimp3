@@ -16,3 +16,4 @@ categories = []
 maintenance = { status = "experimental" }
 
 [dependencies]
+byteorder = "1"

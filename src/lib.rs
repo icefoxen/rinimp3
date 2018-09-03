@@ -164,7 +164,7 @@ pub struct Mp3DecScratch {
     gr_info: [L3GrInfo; 3],
     grbuf: [[f32;576]; 2],
     scf: [f32;40],
-    syn: [[f32: 2*32]; 18+15],
+    syn: [[f32; 2*32]; 18+15],
     ist_pos: [[u8;39];2],
 }
 
@@ -183,8 +183,8 @@ impl Bs {
         let mut next: u32 = 0;
         let mut cache: u32 = 0;
         let mut s = (self.pos & 7) as u32;
-        let shl: i32 = n as i32 + s as i32;
-        let p = self.pos as u32 / 8;
+        let mut shl: i32 = n as i32 + s as i32;
+        let mut p = self.pos as u32 / 8;
         if self.pos + (n as usize) > self.limit {
             return 0;
         }
@@ -259,6 +259,186 @@ fn hdr_padding(h: &[u8]) -> u32 {
         }
     } else {
         0
+    }
+}
+
+fn L12_subband_alloc_table(hdr: &[u8], sci: &mut L12ScaleInfo) -> Vec<L12SubbandAlloc> {
+    let mode = hdr_get_stereo_mode(hdr) as usize;
+    let mut nbands;
+    let mut alloc: Vec<L12SubbandAlloc> = vec![];
+    let stereo_bands = if mode == MODE_MONO {
+        0
+    } else if mode == MODE_JOINT_STEREO {
+        (hdr_get_stereo_mode_ext(hdr) << 2) + 4
+    } else {
+        32
+    };
+    if hdr_is_layer_1(hdr) {
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 76,
+            code_tab_width: 4,
+            band_count: 32,
+        });
+        nbands = 32;
+    } else if !hdr_test_mpeg1(hdr) {
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 60,
+            code_tab_width: 4,
+            band_count: 4,
+        });
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 44,
+            code_tab_width: 3,
+            band_count: 7,
+        });
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 44,
+            code_tab_width: 2,
+            band_count: 19,
+        });
+        nbands = 30;
+    } else {
+        let sample_rate_idx = hdr_get_sample_rate(hdr);
+        // TODO: Clean up this comparison
+        let mut kbps = hdr_bitrate_kbps(hdr) >> ((mode != MODE_MONO) as u32);
+        if kbps == 0 {
+            kbps = 192;
+        }
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 0,
+            code_tab_width: 4,
+            band_count: 3,
+        });
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 16,
+            code_tab_width: 4,
+            band_count: 8,
+        });
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 32,
+            code_tab_width: 3,
+            band_count: 12,
+        });
+        alloc.push(L12SubbandAlloc {
+            tab_offset: 40,
+            code_tab_width: 2,
+            band_count: 7,
+        });
+        nbands = 27;
+        if kbps < 56 {
+            alloc.clear();
+            alloc.push(L12SubbandAlloc {
+                tab_offset: 44,
+                code_tab_width: 4,
+                band_count: 2,
+            });
+            alloc.push(L12SubbandAlloc {
+                tab_offset: 44,
+                code_tab_width: 3,
+                band_count: 10,
+            });
+            nbands = if sample_rate_idx == 2 { 12 } else { 8 };
+        } else if (kbps >= 96 && sample_rate_idx != 1) {
+            // TODO: sigh, and possibly weep.
+            // I think this basically just chops off the last few
+            // entries in the alloc defined above the previous if
+            // statement.
+            nbands = 30;
+        }
+    }
+    sci.total_bands = nbands;
+    sci.stereo_bands = u8::min(stereo_bands, nbands);
+    alloc
+}
+
+fn L12_read_scalefactors(bs: &mut Bs, pba: &[u8], scfcod: &[u8], bands: usize, scf: &mut [f32]) {
+    // TODO: The C version uses macros to build this array statically,
+    // which is a PITA so for now we just do it the simple and slower way.
+    let mut g_deq_L12: Vec<f32> = vec![];
+    {
+        let mut DQ = |x: f32| {
+            g_deq_L12.push(9.53674316e-07/x);
+            g_deq_L12.push(7.56931807e-07/x);
+            g_deq_L12.push(6.00777173e-07/x);
+        };
+        
+        DQ(3.0);DQ(7.0);DQ(15.0);DQ(31.0);DQ(63.0);DQ(127.0);DQ(255.0);DQ(511.0);DQ(1023.0);DQ(2047.0);DQ(4095.0);DQ(8191.0);DQ(16383.0);DQ(32767.0);DQ(65535.0);DQ(3.0);DQ(5.0);DQ(9.0);
+    }
+    let mut scf_idx = 0;
+    for i in 0..bands {
+        let ba = pba[i];
+        let mask = if ba != 0 {
+            4 + ((19 >> scfcod[i]) & 3)
+        } else {
+            0
+        };
+        let mut m = 4;
+        while m != 0 {
+            let s;
+            if (mask & m) != 0 {
+                let b = bs.get_bits(6);
+                let idx = (ba as u32*3 - 6 + b % 3) as usize;
+                s = g_deq_L12[idx] * (1 << 21 >> (b/3)) as f32;
+            } else {
+                s = 0.0;
+            }
+            // TODO: Check the post and pre-increment order here!!!
+            scf[scf_idx] = s;
+            scf_idx += 1;
+        }
+    }
+}
+
+fn L12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
+    let g_bitalloc_code_tab: &[u8] = &[
+        0,17, 3, 4, 5,6,7, 8,9,10,11,12,13,14,15,16,
+        0,17,18, 3,19,4,5, 6,7, 8, 9,10,11,12,13,16,
+        0,17,18, 3,19,4,5,16,
+        0,17,18,16,
+        0,17,18,19, 4,5,6, 7,8, 9,10,11,12,13,14,15,
+        0,17,18, 3,19,4,5, 6,7, 8, 9,10,11,12,13,14,
+        0, 2, 3, 4, 5,6,7, 8,9,10,11,12,13,14,15,16
+    ];
+    let subband_alloc = L12_subband_alloc_table(hdr, sci);
+    let mut subband_alloc_idx = 0;
+    let mut k: usize = 0;
+    let mut ba_bits = 0;
+    let mut ba_code_tab_idx: usize = 0;
+    for i in 0..(sci.total_bands as usize) {
+        let ba: u8;
+        if i == k {
+            let sb = &subband_alloc[subband_alloc_idx];
+            k += sb.band_count as usize;
+            ba_bits = sb.code_tab_width;
+            ba_code_tab_idx = sb.tab_offset as usize;
+            subband_alloc_idx += 1;
+        }
+        let ba_idx: usize = ba_code_tab_idx + (bs.get_bits(ba_bits as u32) as usize);
+        ba = g_bitalloc_code_tab[ba_idx];
+        sci.bitalloc[2*i + 1] = if sci.stereo_bands != 0 {
+            ba
+        } else {
+            0
+        };
+    }
+
+    for i in 0..(2*sci.total_bands as usize) {
+        sci.scfcod[i] = if sci.bitalloc[i] != 0 {
+            if hdr_is_layer_1(hdr) {
+                2
+            } else {
+                bs.get_bits(2) as u8
+            }
+        } else {
+            6
+        };
+    }
+
+    L12_read_scalefactors(bs, &sci.bitalloc, &sci.scfcod, (sci.total_bands * 2) as usize, &mut sci.scf);
+    // TODO: This clear can probably be better.
+    for i in sci.stereo_bands..sci.total_bands {
+        let i = i as usize;
+        sci.bitalloc[2*i+1] = 0;
     }
 }
 

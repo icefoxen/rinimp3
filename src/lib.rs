@@ -1,9 +1,9 @@
 extern crate byteorder;
-use byteorder::{LE, WriteBytesExt};
+use byteorder::{WriteBytesExt, LE};
 
-use std::io::{self, Read, Write, Cursor};
+use std::io::{self, Cursor, Read, Write};
 
-pub const MAX_SAMPLES_PER_FRAME: usize = 1152*2;
+pub const MAX_SAMPLES_PER_FRAME: usize = 1152 * 2;
 /// More than ISO spec's
 pub const MAX_FREE_FORMAT_FRAME_SIZE: usize = 2304;
 pub const MAX_FRAME_SYNC_MATCHES: usize = 10;
@@ -18,7 +18,7 @@ pub const MODE_MONO: usize = 3;
 pub const MODE_JOINT_STEREO: usize = 1;
 pub const HDR_SIZE: usize = 4;
 
-mod corrode_test;
+pub mod corrode_test;
 
 fn hdr_is_mono(h: &[u8]) -> bool {
     // TODO: Might be nicer ways to do these bit-tests
@@ -29,11 +29,9 @@ fn hdr_is_ms_stereo(h: &[u8]) -> bool {
     (h[3] & 0xE0) == 0x60
 }
 
-
 fn hdr_is_free_format(h: &[u8]) -> bool {
     (h[2] & 0xF0) == 0
 }
-
 
 fn hdr_is_crc(h: &[u8]) -> bool {
     // TODO: Double-check
@@ -72,7 +70,6 @@ fn hdr_get_layer(h: &[u8]) -> u8 {
     ((h[1] >> 1) & 3)
 }
 
-
 fn hdr_get_bitrate(h: &[u8]) -> u8 {
     (h[2] >> 4)
 }
@@ -81,11 +78,9 @@ fn hdr_get_sample_rate(h: &[u8]) -> u8 {
     ((h[2] >> 2) & 3)
 }
 
-
 fn hdr_is_frame_576(h: &[u8]) -> bool {
     (h[1] & 14) == 2
 }
-
 
 fn hdr_is_layer_1(h: &[u8]) -> bool {
     (h[1] & 6) == 6
@@ -94,8 +89,6 @@ fn hdr_is_layer_1(h: &[u8]) -> bool {
 const BITS_DEQUANTIZER_OUT: i32 = -1;
 const MAX_SCF: i32 = 255 + BITS_DEQUANTIZER_OUT * 4 - 210;
 const MAX_SCFI: i32 = (MAX_SCF + 3) & !3;
-
-
 
 pub struct FrameInfo {
     frame_bytes: i32,
@@ -106,18 +99,24 @@ pub struct FrameInfo {
 }
 
 pub struct Mp3Dec {
-    mdct_overlap: [[f32;2]; 9*32],
-    qmf_state: [f32;15 * 2 * 32],
+    mdct_overlap: [[f32; 2]; 9 * 32],
+    qmf_state: [f32; 15 * 2 * 32],
     reserv: i32,
     free_format_bytes: i32,
-    header: [u8;4],
-    reserv_buf: [u8;511],
+    header: [u8; 4],
+    reserv_buf: [u8; 511],
 }
 
 // TODO: float vs. int16 output?
 type Mp3Sample = i16;
 
-fn decode_frame(dec: &Mp3Dec, mp3: &[u8], mp3_bytes: usize, pcm: &[Mp3Sample], info: &FrameInfo) -> i32 {
+fn decode_frame(
+    dec: &Mp3Dec,
+    mp3: &[u8],
+    mp3_bytes: usize,
+    pcm: &[Mp3Sample],
+    info: &FrameInfo,
+) -> i32 {
     0
 }
 
@@ -128,11 +127,11 @@ pub struct Bs {
 }
 
 pub struct L12ScaleInfo {
-    scf: [f32;3*64],
+    scf: [f32; 3 * 64],
     total_bands: u8,
     stereo_bands: u8,
-    bitalloc: [u8;64],
-    scfcod: [u8;64],
+    bitalloc: [u8; 64],
+    scfcod: [u8; 64],
 }
 
 pub struct L12SubbandAlloc {
@@ -151,9 +150,9 @@ pub struct L3GrInfo {
     mixed_block_flag: u8,
     n_long_sfb: u8,
     n_short_sfb: u8,
-    table_select: [u8;3],
-    region_count: [u8;3],
-    subblock_gain: [u8;3],
+    table_select: [u8; 3],
+    region_count: [u8; 3],
+    subblock_gain: [u8; 3],
     preflag: u8,
     scalefac_scale: u8,
     count1_table: u8,
@@ -162,12 +161,12 @@ pub struct L3GrInfo {
 
 pub struct Mp3DecScratch {
     bs: Bs,
-    maindata: [u8;MAX_BITRESERVOIR_BYTES + MAX_L3_FRAME_PAYLOAD_BYTES],
+    maindata: [u8; MAX_BITRESERVOIR_BYTES + MAX_L3_FRAME_PAYLOAD_BYTES],
     gr_info: [L3GrInfo; 3],
-    grbuf: [[f32;576]; 2],
-    scf: [f32;40],
-    syn: [[f32; 2*32]; 18+15],
-    ist_pos: [[u8;39];2],
+    grbuf: [[f32; 576]; 2],
+    scf: [f32; 40],
+    syn: [[f32; 2 * 32]; 18 + 15],
+    ist_pos: [[u8; 39]; 2],
 }
 
 impl Bs {
@@ -204,31 +203,46 @@ impl Bs {
 }
 
 fn hdr_valid(h: &[u8]) -> bool {
-    h[0] == 0xFF &&
-    ((h[1] & 0xF0) == 0xF0 || (h[1] & 0xFE) == 0xE2) &&
-    hdr_get_layer(h) != 0 &&
-    hdr_get_bitrate(h) != 15 &&
-    hdr_get_sample_rate(h) != 3
+    h[0] == 0xFF
+        && ((h[1] & 0xF0) == 0xF0 || (h[1] & 0xFE) == 0xE2)
+        && hdr_get_layer(h) != 0
+        && hdr_get_bitrate(h) != 15
+        && hdr_get_sample_rate(h) != 3
 }
 
 fn hdr_compare(h1: &[u8], h2: &[u8]) -> bool {
-    hdr_valid(h2) &&
-    ((h1[1] ^ h2[1])& 0xFE) == 0 &&
-    ((h1[2] ^ h2[2])& 0x0C) == 0 &&
-    !(hdr_is_free_format(h1) ^ hdr_is_free_format(h2))
+    hdr_valid(h2)
+        && ((h1[1] ^ h2[1]) & 0xFE) == 0
+        && ((h1[2] ^ h2[2]) & 0x0C) == 0
+        && !(hdr_is_free_format(h1) ^ hdr_is_free_format(h2))
 }
 
 fn hdr_bitrate_kbps(h: &[u8]) -> u32 {
     let halfrate: [[[u32; 15]; 3]; 2] = [
-        [ [ 0,4,8,12,16,20,24,28,32,40,48,56,64,72,80 ], [ 0,4,8,12,16,20,24,28,32,40,48,56,64,72,80 ], [ 0,16,24,28,32,40,48,56,64,72,80,88,96,112,128 ] ],
-        [ [ 0,16,20,24,28,32,40,48,56,64,80,96,112,128,160 ], [ 0,16,24,28,32,40,48,56,64,80,96,112,128,160,192 ], [ 0,16,32,48,64,80,96,112,128,144,160,176,192,208,224 ] ],
+        [
+            [0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80],
+            [0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80],
+            [0, 16, 24, 28, 32, 40, 48, 56, 64, 72, 80, 88, 96, 112, 128],
+        ],
+        [
+            [0, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160],
+            [
+                0, 16, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192,
+            ],
+            [
+                0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224,
+            ],
+        ],
     ];
-    2 * halfrate[hdr_test_mpeg1(h) as usize][hdr_get_layer(h) as usize - 1][hdr_get_bitrate(h) as usize]
+    2 * halfrate[hdr_test_mpeg1(h) as usize][hdr_get_layer(h) as usize - 1]
+        [hdr_get_bitrate(h) as usize]
 }
 
 fn hdr_sample_rate_hz(h: &[u8]) -> u32 {
-    let g_hz: [u32;3] = [44100, 48000, 32000];
-    g_hz[hdr_get_sample_rate(h) as usize] >> (!hdr_test_mpeg1(h)) as u32 >> (!hdr_test_not_mpeg25(h)) as u32
+    let g_hz: [u32; 3] = [44100, 48000, 32000];
+    g_hz[hdr_get_sample_rate(h) as usize]
+        >> (!hdr_test_mpeg1(h)) as u32
+        >> (!hdr_test_not_mpeg25(h)) as u32
 }
 
 fn hdr_frame_samples(h: &[u8]) -> u32 {
@@ -359,12 +373,29 @@ fn L12_read_scalefactors(bs: &mut Bs, pba: &[u8], scfcod: &[u8], bands: usize, s
     let mut g_deq_L12: Vec<f32> = vec![];
     {
         let mut DQ = |x: f32| {
-            g_deq_L12.push(9.53674316e-07/x);
-            g_deq_L12.push(7.56931807e-07/x);
-            g_deq_L12.push(6.00777173e-07/x);
+            g_deq_L12.push(9.53674316e-07 / x);
+            g_deq_L12.push(7.56931807e-07 / x);
+            g_deq_L12.push(6.00777173e-07 / x);
         };
-        
-        DQ(3.0);DQ(7.0);DQ(15.0);DQ(31.0);DQ(63.0);DQ(127.0);DQ(255.0);DQ(511.0);DQ(1023.0);DQ(2047.0);DQ(4095.0);DQ(8191.0);DQ(16383.0);DQ(32767.0);DQ(65535.0);DQ(3.0);DQ(5.0);DQ(9.0);
+
+        DQ(3.0);
+        DQ(7.0);
+        DQ(15.0);
+        DQ(31.0);
+        DQ(63.0);
+        DQ(127.0);
+        DQ(255.0);
+        DQ(511.0);
+        DQ(1023.0);
+        DQ(2047.0);
+        DQ(4095.0);
+        DQ(8191.0);
+        DQ(16383.0);
+        DQ(32767.0);
+        DQ(65535.0);
+        DQ(3.0);
+        DQ(5.0);
+        DQ(9.0);
     }
     let mut scf_idx = 0;
     for i in 0..bands {
@@ -379,8 +410,8 @@ fn L12_read_scalefactors(bs: &mut Bs, pba: &[u8], scfcod: &[u8], bands: usize, s
             let s;
             if (mask & m) != 0 {
                 let b = bs.get_bits(6);
-                let idx = (ba as u32*3 - 6 + b % 3) as usize;
-                s = g_deq_L12[idx] * (1 << 21 >> (b/3)) as f32;
+                let idx = (ba as u32 * 3 - 6 + b % 3) as usize;
+                s = g_deq_L12[idx] * (1 << 21 >> (b / 3)) as f32;
             } else {
                 s = 0.0;
             }
@@ -393,13 +424,10 @@ fn L12_read_scalefactors(bs: &mut Bs, pba: &[u8], scfcod: &[u8], bands: usize, s
 
 fn L12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
     let g_bitalloc_code_tab: &[u8] = &[
-        0,17, 3, 4, 5,6,7, 8,9,10,11,12,13,14,15,16,
-        0,17,18, 3,19,4,5, 6,7, 8, 9,10,11,12,13,16,
-        0,17,18, 3,19,4,5,16,
-        0,17,18,16,
-        0,17,18,19, 4,5,6, 7,8, 9,10,11,12,13,14,15,
-        0,17,18, 3,19,4,5, 6,7, 8, 9,10,11,12,13,14,
-        0, 2, 3, 4, 5,6,7, 8,9,10,11,12,13,14,15,16
+        0, 17, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0, 17, 18, 3, 19, 4, 5, 6, 7, 8, 9,
+        10, 11, 12, 13, 16, 0, 17, 18, 3, 19, 4, 5, 16, 0, 17, 18, 16, 0, 17, 18, 19, 4, 5, 6, 7,
+        8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 3, 19, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 2,
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     ];
     let subband_alloc = L12_subband_alloc_table(hdr, sci);
     let mut subband_alloc_idx = 0;
@@ -417,14 +445,10 @@ fn L12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
         }
         let ba_idx: usize = ba_code_tab_idx + (bs.get_bits(ba_bits as u32) as usize);
         ba = g_bitalloc_code_tab[ba_idx];
-        sci.bitalloc[2*i + 1] = if sci.stereo_bands != 0 {
-            ba
-        } else {
-            0
-        };
+        sci.bitalloc[2 * i + 1] = if sci.stereo_bands != 0 { ba } else { 0 };
     }
 
-    for i in 0..(2*sci.total_bands as usize) {
+    for i in 0..(2 * sci.total_bands as usize) {
         sci.scfcod[i] = if sci.bitalloc[i] != 0 {
             if hdr_is_layer_1(hdr) {
                 2
@@ -436,11 +460,17 @@ fn L12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
         };
     }
 
-    L12_read_scalefactors(bs, &sci.bitalloc, &sci.scfcod, (sci.total_bands * 2) as usize, &mut sci.scf);
+    L12_read_scalefactors(
+        bs,
+        &sci.bitalloc,
+        &sci.scfcod,
+        (sci.total_bands * 2) as usize,
+        &mut sci.scf,
+    );
     // TODO: This clear can probably be better.
     for i in sci.stereo_bands..sci.total_bands {
         let i = i as usize;
-        sci.bitalloc[2*i+1] = 0;
+        sci.bitalloc[2 * i + 1] = 0;
     }
 }
 
@@ -451,8 +481,7 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 
-
-/*
+    /*
 fn wav_header(hz: i32, ch: i16, bips: i32, data_bytes: i32) -> [u8;44] {
     // let buffer: &mut [u8;44] = b"RIFFsizeWAVEfmt \x10\x00\x00\x00\x01\x00ch_hz_abpsbabsdatasize";
     let mut buffer: [u8;44] = [0;44];

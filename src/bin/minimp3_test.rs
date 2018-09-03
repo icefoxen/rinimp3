@@ -57,7 +57,8 @@ extern "C" {
 
 enum _IO_FILE {}
 
-use corrode_test::*;
+extern crate rinimp3;
+use rinimp3::corrode_test::*;
 
 #[derive(Copy)]
 #[repr(C)]
@@ -104,7 +105,7 @@ pub unsafe extern "C" fn mp3dec_load_buf(
     mut user_data: *mut ::std::os::raw::c_void,
 ) {
     let mut orig_buf_size: usize = buf_size;
-    let mut pcm: [i16; 2304] = [0;2304];
+    let mut pcm: [i16; 2304] = [0; 2304];
     let mut frame_info: Struct2 = ::std::mem::uninitialized();
     memset(
         info as (*mut ::std::os::raw::c_void),
@@ -198,12 +199,12 @@ pub unsafe extern "C" fn mp3dec_load_buf(
                         avg_bitrate_kbps =
                             avg_bitrate_kbps.wrapping_add(frame_info.bitrate_kbps as (usize));
                         frames = frames.wrapping_add(1usize);
-                            progress_cb(
-                                user_data,
-                                orig_buf_size,
-                                orig_buf_size.wrapping_sub(buf_size),
-                                &mut frame_info as (*mut Struct2),
-                            );
+                        progress_cb(
+                            user_data,
+                            orig_buf_size,
+                            orig_buf_size.wrapping_sub(buf_size),
+                            &mut frame_info as (*mut Struct2),
+                        );
                     }
                     if frame_bytes == 0 {
                         break;
@@ -234,63 +235,62 @@ pub unsafe extern "C" fn mp3dec_iterate_buf(
     ) -> i32,
     mut user_data: *mut ::std::os::raw::c_void,
 ) {
-        let mut frame_info: Struct2 = ::std::mem::uninitialized();
-        memset(
-            &mut frame_info as (*mut Struct2) as (*mut ::std::os::raw::c_void),
-            0i32,
-            ::std::mem::size_of::<Struct2>(),
-        );
-        let mut id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
-        (if id3v2size > buf_size {
-        } else {
-            let mut orig_buf: *const u8 = buf;
-            buf = buf.offset(id3v2size as (isize));
-            buf_size = buf_size.wrapping_sub(id3v2size);
-            'loop3: loop {
-                let mut free_format_bytes: i32 = 0i32;
-                let mut frame_size: i32 = 0i32;
-                let mut i: i32 = mp3d_find_frame(
-                    buf,
-                    buf_size as (i32),
-                    &mut free_format_bytes as (*mut i32),
-                    &mut frame_size as (*mut i32),
-                );
-                buf = buf.offset(i as (isize));
-                buf_size = buf_size.wrapping_sub(i as (usize));
-                if !(i != 0 && (frame_size == 0)) {
-                    if frame_size == 0 {
-                        break;
-                    }
-                    let mut hdr: *const u8 = buf;
-                    frame_info.channels = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
-                        1i32
-                    } else {
-                        2i32
-                    };
-                    frame_info.hz = hdr_sample_rate_hz(hdr) as (i32);
-                    frame_info.layer = 4i32 - (*hdr.offset(1isize) as (i32) >> 1i32 & 3i32);
-                    frame_info.bitrate_kbps = hdr_bitrate_kbps(hdr) as (i32);
-                    frame_info.frame_bytes = frame_size;
-                    if callback(
-                        user_data,
-                        hdr,
-                        frame_size,
-                        ((hdr as (isize)).wrapping_sub(orig_buf as (isize))
-                            / ::std::mem::size_of::<u8>() as (isize))
-                            as (usize),
-                        &mut frame_info as (*mut Struct2),
-                    ) != 0
-                    {
-                        break;
-                    }
-                    buf = buf.offset(frame_size as (isize));
-                    buf_size = buf_size.wrapping_sub(frame_size as (usize));
-                }
-                if false {
+    let mut frame_info: Struct2 = ::std::mem::uninitialized();
+    memset(
+        &mut frame_info as (*mut Struct2) as (*mut ::std::os::raw::c_void),
+        0i32,
+        ::std::mem::size_of::<Struct2>(),
+    );
+    let mut id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
+    (if id3v2size > buf_size {
+    } else {
+        let mut orig_buf: *const u8 = buf;
+        buf = buf.offset(id3v2size as (isize));
+        buf_size = buf_size.wrapping_sub(id3v2size);
+        'loop3: loop {
+            let mut free_format_bytes: i32 = 0i32;
+            let mut frame_size: i32 = 0i32;
+            let mut i: i32 = mp3d_find_frame(
+                buf,
+                buf_size as (i32),
+                &mut free_format_bytes as (*mut i32),
+                &mut frame_size as (*mut i32),
+            );
+            buf = buf.offset(i as (isize));
+            buf_size = buf_size.wrapping_sub(i as (usize));
+            if !(i != 0 && (frame_size == 0)) {
+                if frame_size == 0 {
                     break;
                 }
+                let mut hdr: *const u8 = buf;
+                frame_info.channels = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
+                    1i32
+                } else {
+                    2i32
+                };
+                frame_info.hz = hdr_sample_rate_hz(hdr) as (i32);
+                frame_info.layer = 4i32 - (*hdr.offset(1isize) as (i32) >> 1i32 & 3i32);
+                frame_info.bitrate_kbps = hdr_bitrate_kbps(hdr) as (i32);
+                frame_info.frame_bytes = frame_size;
+                if callback(
+                    user_data,
+                    hdr,
+                    frame_size,
+                    ((hdr as (isize)).wrapping_sub(orig_buf as (isize))
+                        / ::std::mem::size_of::<u8>() as (isize)) as (usize),
+                    &mut frame_info as (*mut Struct2),
+                ) != 0
+                {
+                    break;
+                }
+                buf = buf.offset(frame_size as (isize));
+                buf_size = buf_size.wrapping_sub(frame_size as (usize));
             }
-        })
+            if false {
+                break;
+            }
+        }
+    })
 }
 
 #[derive(Copy)]
@@ -550,7 +550,7 @@ fn main() {
         .map(|vec| vec.as_mut_ptr())
         .chain(Some(::std::ptr::null_mut()))
         .collect::<Vec<_>>();
-    let ret = unsafe { _c_main(argv_storage.len() as (i32), argv.as_mut_ptr()) };
+    let ret = unsafe { _c_other_main(argv_storage.len() as (i32), argv.as_mut_ptr()) };
     ::std::process::exit(ret);
 }
 
@@ -593,7 +593,8 @@ unsafe extern "C" fn wav_header(
     mut bips: i32,
     mut data_bytes: i32,
 ) -> Vec<u8> {
-    let hdr: &mut Vec<u8> = &mut Vec::from(&b"RIFFsizeWAVEfmt \x10\0\0\0\x01\0ch_hz_abpsbabsdatasize\0"[..]);
+    let hdr: &mut Vec<u8> =
+        &mut Vec::from(&b"RIFFsizeWAVEfmt \x10\0\0\0\x01\0ch_hz_abpsbabsdatasize\0"[..]);
     let mut nAvgBytesPerSec: usize = (bips * ch * hz >> 3i32) as (usize);
     let mut nBlockAlign: u32 = (bips * ch >> 3i32) as (u32);
     *(hdr.as_mut_ptr().offset(0x4isize) as (*mut ::std::os::raw::c_void) as (*mut i32)) =
@@ -633,7 +634,14 @@ unsafe extern "C" fn decode_file(
     let mut MSE: f64 = 0.0f64;
     let mut psnr: f64;
     let mut info: Struct8 = ::std::mem::uninitialized();
-    unsafe extern "C" fn callback(_: *mut ::std::os::raw::c_void, _: usize, _: usize, _: *mut Struct2) -> i32 {0};
+    unsafe extern "C" fn callback(
+        _: *mut ::std::os::raw::c_void,
+        _: usize,
+        _: usize,
+        _: *mut Struct2,
+    ) -> i32 {
+        0
+    };
     if mp3dec_load(
         &mut mp3d as (*mut Struct1),
         input_file_name,
@@ -727,7 +735,7 @@ unsafe extern "C" fn decode_file(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn _c_main(mut argc: i32, mut argv: *mut *mut u8) -> i32 {
+pub unsafe extern "C" fn _c_other_main(mut argc: i32, mut argv: *mut *mut u8) -> i32 {
     let mut wave_out: i32 = 0i32;
     let mut ref_size: i32 = 0;
     let mut ref_file_name: *mut u8 = if argc > 2i32 {

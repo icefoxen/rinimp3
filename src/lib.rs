@@ -18,6 +18,8 @@ pub const MODE_MONO: usize = 3;
 pub const MODE_JOINT_STEREO: usize = 1;
 pub const HDR_SIZE: usize = 4;
 
+mod corrode_test;
+
 fn hdr_is_mono(h: &[u8]) -> bool {
     // TODO: Might be nicer ways to do these bit-tests
     (h[3] & 0xC0) == 0xC0

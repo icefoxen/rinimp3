@@ -27,11 +27,6 @@ extern "C" {
         __src: *const ::std::os::raw::c_void,
         __n: usize,
     ) -> *mut ::std::os::raw::c_void;
-    fn memmove(
-        __dest: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
     fn memset(
         __s: *mut ::std::os::raw::c_void,
         __c: i32,
@@ -77,7 +72,7 @@ impl Clone for Struct8 {
     }
 }
 
-unsafe extern "C" fn mp3dec_skip_id3v2(mut buf: *const u8, mut buf_size: usize) -> usize {
+unsafe  fn mp3dec_skip_id3v2(buf: *const u8, buf_size: usize) -> usize {
     if buf_size > 10usize
         && (strncmp(
             buf as (*mut u8) as (*const u8),
@@ -95,29 +90,29 @@ unsafe extern "C" fn mp3dec_skip_id3v2(mut buf: *const u8, mut buf_size: usize) 
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_load_buf(
-    mut dec: *mut Struct1,
+pub unsafe  fn mp3dec_load_buf(
+    dec: *mut Mp3Dec,
     mut buf: *const u8,
     mut buf_size: usize,
-    mut info: *mut Struct8,
-    mut progress_cb: unsafe extern "C" fn(*mut ::std::os::raw::c_void, usize, usize, *mut Struct2)
+    info: *mut Struct8,
+    progress_cb: unsafe  fn(*mut ::std::os::raw::c_void, usize, usize, *mut FrameInfo)
         -> i32,
-    mut user_data: *mut ::std::os::raw::c_void,
+    user_data: *mut ::std::os::raw::c_void,
 ) {
-    let mut orig_buf_size: usize = buf_size;
+    let orig_buf_size: usize = buf_size;
     let mut pcm: [i16; 2304] = [0; 2304];
-    let mut frame_info: Struct2 = ::std::mem::uninitialized();
+    let mut frame_info: FrameInfo = ::std::mem::uninitialized();
     memset(
         info as (*mut ::std::os::raw::c_void),
         0i32,
         ::std::mem::size_of::<Struct8>(),
     );
     memset(
-        &mut frame_info as (*mut Struct2) as (*mut ::std::os::raw::c_void),
+        &mut frame_info as (*mut FrameInfo) as (*mut ::std::os::raw::c_void),
         0i32,
-        ::std::mem::size_of::<Struct2>(),
+        ::std::mem::size_of::<FrameInfo>(),
     );
-    let mut id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
+    let id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
     if id3v2size > buf_size {
     } else {
         buf = buf.offset(id3v2size as (isize));
@@ -130,7 +125,7 @@ pub unsafe extern "C" fn mp3dec_load_buf(
                 buf,
                 buf_size as (i32),
                 pcm.as_mut_ptr(),
-                &mut frame_info as (*mut Struct2),
+                &mut frame_info as (*mut FrameInfo),
             );
             buf = buf.offset(frame_info.frame_bytes as (isize));
             buf_size = buf_size.wrapping_sub(frame_info.frame_bytes as (usize));
@@ -181,7 +176,7 @@ pub unsafe extern "C" fn mp3dec_load_buf(
                         buf,
                         buf_size as (i32),
                         (*info).buffer.offset((*info).samples as (isize)),
-                        &mut frame_info as (*mut Struct2),
+                        &mut frame_info as (*mut FrameInfo),
                     );
                     frame_bytes = frame_info.frame_bytes;
                     buf = buf.offset(frame_bytes as (isize));
@@ -203,7 +198,7 @@ pub unsafe extern "C" fn mp3dec_load_buf(
                             user_data,
                             orig_buf_size,
                             orig_buf_size.wrapping_sub(buf_size),
-                            &mut frame_info as (*mut Struct2),
+                            &mut frame_info as (*mut FrameInfo),
                         );
                     }
                     if frame_bytes == 0 {
@@ -223,34 +218,34 @@ pub unsafe extern "C" fn mp3dec_load_buf(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_iterate_buf(
+pub unsafe  fn mp3dec_iterate_buf(
     mut buf: *const u8,
     mut buf_size: usize,
-    mut callback: unsafe extern "C" fn(
+    callback: unsafe  fn(
         *mut ::std::os::raw::c_void,
         *const u8,
         i32,
         usize,
-        *mut Struct2,
+        *mut FrameInfo,
     ) -> i32,
-    mut user_data: *mut ::std::os::raw::c_void,
+    user_data: *mut ::std::os::raw::c_void,
 ) {
-    let mut frame_info: Struct2 = ::std::mem::uninitialized();
+    let mut frame_info: FrameInfo = ::std::mem::uninitialized();
     memset(
-        &mut frame_info as (*mut Struct2) as (*mut ::std::os::raw::c_void),
+        &mut frame_info as (*mut FrameInfo) as (*mut ::std::os::raw::c_void),
         0i32,
-        ::std::mem::size_of::<Struct2>(),
+        ::std::mem::size_of::<FrameInfo>(),
     );
-    let mut id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
+    let id3v2size: usize = mp3dec_skip_id3v2(buf, buf_size);
     (if id3v2size > buf_size {
     } else {
-        let mut orig_buf: *const u8 = buf;
+        let orig_buf: *const u8 = buf;
         buf = buf.offset(id3v2size as (isize));
         buf_size = buf_size.wrapping_sub(id3v2size);
         'loop3: loop {
             let mut free_format_bytes: i32 = 0i32;
             let mut frame_size: i32 = 0i32;
-            let mut i: i32 = mp3d_find_frame(
+            let i: i32 = mp3d_find_frame(
                 buf,
                 buf_size as (i32),
                 &mut free_format_bytes as (*mut i32),
@@ -262,7 +257,7 @@ pub unsafe extern "C" fn mp3dec_iterate_buf(
                 if frame_size == 0 {
                     break;
                 }
-                let mut hdr: *const u8 = buf;
+                let hdr: *const u8 = buf;
                 frame_info.channels = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
                     1i32
                 } else {
@@ -278,7 +273,7 @@ pub unsafe extern "C" fn mp3dec_iterate_buf(
                     frame_size,
                     ((hdr as (isize)).wrapping_sub(orig_buf as (isize))
                         / ::std::mem::size_of::<u8>() as (isize)) as (usize),
-                    &mut frame_info as (*mut Struct2),
+                    &mut frame_info as (*mut FrameInfo),
                 ) != 0
                 {
                     break;
@@ -309,7 +304,7 @@ impl Clone for Struct10 {
 #[derive(Copy)]
 #[repr(C)]
 pub struct Struct9 {
-    pub mp3d: Struct1,
+    pub mp3d: Mp3Dec,
     pub file: Struct10,
     pub seek_method: i32,
     pub is_file: i32,
@@ -322,11 +317,11 @@ impl Clone for Struct9 {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_ex_open_buf(
-    mut dec: *mut Struct9,
-    mut buf: *const u8,
-    mut buf_size: usize,
-    mut seek_method: i32,
+pub unsafe  fn mp3dec_ex_open_buf(
+    dec: *mut Struct9,
+    buf: *const u8,
+    buf_size: usize,
+    seek_method: i32,
 ) -> i32 {
     memset(
         dec as (*mut ::std::os::raw::c_void),
@@ -336,7 +331,7 @@ pub unsafe extern "C" fn mp3dec_ex_open_buf(
     (*dec).file.buffer = buf;
     (*dec).file.size = buf_size;
     (*dec).seek_method = seek_method;
-    mp3dec_init(&mut (*dec).mp3d as (*mut Struct1));
+    mp3dec_init(&mut (*dec).mp3d as (*mut Mp3Dec));
     0i32
 }
 
@@ -379,9 +374,9 @@ impl Clone for stat {
     }
 }
 
-unsafe extern "C" fn mp3dec_open_file(
-    mut file_name: *const u8,
-    mut map_info: *mut Struct10,
+unsafe  fn mp3dec_open_file(
+    file_name: *const u8,
+    map_info: *mut Struct10,
 ) -> i32 {
     let mut file: i32;
     let mut st: stat = ::std::mem::uninitialized();
@@ -425,7 +420,7 @@ unsafe extern "C" fn mp3dec_open_file(
     }
 }
 
-unsafe extern "C" fn mp3dec_close_file(mut map_info: *mut Struct10) {
+unsafe  fn mp3dec_close_file(map_info: *mut Struct10) {
     if !(*map_info).buffer.is_null()
         && (-1i32 as (*mut ::std::os::raw::c_void) as (*const u8) != (*map_info).buffer)
     {
@@ -439,15 +434,15 @@ unsafe extern "C" fn mp3dec_close_file(mut map_info: *mut Struct10) {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_load(
-    mut dec: *mut Struct1,
-    mut file_name: *const u8,
-    mut info: *mut Struct8,
-    mut progress_cb: unsafe extern "C" fn(*mut ::std::os::raw::c_void, usize, usize, *mut Struct2)
+pub unsafe  fn mp3dec_load(
+    dec: *mut Mp3Dec,
+    file_name: *const u8,
+    info: *mut Struct8,
+    progress_cb: unsafe  fn(*mut ::std::os::raw::c_void, usize, usize, *mut FrameInfo)
         -> i32,
-    mut user_data: *mut ::std::os::raw::c_void,
+    user_data: *mut ::std::os::raw::c_void,
 ) -> i32 {
-    let mut ret: i32;
+    let ret: i32;
     let mut map_info: Struct10 = ::std::mem::uninitialized();
     if {
         ret = mp3dec_open_file(file_name, &mut map_info as (*mut Struct10));
@@ -470,18 +465,18 @@ pub unsafe extern "C" fn mp3dec_load(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_iterate(
-    mut file_name: *const u8,
-    mut callback: unsafe extern "C" fn(
+pub unsafe  fn mp3dec_iterate(
+    file_name: *const u8,
+    callback: unsafe  fn(
         *mut ::std::os::raw::c_void,
         *const u8,
         i32,
         usize,
-        *mut Struct2,
+        *mut FrameInfo,
     ) -> i32,
-    mut user_data: *mut ::std::os::raw::c_void,
+    user_data: *mut ::std::os::raw::c_void,
 ) -> i32 {
-    let mut ret: i32;
+    let ret: i32;
     let mut map_info: Struct10 = ::std::mem::uninitialized();
     if {
         ret = mp3dec_open_file(file_name, &mut map_info as (*mut Struct10));
@@ -497,7 +492,7 @@ pub unsafe extern "C" fn mp3dec_iterate(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_ex_close(mut dec: *mut Struct9) {
+pub unsafe  fn mp3dec_ex_close(dec: *mut Struct9) {
     if (*dec).is_file != 0 {
         mp3dec_close_file(&mut (*dec).file as (*mut Struct10));
     } else {
@@ -511,12 +506,12 @@ pub unsafe extern "C" fn mp3dec_ex_close(mut dec: *mut Struct9) {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_ex_open(
-    mut dec: *mut Struct9,
-    mut file_name: *const u8,
-    mut seek_method: i32,
+pub unsafe  fn mp3dec_ex_open(
+    dec: *mut Struct9,
+    file_name: *const u8,
+    seek_method: i32,
 ) -> i32 {
-    let mut ret: i32;
+    let ret: i32;
     memset(
         dec as (*mut ::std::os::raw::c_void),
         0i32,
@@ -531,7 +526,7 @@ pub unsafe extern "C" fn mp3dec_ex_open(
     } else {
         (*dec).seek_method = seek_method;
         (*dec).is_file = 1i32;
-        mp3dec_init(&mut (*dec).mp3d as (*mut Struct1));
+        mp3dec_init(&mut (*dec).mp3d as (*mut Mp3Dec));
         0i32
     }
 }
@@ -554,8 +549,8 @@ fn main() {
     ::std::process::exit(ret);
 }
 
-unsafe extern "C" fn preload(mut file: *mut _IO_FILE, mut data_size: *mut i32) -> *mut u8 {
-    let mut data: *mut u8;
+unsafe  fn preload(file: *mut _IO_FILE, data_size: *mut i32) -> *mut u8 {
+    let data: *mut u8;
     *data_size = 0i32;
     if file.is_null() {
         0i32 as (*mut u8)
@@ -587,16 +582,16 @@ unsafe extern "C" fn preload(mut file: *mut _IO_FILE, mut data_size: *mut i32) -
     }
 }
 
-unsafe extern "C" fn wav_header(
-    mut hz: i32,
-    mut ch: i32,
-    mut bips: i32,
-    mut data_bytes: i32,
+unsafe  fn wav_header(
+    hz: i32,
+    ch: i32,
+    bips: i32,
+    data_bytes: i32,
 ) -> Vec<u8> {
     let hdr: &mut Vec<u8> =
         &mut Vec::from(&b"RIFFsizeWAVEfmt \x10\0\0\0\x01\0ch_hz_abpsbabsdatasize\0"[..]);
-    let mut nAvgBytesPerSec: usize = (bips * ch * hz >> 3i32) as (usize);
-    let mut nBlockAlign: u32 = (bips * ch >> 3i32) as (u32);
+    let avg_bytes_per_sec: usize = (bips * ch * hz >> 3i32) as (usize);
+    let block_align: u32 = (bips * ch >> 3i32) as (u32);
     *(hdr.as_mut_ptr().offset(0x4isize) as (*mut ::std::os::raw::c_void) as (*mut i32)) =
         44i32 + data_bytes - 8i32;
     *(hdr.as_mut_ptr().offset(0x14isize) as (*mut ::std::os::raw::c_void) as (*mut i16)) = 1i16;
@@ -604,9 +599,9 @@ unsafe extern "C" fn wav_header(
         ch as (i16);
     *(hdr.as_mut_ptr().offset(0x18isize) as (*mut ::std::os::raw::c_void) as (*mut i32)) = hz;
     *(hdr.as_mut_ptr().offset(0x1cisize) as (*mut ::std::os::raw::c_void) as (*mut i32)) =
-        nAvgBytesPerSec as (i32);
+        avg_bytes_per_sec as (i32);
     *(hdr.as_mut_ptr().offset(0x20isize) as (*mut ::std::os::raw::c_void) as (*mut i16)) =
-        nBlockAlign as (i16);
+        block_align as (i16);
     *(hdr.as_mut_ptr().offset(0x22isize) as (*mut ::std::os::raw::c_void) as (*mut i16)) =
         bips as (i16);
     *(hdr.as_mut_ptr().offset(0x28isize) as (*mut ::std::os::raw::c_void) as (*mut i32)) =
@@ -614,36 +609,36 @@ unsafe extern "C" fn wav_header(
     hdr.clone()
 }
 
-unsafe extern "C" fn read16le(mut p: *const ::std::os::raw::c_void) -> i16 {
-    let mut src: *const u8 = p as (*const u8);
+unsafe  fn read16le(p: *const ::std::os::raw::c_void) -> i16 {
+    let src: *const u8 = p as (*const u8);
     (*src.offset(0isize) as (i32) << 0i32 | *src.offset(1isize) as (i32) << 8i32) as (i16)
 }
 
-unsafe extern "C" fn decode_file(
-    mut input_file_name: *const u8,
-    mut buf_ref: *const u8,
-    mut ref_size: i32,
-    mut file_out: *mut _IO_FILE,
+unsafe  fn decode_file(
+    input_file_name: *const u8,
+    buf_ref: *const u8,
+    ref_size: i32,
+    file_out: *mut _IO_FILE,
     wave_out: i32,
 ) {
-    let mut mp3d: Struct1 = ::std::mem::uninitialized();
+    let mut mp3d: Mp3Dec = ::std::mem::uninitialized();
     let mut i: i32;
-    let mut data_bytes: i32;
+    let data_bytes: i32;
     let mut total_samples: i32 = 0i32;
     let mut maxdiff: i32 = 0i32;
     let mut MSE: f64 = 0.0f64;
-    let mut psnr: f64;
+    let psnr: f64;
     let mut info: Struct8 = ::std::mem::uninitialized();
-    unsafe extern "C" fn callback(
+    unsafe  fn callback(
         _: *mut ::std::os::raw::c_void,
         _: usize,
         _: usize,
-        _: *mut Struct2,
+        _: *mut FrameInfo,
     ) -> i32 {
         0
     };
     if mp3dec_load(
-        &mut mp3d as (*mut Struct1),
+        &mut mp3d as (*mut Mp3Dec),
         input_file_name,
         &mut info as (*mut Struct8),
         callback,
@@ -653,7 +648,7 @@ unsafe extern "C" fn decode_file(
         printf((*b"error: file not found or read error\0").as_ptr());
         exit(1i32);
     }
-    let mut buffer: *mut i16 = info.buffer;
+    let buffer: *mut i16 = info.buffer;
     if wave_out != 0 && !file_out.is_null() {
         fwrite(
             wav_header(0i32, 0i32, 0i32, 0i32).as_ptr() as (*const ::std::os::raw::c_void),
@@ -665,7 +660,7 @@ unsafe extern "C" fn decode_file(
     if info.samples != 0 {
         total_samples = (total_samples as (usize)).wrapping_add(info.samples) as (i32);
         if !buf_ref.is_null() {
-            let mut max_samples: i32 = (if (ref_size as (usize)).wrapping_div(2usize) > info.samples
+            let max_samples: i32 = (if (ref_size as (usize)).wrapping_div(2usize) > info.samples
             {
                 info.samples
             } else {
@@ -676,17 +671,17 @@ unsafe extern "C" fn decode_file(
                 if !(i < max_samples) {
                     break;
                 }
-                let mut MSEtemp: i32 = abs(*buffer.offset(i as (isize)) as (i32)
+                let mse_temp: i32 = abs(*buffer.offset(i as (isize)) as (i32)
                     - read16le(
                         &*buf_ref
                             .offset((i as (usize)).wrapping_mul(::std::mem::size_of::<i16>())
                                 as (isize)) as (*const u8)
                             as (*const ::std::os::raw::c_void),
                     ) as (i32));
-                if MSEtemp > maxdiff {
-                    maxdiff = MSEtemp;
+                if mse_temp > maxdiff {
+                    maxdiff = mse_temp;
                 }
-                MSE = MSE + (MSEtemp as (f32) * MSEtemp as (f32)) as (f64);
+                MSE = MSE + (mse_temp as (f32) * mse_temp as (f32)) as (f64);
                 i = i + 1;
             }
         }
@@ -735,15 +730,15 @@ unsafe extern "C" fn decode_file(
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn _c_other_main(mut argc: i32, mut argv: *mut *mut u8) -> i32 {
+pub unsafe  fn _c_other_main(argc: i32, argv: *mut *mut u8) -> i32 {
     let mut wave_out: i32 = 0i32;
     let mut ref_size: i32 = 0;
-    let mut ref_file_name: *mut u8 = if argc > 2i32 {
+    let ref_file_name: *mut u8 = if argc > 2i32 {
         *argv.offset(2isize)
     } else {
         0i32 as (*mut ::std::os::raw::c_void) as (*mut u8)
     };
-    let mut output_file_name: *mut u8 = if argc > 3i32 {
+    let output_file_name: *mut u8 = if argc > 3i32 {
         *argv.offset(3isize)
     } else {
         0i32 as (*mut ::std::os::raw::c_void) as (*mut u8)
@@ -751,23 +746,23 @@ pub unsafe extern "C" fn _c_other_main(mut argc: i32, mut argv: *mut *mut u8) ->
     let mut file_out: *mut _IO_FILE = 0i32 as (*mut ::std::os::raw::c_void) as (*mut _IO_FILE);
     if !output_file_name.is_null() {
         file_out = fopen(output_file_name as (*const u8), (*b"wb\0").as_ptr());
-        let mut ext: *mut u8 = strrchr(output_file_name as (*const u8), b'.' as (i32));
+        let ext: *mut u8 = strrchr(output_file_name as (*const u8), b'.' as (i32));
         if !ext.is_null()
             && (strcasecmp(ext.offset(1isize) as (*const u8), (*b"wav\0").as_ptr()) == 0)
         {
             wave_out = 1i32;
         }
     }
-    let mut file_ref: *mut _IO_FILE = if !ref_file_name.is_null() {
+    let file_ref: *mut _IO_FILE = if !ref_file_name.is_null() {
         fopen(ref_file_name as (*const u8), (*b"rb\0").as_ptr())
     } else {
         0i32 as (*mut ::std::os::raw::c_void) as (*mut _IO_FILE)
     };
-    let mut buf_ref: *mut u8 = preload(file_ref, &mut ref_size as (*mut i32));
+    let buf_ref: *mut u8 = preload(file_ref, &mut ref_size as (*mut i32));
     if !file_ref.is_null() {
         fclose(file_ref);
     }
-    let mut input_file_name: *mut u8 = if argc > 1i32 {
+    let input_file_name: *mut u8 = if argc > 1i32 {
         *argv.offset(1isize)
     } else {
         0i32 as (*mut ::std::os::raw::c_void) as (*mut u8)

@@ -1,4 +1,4 @@
-extern "C" {
+ extern "C" {
     fn memcpy(
         __dest: *mut ::std::os::raw::c_void,
         __src: *const ::std::os::raw::c_void,
@@ -16,7 +16,7 @@ extern "C" {
     ) -> *mut ::std::os::raw::c_void;
 }
 
-static mut g_pow43: [f32; 145] = [
+static mut GPOW43: [f32; 145] = [
     0i32 as (f32),
     -1i32 as (f32),
     -2.519842f32,
@@ -166,7 +166,7 @@ static mut g_pow43: [f32; 145] = [
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Struct1 {
+pub struct Mp3Dec {
     pub mdct_overlap: [[f32; 288]; 2],
     pub qmf_state: [f32; 960],
     pub reserv: i32,
@@ -175,20 +175,20 @@ pub struct Struct1 {
     pub reserv_buf: [u8; 511],
 }
 
-impl Clone for Struct1 {
+impl Clone for Mp3Dec {
     fn clone(&self) -> Self {
         *self
     }
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_init(mut dec: *mut Struct1) {
+pub unsafe  fn mp3dec_init(dec: *mut Mp3Dec) {
     (*dec).header[0usize] = 0u8;
 }
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Struct2 {
+pub struct FrameInfo {
     pub frame_bytes: i32,
     pub channels: i32,
     pub hz: i32,
@@ -196,7 +196,7 @@ pub struct Struct2 {
     pub bitrate_kbps: i32,
 }
 
-impl Clone for Struct2 {
+impl Clone for FrameInfo {
     fn clone(&self) -> Self {
         *self
     }
@@ -204,13 +204,13 @@ impl Clone for Struct2 {
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Struct3 {
+pub struct Bs {
     pub buf: *const u8,
     pub pos: i32,
     pub limit: i32,
 }
 
-impl Clone for Struct3 {
+impl Clone for Bs {
     fn clone(&self) -> Self {
         *self
     }
@@ -218,7 +218,7 @@ impl Clone for Struct3 {
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Struct5 {
+pub struct L3GrInfo {
     pub sfbtab: *const u8,
     pub part_23_length: u16,
     pub big_values: u16,
@@ -237,7 +237,7 @@ pub struct Struct5 {
     pub scfsi: u8,
 }
 
-impl Clone for Struct5 {
+impl Clone for L3GrInfo {
     fn clone(&self) -> Self {
         *self
     }
@@ -245,23 +245,23 @@ impl Clone for Struct5 {
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Struct4 {
-    pub bs: Struct3,
+pub struct Mp3DecScratch {
+    pub bs: Bs,
     pub maindata: [u8; 2815],
-    pub gr_info: [Struct5; 4],
+    pub gr_info: [L3GrInfo; 4],
     pub grbuf: [[f32; 576]; 2],
     pub scf: [f32; 40],
     pub syn: [[f32; 64]; 33],
     pub ist_pos: [[u8; 39]; 2],
 }
 
-impl Clone for Struct4 {
+impl Clone for Mp3DecScratch {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-unsafe extern "C" fn hdr_valid(mut h: *const u8) -> i32 {
+unsafe  fn hdr_valid(h: *const u8) -> i32 {
     (*h.offset(0isize) as (i32) == 0xffi32
         && (*h.offset(1isize) as (i32) & 0xf0i32 == 0xf0i32
             || *h.offset(1isize) as (i32) & 0xfei32 == 0xe2i32)
@@ -270,7 +270,7 @@ unsafe extern "C" fn hdr_valid(mut h: *const u8) -> i32 {
         && (*h.offset(2isize) as (i32) >> 2i32 & 3i32 != 3i32)) as (i32)
 }
 
-unsafe extern "C" fn hdr_compare(mut h1: *const u8, mut h2: *const u8) -> i32 {
+unsafe  fn hdr_compare(h1: *const u8, h2: *const u8) -> i32 {
     (hdr_valid(h2) != 0
         && ((*h1.offset(1isize) as (i32) ^ *h2.offset(1isize) as (i32)) & 0xfei32 == 0i32)
         && ((*h1.offset(2isize) as (i32) ^ *h2.offset(2isize) as (i32)) & 0xci32 == 0i32)
@@ -278,7 +278,7 @@ unsafe extern "C" fn hdr_compare(mut h1: *const u8, mut h2: *const u8) -> i32 {
             ^ (*h2.offset(2isize) as (i32) & 0xf0i32 == 0i32) as (i32) == 0)) as (i32)
 }
 
-unsafe extern "C" fn hdr_frame_samples(mut h: *const u8) -> u32 {
+unsafe  fn hdr_frame_samples(h: *const u8) -> u32 {
     (if *h.offset(1isize) as (i32) & 6i32 == 6i32 {
         384i32
     } else {
@@ -286,8 +286,8 @@ unsafe extern "C" fn hdr_frame_samples(mut h: *const u8) -> u32 {
     }) as (u32)
 }
 
-pub unsafe extern "C" fn hdr_bitrate_kbps(mut h: *const u8) -> u32 {
-    static mut halfrate: [[[u8; 15]; 3]; 2] = [
+pub unsafe  fn hdr_bitrate_kbps(h: *const u8) -> u32 {
+    static mut HALFRATE: [[[u8; 15]; 3]; 2] = [
         [
             [
                 0u8, 4u8, 8u8, 12u8, 16u8, 20u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 72u8,
@@ -317,19 +317,19 @@ pub unsafe extern "C" fn hdr_bitrate_kbps(mut h: *const u8) -> u32 {
             ],
         ],
     ];
-    (2i32 * halfrate[!(*h.offset(1isize) as (i32) & 0x8i32 == 0) as (usize)]
+    (2i32 * HALFRATE[!(*h.offset(1isize) as (i32) & 0x8i32 == 0) as (usize)]
         [((*h.offset(1isize) as (i32) >> 1i32 & 3i32) - 1i32) as (usize)]
         [(*h.offset(2isize) as (i32) >> 4i32) as (usize)] as (i32)) as (u32)
 }
 
-pub unsafe extern "C" fn hdr_sample_rate_hz(mut h: *const u8) -> u32 {
-    static mut g_hz: [u32; 3] = [44100u32, 48000u32, 32000u32];
-    g_hz[(*h.offset(2isize) as (i32) >> 2i32 & 3i32) as (usize)]
+pub unsafe  fn hdr_sample_rate_hz(h: *const u8) -> u32 {
+    static mut G_HZ: [u32; 3] = [44100u32, 48000u32, 32000u32];
+    G_HZ[(*h.offset(2isize) as (i32) >> 2i32 & 3i32) as (usize)]
         >> (*h.offset(1isize) as (i32) & 0x8i32 == 0) as (i32)
         >> (*h.offset(1isize) as (i32) & 0x10i32 == 0) as (i32)
 }
 
-pub unsafe extern "C" fn hdr_frame_bytes(mut h: *const u8, mut free_format_size: i32) -> i32 {
+pub unsafe  fn hdr_frame_bytes(h: *const u8, free_format_size: i32) -> i32 {
     let mut frame_bytes: i32 = hdr_frame_samples(h)
         .wrapping_mul(hdr_bitrate_kbps(h))
         .wrapping_mul(125u32)
@@ -344,7 +344,7 @@ pub unsafe extern "C" fn hdr_frame_bytes(mut h: *const u8, mut free_format_size:
     }
 }
 
-pub unsafe extern "C" fn hdr_padding(mut h: *const u8) -> i32 {
+pub unsafe  fn hdr_padding(h: *const u8) -> i32 {
     if *h.offset(2isize) as (i32) & 0x2i32 != 0 {
         (if *h.offset(1isize) as (i32) & 6i32 == 6i32 {
             4i32
@@ -356,49 +356,49 @@ pub unsafe extern "C" fn hdr_padding(mut h: *const u8) -> i32 {
     }
 }
 
-unsafe extern "C" fn mp3d_match_frame(
-    mut hdr: *const u8,
-    mut mp3_bytes: i32,
-    mut frame_bytes: i32,
+unsafe  fn mp3d_match_frame(
+    hdr: *const u8,
+    mp3_bytes: i32,
+    frame_bytes: i32,
 ) -> i32 {
-    let mut _currentBlock;
+    let current_block;
     let mut i: i32;
     let mut nmatch: i32;
     i = 0i32;
     nmatch = 0i32;
     'loop1: loop {
         if !(nmatch < 10i32) {
-            _currentBlock = 2;
+            current_block = 2;
             break;
         }
         i = i + (hdr_frame_bytes(hdr.offset(i as (isize)), frame_bytes)
             + hdr_padding(hdr.offset(i as (isize))));
         if i + 4i32 > mp3_bytes {
-            _currentBlock = 7;
+            current_block = 7;
             break;
         }
         if hdr_compare(hdr, hdr.offset(i as (isize))) == 0 {
-            _currentBlock = 6;
+            current_block = 6;
             break;
         }
         nmatch = nmatch + 1;
     }
-    if _currentBlock == 2 {
+    if current_block == 2 {
         1i32
-    } else if _currentBlock == 6 {
+    } else if current_block == 6 {
         0i32
     } else {
         (nmatch > 0i32) as (i32)
     }
 }
 
-pub unsafe extern "C" fn mp3d_find_frame(
+pub unsafe  fn mp3d_find_frame(
     mut mp3: *const u8,
-    mut mp3_bytes: i32,
-    mut free_format_bytes: *mut i32,
-    mut ptr_frame_bytes: *mut i32,
+    mp3_bytes: i32,
+    free_format_bytes: *mut i32,
+    ptr_frame_bytes: *mut i32,
 ) -> i32 {
-    let mut _currentBlock;
+    let current_block;
     let mut i: i32;
     let mut k: i32;
     i = 0i32;
@@ -406,7 +406,7 @@ pub unsafe extern "C" fn mp3d_find_frame(
     let mut frame_and_padding: i32 = frame_bytes + hdr_padding(mp3);
     'loop1: loop {
         if !(i < mp3_bytes - 4i32) {
-            _currentBlock = 2;
+            current_block = 2;
             break;
         }
         if hdr_valid(mp3) != 0 {
@@ -416,8 +416,8 @@ pub unsafe extern "C" fn mp3d_find_frame(
                     break;
                 }
                 if hdr_compare(mp3, mp3.offset(k as (isize))) != 0 {
-                    let mut fb: i32 = k - hdr_padding(mp3);
-                    let mut nextfb: i32 = fb + hdr_padding(mp3.offset(k as (isize)));
+                    let fb: i32 = k - hdr_padding(mp3);
+                    let nextfb: i32 = fb + hdr_padding(mp3.offset(k as (isize)));
                     if !(i + k + nextfb + 4i32 > mp3_bytes
                         || hdr_compare(mp3, mp3.offset(k as (isize)).offset(nextfb as (isize)))
                             == 0)
@@ -434,7 +434,7 @@ pub unsafe extern "C" fn mp3d_find_frame(
                 && (mp3d_match_frame(mp3, mp3_bytes - i, frame_bytes) != 0)
                 || i == 0 && (frame_and_padding == mp3_bytes)
             {
-                _currentBlock = 9;
+                current_block = 9;
                 break;
             }
             *free_format_bytes = 0i32;
@@ -442,7 +442,7 @@ pub unsafe extern "C" fn mp3d_find_frame(
         i = i + 1;
         mp3 = mp3.offset(1isize);
     }
-    if _currentBlock == 2 {
+    if current_block == 2 {
         *ptr_frame_bytes = 0i32;
         i
     } else {
@@ -451,16 +451,16 @@ pub unsafe extern "C" fn mp3d_find_frame(
     }
 }
 
-unsafe extern "C" fn bs_init(mut bs: *mut Struct3, mut data: *const u8, mut bytes: i32) {
+unsafe  fn bs_init(bs: *mut Bs, data: *const u8, bytes: i32) {
     (*bs).buf = data;
     (*bs).pos = 0i32;
     (*bs).limit = bytes * 8i32;
 }
 
-unsafe extern "C" fn get_bits(mut bs: *mut Struct3, mut n: i32) -> u32 {
+unsafe  fn get_bits(bs: *mut Bs, n: i32) -> u32 {
     let mut next: u32;
     let mut cache: u32 = 0u32;
-    let mut s: u32 = ((*bs).pos & 7i32) as (u32);
+    let s: u32 = ((*bs).pos & 7i32) as (u32);
     let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
     let mut p: *const u8 = (*bs).buf.offset(((*bs).pos >> 3i32) as (isize));
     if {
@@ -524,7 +524,7 @@ impl Clone for Struct7 {
     }
 }
 
-unsafe extern "C" fn L12_subband_alloc_table(
+unsafe  fn l12_subband_alloc_table(
     mut hdr: *const u8,
     mut sci: *mut Struct6,
 ) -> *const Struct7 {
@@ -624,14 +624,14 @@ unsafe extern "C" fn L12_subband_alloc_table(
     alloc
 }
 
-unsafe extern "C" fn L12_read_scalefactors(
-    mut bs: *mut Struct3,
+unsafe  fn l12_read_scalefactors(
+    mut bs: *mut Bs,
     mut pba: *mut u8,
     mut scfcod: *mut u8,
     mut bands: i32,
     mut scf: *mut f32,
 ) {
-    static mut g_deq_L12: [f32; 54] = [
+    static mut G_DEQ_L12: [f32; 54] = [
         9.53674316e-07f32 / 3i32 as (f32),
         7.56931807e-07f32 / 3i32 as (f32),
         6.00777173e-07f32 / 3i32 as (f32),
@@ -712,7 +712,7 @@ unsafe extern "C" fn L12_read_scalefactors(
             }
             if mask & m != 0 {
                 let mut b: i32 = get_bits(bs, 6i32) as (i32);
-                s = g_deq_L12[(ba * 3i32 - 6i32 + b % 3i32) as (usize)]
+                s = G_DEQ_L12[(ba * 3i32 - 6i32 + b % 3i32) as (usize)]
                     * (1i32 << 21i32 >> b / 3i32) as (f32);
             }
             *{
@@ -726,12 +726,12 @@ unsafe extern "C" fn L12_read_scalefactors(
     }
 }
 
-unsafe extern "C" fn L12_read_scale_info(
+unsafe  fn l12_read_scale_info(
     mut hdr: *const u8,
-    mut bs: *mut Struct3,
+    mut bs: *mut Bs,
     mut sci: *mut Struct6,
 ) {
-    static mut g_bitalloc_code_tab: [u8; 92] = [
+    static G_BITALLOC_CODE_TAB: [u8; 92] = [
         0u8, 17u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 16u8,
         0u8, 17u8, 18u8, 3u8, 19u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 16u8,
         0u8, 17u8, 18u8, 3u8, 19u8, 4u8, 5u8, 16u8, 0u8, 17u8, 18u8, 16u8, 0u8, 17u8, 18u8, 19u8,
@@ -739,11 +739,11 @@ unsafe extern "C" fn L12_read_scale_info(
         19u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 0u8, 2u8, 3u8, 4u8, 5u8,
         6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 16u8,
     ];
-    let mut subband_alloc: *const Struct7 = L12_subband_alloc_table(hdr, sci);
+    let mut subband_alloc: *const Struct7 = l12_subband_alloc_table(hdr, sci);
     let mut i: i32;
     let mut k: i32 = 0i32;
     let mut ba_bits: i32 = 0i32;
-    let mut ba_code_tab: *const u8 = g_bitalloc_code_tab.as_ptr();
+    let mut ba_code_tab: *const u8 = G_BITALLOC_CODE_TAB.as_ptr();
     i = 0i32;
     'loop1: loop {
         if !(i < (*sci).total_bands as (i32)) {
@@ -753,7 +753,7 @@ unsafe extern "C" fn L12_read_scale_info(
         if i == k {
             k = k + (*subband_alloc).band_count as (i32);
             ba_bits = (*subband_alloc).code_tab_width as (i32);
-            ba_code_tab = g_bitalloc_code_tab
+            ba_code_tab = G_BITALLOC_CODE_TAB
                 .as_ptr()
                 .offset((*subband_alloc).tab_offset as (isize));
             subband_alloc = subband_alloc.offset(1isize);
@@ -786,7 +786,7 @@ unsafe extern "C" fn L12_read_scale_info(
         } as (u8);
         i = i + 1;
     }
-    L12_read_scalefactors(
+    l12_read_scalefactors(
         bs,
         (*sci).bitalloc.as_mut_ptr(),
         (*sci).scfcod.as_mut_ptr(),
@@ -803,9 +803,9 @@ unsafe extern "C" fn L12_read_scale_info(
     }
 }
 
-unsafe extern "C" fn L12_dequantize_granule(
+unsafe  fn l12_dequantize_granule(
     mut grbuf: *mut f32,
-    mut bs: *mut Struct3,
+    mut bs: *mut Bs,
     mut sci: *mut Struct6,
     mut group_size: i32,
 ) -> i32 {
@@ -865,7 +865,7 @@ unsafe extern "C" fn L12_dequantize_granule(
     group_size * 4i32
 }
 
-unsafe extern "C" fn L12_apply_scf_384(
+unsafe  fn l12_apply_scf_384(
     mut sci: *mut Struct6,
     mut scf: *const f32,
     mut dst: *mut f32,
@@ -905,8 +905,9 @@ unsafe extern "C" fn L12_apply_scf_384(
     }
 }
 
-unsafe extern "C" fn mp3d_DCT_II(mut grbuf: *mut f32, mut n: i32) {
-    static mut g_sec: [f32; 24] = [
+#[allow(non_snake_case)]
+unsafe  fn mp3d_DCT_II(mut grbuf: *mut f32, mut n: i32) {
+    static G_SEC: [f32; 24] = [
         10.19000816f32,
         0.50060302f32,
         0.50241929f32,
@@ -953,12 +954,12 @@ unsafe extern "C" fn mp3d_DCT_II(mut grbuf: *mut f32, mut n: i32) {
             let mut x3: f32 = *y.offset(((31i32 - i) * 18i32) as (isize));
             let mut t0: f32 = x0 + x3;
             let mut t1: f32 = x1 + x2;
-            let mut t2: f32 = (x1 - x2) * g_sec[(3i32 * i + 0i32) as (usize)];
-            let mut t3: f32 = (x0 - x3) * g_sec[(3i32 * i + 1i32) as (usize)];
+            let mut t2: f32 = (x1 - x2) * G_SEC[(3i32 * i + 0i32) as (usize)];
+            let mut t3: f32 = (x0 - x3) * G_SEC[(3i32 * i + 1i32) as (usize)];
             *x.offset(0isize) = t0 + t1;
-            *x.offset(8isize) = (t0 - t1) * g_sec[(3i32 * i + 2i32) as (usize)];
+            *x.offset(8isize) = (t0 - t1) * G_SEC[(3i32 * i + 2i32) as (usize)];
             *x.offset(16isize) = t3 + t2;
-            *x.offset(24isize) = (t3 - t2) * g_sec[(3i32 * i + 2i32) as (usize)];
+            *x.offset(24isize) = (t3 - t2) * G_SEC[(3i32 * i + 2i32) as (usize)];
             i = i + 1;
             x = x.offset(1isize);
         }
@@ -1034,7 +1035,7 @@ unsafe extern "C" fn mp3d_DCT_II(mut grbuf: *mut f32, mut n: i32) {
     }
 }
 
-unsafe extern "C" fn mp3d_scale_pcm(mut sample: f32) -> i16 {
+unsafe  fn mp3d_scale_pcm(sample: f32) -> i16 {
     if sample as (f64) >= 32766.5f64 {
         32767i16
     } else if sample as (f64) <= -32767.5f64 {
@@ -1046,7 +1047,7 @@ unsafe extern "C" fn mp3d_scale_pcm(mut sample: f32) -> i16 {
     }
 }
 
-unsafe extern "C" fn mp3d_synth_pair(mut pcm: *mut i16, mut nch: i32, mut z: *const f32) {
+unsafe  fn mp3d_synth_pair(pcm: *mut i16, nch: i32, mut z: *const f32) {
     let mut a: f32;
     a = (*z.offset((14i32 * 64i32) as (isize)) - *z.offset(0isize)) * 29i32 as (f32);
     a = a + (*z.offset((1i32 * 64i32) as (isize)) + *z.offset((13i32 * 64i32) as (isize)))
@@ -1075,16 +1076,16 @@ unsafe extern "C" fn mp3d_synth_pair(mut pcm: *mut i16, mut nch: i32, mut z: *co
     *pcm.offset((16i32 * nch) as (isize)) = mp3d_scale_pcm(a);
 }
 
-unsafe extern "C" fn mp3d_synth(
-    mut xl: *mut f32,
-    mut dstl: *mut i16,
-    mut nch: i32,
-    mut lins: *mut f32,
+unsafe  fn mp3d_synth(
+    xl: *mut f32,
+    dstl: *mut i16,
+    nch: i32,
+    lins: *mut f32,
 ) {
     let mut i: i32;
-    let mut xr: *mut f32 = xl.offset((576i32 * (nch - 1i32)) as (isize));
-    let mut dstr: *mut i16 = dstl.offset((nch - 1i32) as (isize));
-    static mut g_win: [f32; 240] = [
+    let xr: *mut f32 = xl.offset((576i32 * (nch - 1i32)) as (isize));
+    let dstr: *mut i16 = dstl.offset((nch - 1i32) as (isize));
+    static G_WIN: [f32; 240] = [
         -1i32 as (f32),
         26i32 as (f32),
         -31i32 as (f32),
@@ -1326,8 +1327,8 @@ unsafe extern "C" fn mp3d_synth(
         -62684i32 as (f32),
         65290i32 as (f32),
     ];
-    let mut zlin: *mut f32 = lins.offset((15i32 * 64i32) as (isize));
-    let mut w: *const f32 = g_win.as_ptr();
+    let zlin: *mut f32 = lins.offset((15i32 * 64i32) as (isize));
+    let mut w: *const f32 = G_WIN.as_ptr();
     *zlin.offset((4i32 * 15i32) as (isize)) = *xl.offset((18i32 * 16i32) as (isize));
     *zlin.offset((4i32 * 15i32 + 1i32) as (isize)) = *xr.offset((18i32 * 16i32) as (isize));
     *zlin.offset((4i32 * 15i32 + 2i32) as (isize)) = *xl.offset(0isize);
@@ -1611,13 +1612,13 @@ unsafe extern "C" fn mp3d_synth(
     }
 }
 
-unsafe extern "C" fn mp3d_synth_granule(
-    mut qmf_state: *mut f32,
-    mut grbuf: *mut f32,
-    mut nbands: i32,
-    mut nch: i32,
-    mut pcm: *mut i16,
-    mut lins: *mut f32,
+unsafe  fn mp3d_synth_granule(
+    qmf_state: *mut f32,
+    grbuf: *mut f32,
+    nbands: i32,
+    nch: i32,
+    pcm: *mut i16,
+    lins: *mut f32,
 ) {
     let mut i: i32;
     i = 0i32;
@@ -1668,13 +1669,13 @@ unsafe extern "C" fn mp3d_synth_granule(
     }
 }
 
-unsafe extern "C" fn L3_read_side_info(
-    mut bs: *mut Struct3,
-    mut gr: *mut Struct5,
-    mut hdr: *const u8,
+unsafe  fn l3_read_side_info(
+    bs: *mut Bs,
+    mut gr: *mut L3GrInfo,
+    hdr: *const u8,
 ) -> i32 {
     let mut _currentBlock;
-    static mut g_scf_long: [[u8; 23]; 8] = [
+    static mut G_SCF_LONG: [[u8; 23]; 8] = [
         [
             6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 14u8, 16u8, 20u8, 24u8, 28u8, 32u8,
             38u8, 46u8, 52u8, 60u8, 68u8, 58u8, 54u8, 0u8,
@@ -1708,7 +1709,7 @@ unsafe extern "C" fn L3_read_side_info(
             46u8, 56u8, 68u8, 84u8, 102u8, 26u8, 0u8,
         ],
     ];
-    static mut g_scf_short: [[u8; 40]; 8] = [
+    static mut G_SCF_SHORT: [[u8; 40]; 8] = [
         [
             4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8, 8u8, 10u8, 10u8,
             10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 24u8, 24u8, 24u8, 30u8,
@@ -1751,7 +1752,7 @@ unsafe extern "C" fn L3_read_side_info(
         ],
     ];
     // TODO: These... lengths are wrong???  I jus padded them out with 0's
-    static mut g_scf_mixed: [[u8; 40]; 8] = [
+    static mut G_SCF_MIXED: [[u8; 40]; 8] = [
         [
             6, 6, 6, 6, 6, 6, 6, 6, 6, 8, 8, 8, 10, 10, 10, 12, 12, 12, 14, 14, 14, 18, 18, 18, 24,
             24, 24, 30, 30, 30, 40, 40, 40, 18, 18, 18, 0, 0, 0, 0,
@@ -1787,7 +1788,7 @@ unsafe extern "C" fn L3_read_side_info(
     ];
     let mut tables: u32;
     let mut scfsi: u32 = 0u32;
-    let mut main_data_begin: i32;
+    let main_data_begin: i32;
     let mut part_23_sum: i32 = 0i32;
     let mut sr_idx: i32 = (*hdr.offset(2isize) as (i32) >> 2i32 & 3i32)
         + ((*hdr.offset(1isize) as (i32) >> 3i32 & 1i32)
@@ -1825,7 +1826,7 @@ unsafe extern "C" fn L3_read_side_info(
                 9i32
             },
         ) as (u16);
-        (*gr).sfbtab = g_scf_long[sr_idx as (usize)].as_ptr();
+        (*gr).sfbtab = G_SCF_LONG[sr_idx as (usize)].as_ptr();
         (*gr).n_long_sfb = 22u8;
         (*gr).n_short_sfb = 0u8;
         if get_bits(bs, 1i32) != 0 {
@@ -1841,11 +1842,11 @@ unsafe extern "C" fn L3_read_side_info(
                 scfsi = scfsi & 0xf0fu32;
                 if (*gr).mixed_block_flag == 0 {
                     (*gr).region_count[0usize] = 8u8;
-                    (*gr).sfbtab = g_scf_short[sr_idx as (usize)].as_ptr();
+                    (*gr).sfbtab = G_SCF_SHORT[sr_idx as (usize)].as_ptr();
                     (*gr).n_long_sfb = 0u8;
                     (*gr).n_short_sfb = 39u8;
                 } else {
-                    (*gr).sfbtab = g_scf_mixed[sr_idx as (usize)].as_ptr();
+                    (*gr).sfbtab = G_SCF_MIXED[sr_idx as (usize)].as_ptr();
                     (*gr).n_long_sfb = if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
                         8i32
                     } else {
@@ -1902,11 +1903,11 @@ unsafe extern "C" fn L3_read_side_info(
     }
 }
 
-unsafe extern "C" fn L3_restore_reservoir(
-    mut h: *mut Struct1,
-    mut bs: *mut Struct3,
-    mut s: *mut Struct4,
-    mut main_data_begin: i32,
+unsafe  fn l3_restore_reservoir(
+    h: *mut Mp3Dec,
+    bs: *mut Bs,
+    s: *mut Mp3DecScratch,
+    main_data_begin: i32,
 ) -> i32 {
     let mut frame_bytes: i32 = ((*bs).limit - (*bs).pos) / 8i32;
     let mut bytes_have: i32 = if (*h).reserv > main_data_begin {
@@ -1935,19 +1936,19 @@ unsafe extern "C" fn L3_restore_reservoir(
         frame_bytes as (usize),
     );
     bs_init(
-        &mut (*s).bs as (*mut Struct3),
+        &mut (*s).bs as (*mut Bs),
         (*s).maindata.as_mut_ptr() as (*const u8),
         bytes_have + frame_bytes,
     );
     ((*h).reserv >= main_data_begin) as (i32)
 }
 
-unsafe extern "C" fn L3_read_scalefactors(
+unsafe  fn l3_read_scalefactors(
     mut scf: *mut u8,
     mut ist_pos: *mut u8,
-    mut scf_size: *const u8,
-    mut scf_count: *const u8,
-    mut bitbuf: *mut Struct3,
+    scf_size: *const u8,
+    scf_count: *const u8,
+    bitbuf: *mut Bs,
     mut scfsi: i32,
 ) {
     let mut i: i32;
@@ -2009,8 +2010,8 @@ unsafe extern "C" fn L3_read_scalefactors(
     };
 }
 
-unsafe extern "C" fn L3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
-    static mut g_expfrac: [f32; 4] = [
+unsafe  fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
+    static mut G_EXPFRAC: [f32; 4] = [
         9.31322575e-10f32,
         7.83145814e-10f32,
         6.58544508e-10f32,
@@ -2023,7 +2024,7 @@ unsafe extern "C" fn L3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
         } else {
             30i32 * 4i32
         };
-        y = y * (g_expfrac[(e & 3i32) as (usize)] * (1i32 << 30i32 >> (e >> 2i32)) as (f32));
+        y = y * (G_EXPFRAC[(e & 3i32) as (usize)] * (1i32 << 30i32 >> (e >> 2i32)) as (f32));
         if !({
             exp_q2 = exp_q2 - e;
             exp_q2
@@ -2035,15 +2036,15 @@ unsafe extern "C" fn L3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
     y
 }
 
-unsafe extern "C" fn L3_decode_scalefactors(
-    mut hdr: *const u8,
-    mut ist_pos: *mut u8,
-    mut bs: *mut Struct3,
-    mut gr: *const Struct5,
-    mut scf: *mut f32,
-    mut ch: i32,
+unsafe  fn l3_decode_scalefactors(
+    hdr: *const u8,
+    ist_pos: *mut u8,
+    bs: *mut Bs,
+    gr: *const L3GrInfo,
+    scf: *mut f32,
+    ch: i32,
 ) {
-    static mut g_scf_partitions: [[u8; 28]; 3] = [
+    static mut G_SCF_PARTITIONS: [[u8; 28]; 3] = [
         [
             6u8, 5u8, 5u8, 5u8, 6u8, 5u8, 5u8, 5u8, 6u8, 5u8, 7u8, 3u8, 11u8, 10u8, 0u8, 0u8, 7u8,
             7u8, 7u8, 0u8, 6u8, 6u8, 6u8, 3u8, 8u8, 8u8, 5u8, 0u8,
@@ -2057,7 +2058,7 @@ unsafe extern "C" fn L3_decode_scalefactors(
             12u8, 12u8, 12u8, 0u8, 12u8, 9u8, 9u8, 6u8, 15u8, 12u8, 9u8, 0u8,
         ],
     ];
-    let mut scf_partition: *const u8 = g_scf_partitions
+    let mut scf_partition: *const u8 = G_SCF_PARTITIONS
         [(!((*gr).n_short_sfb == 0) as (i32) + ((*gr).n_long_sfb == 0) as (i32)) as (usize)]
         .as_ptr();
     let mut scf_size: [u8; 4] = [0; 4];
@@ -2116,7 +2117,7 @@ unsafe extern "C" fn L3_decode_scalefactors(
         scf_partition = scf_partition.offset(k as (isize));
         scfsi = -16i32;
     }
-    L3_read_scalefactors(
+    l3_read_scalefactors(
         iscf.as_mut_ptr(),
         ist_pos,
         scf_size.as_mut_ptr() as (*const u8),
@@ -2167,7 +2168,7 @@ unsafe extern "C" fn L3_decode_scalefactors(
         } else {
             0i32
         };
-    gain = L3_ldexp_q2(
+    gain = l3_ldexp_q2(
         (1i32 << (255i32 + -1i32 * 4i32 - 210i32 + 3i32 & !3i32) / 4i32) as (f32),
         (255i32 + -1i32 * 4i32 - 210i32 + 3i32 & !3i32) - gain_exp,
     );
@@ -2176,17 +2177,17 @@ unsafe extern "C" fn L3_decode_scalefactors(
         if !(i < (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32)) {
             break;
         }
-        *scf.offset(i as (isize)) = L3_ldexp_q2(gain, iscf[i as (usize)] as (i32) << scf_shift);
+        *scf.offset(i as (isize)) = l3_ldexp_q2(gain, iscf[i as (usize)] as (i32) << scf_shift);
         i = i + 1;
     }
 }
 
-unsafe extern "C" fn L3_pow_43(mut x: i32) -> f32 {
-    let mut frac: f32;
-    let mut sign: i32;
+unsafe  fn l3_pow_43(mut x: i32) -> f32 {
+    let frac: f32;
+    let sign: i32;
     let mut mult: i32 = 256i32;
     if x < 129i32 {
-        g_pow43[(16i32 + x) as (usize)]
+        GPOW43[(16i32 + x) as (usize)]
     } else {
         if x < 1024i32 {
             mult = 16i32;
@@ -2194,20 +2195,20 @@ unsafe extern "C" fn L3_pow_43(mut x: i32) -> f32 {
         }
         sign = 2i32 * x & 64i32;
         frac = ((x & 63i32) - sign) as (f32) / ((x & !63i32) + sign) as (f32);
-        g_pow43[(16i32 + (x + sign >> 6i32)) as (usize)]
+        GPOW43[(16i32 + (x + sign >> 6i32)) as (usize)]
             * (1f32 + frac * (4f32 / 3i32 as (f32) + frac * (2f32 / 9i32 as (f32))))
             * mult as (f32)
     }
 }
 
-unsafe extern "C" fn L3_huffman(
+unsafe  fn l3_huffman(
     mut dst: *mut f32,
-    mut bs: *mut Struct3,
-    mut gr_info: *const Struct5,
+    bs: *mut Bs,
+    gr_info: *const L3GrInfo,
     mut scf: *const f32,
-    mut layer3gr_limit: i32,
+    layer3gr_limit: i32,
 ) {
-    static mut tabs: [i16; 512] = [
+    static mut TABS: [i16; 512] = [
         0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16,
         0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16,
         0i16, 0i16, 785i16, 785i16, 785i16, 785i16, 784i16, 784i16, 784i16, 784i16, 513i16, 513i16,
@@ -2256,20 +2257,20 @@ unsafe extern "C" fn L3_huffman(
         373i16, 343i16, 358i16, 341i16, 325i16, 791i16, 791i16, 1123i16, 1122i16, -703i16, 1105i16,
         1045i16, -719i16, 865i16, 865i16, 790i16, 790i16, 774i16, 774i16,
     ];
-    static mut tab32: [u8; 28] = [
+    static mut TAB32: [u8; 28] = [
         130u8, 162u8, 193u8, 209u8, 44u8, 28u8, 76u8, 140u8, 9u8, 9u8, 9u8, 9u8, 9u8, 9u8, 9u8,
         9u8, 190u8, 254u8, 222u8, 238u8, 126u8, 94u8, 157u8, 157u8, 109u8, 61u8, 173u8, 205u8,
     ];
-    static mut tab33: [u8; 16] = [
+    static mut TAB33: [u8; 16] = [
         252u8, 236u8, 220u8, 204u8, 188u8, 172u8, 156u8, 140u8, 124u8, 108u8, 92u8, 76u8, 60u8,
         44u8, 28u8, 12u8,
     ];
-    static mut tabindex: [i16; 32] = [
+    static mut TABINDEX: [i16; 32] = [
         0i16, 32i16, 64i16, 98i16, 0i16, 132i16, 180i16, 218i16, 292i16, 364i16, 426i16, 538i16,
         648i16, 746i16, 0i16, 1126i16, 1460i16, 1460i16, 1460i16, 1460i16, 1460i16, 1460i16,
         1460i16, 1460i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16,
     ];
-    static mut g_linbits: [u8; 32] = [
+    static mut G_LINBITS: [u8; 32] = [
         0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 1u8, 2u8,
         3u8, 4u8, 6u8, 8u8, 10u8, 13u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 11u8, 13u8,
     ];
@@ -2301,10 +2302,10 @@ unsafe extern "C" fn L3_huffman(
                                         ireg = ireg + 1;
                                         _old
                                     } as (usize)] as (i32);
-        let mut codebook: *const i16 = tabs
+        let mut codebook: *const i16 = TABS
             .as_ptr()
-            .offset(tabindex[tab_num as (usize)] as (isize));
-        let mut linbits: i32 = g_linbits[tab_num as (usize)] as (i32);
+            .offset(TABINDEX[tab_num as (usize)] as (isize));
+        let mut linbits: i32 = G_LINBITS[tab_num as (usize)] as (i32);
         'loop25: loop {
             np = *{
                 let _old = sfb;
@@ -2355,13 +2356,13 @@ unsafe extern "C" fn L3_huffman(
                             } as (u32) << bs_sh;
                             bs_sh = bs_sh - 8i32;
                         }
-                        *dst = one * L3_pow_43(lsb) * if bs_cache as (i32) < 0i32 {
+                        *dst = one * l3_pow_43(lsb) * if bs_cache as (i32) < 0i32 {
                             -1i32
                         } else {
                             1i32
                         } as (f32);
                     } else {
-                        *dst = g_pow43[((16i32 + lsb) as (u32))
+                        *dst = GPOW43[((16i32 + lsb) as (u32))
                                            .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31i32))
                                            as (usize)] * one;
                     }
@@ -2404,10 +2405,10 @@ unsafe extern "C" fn L3_huffman(
     }
     np = 1i32 - big_val_cnt;
     'loop3: loop {
-        let mut codebook_count1: *const u8 = if (*gr_info).count1_table != 0 {
-            tab33.as_ptr()
+        let codebook_count1: *const u8 = if (*gr_info).count1_table != 0 {
+            TAB33.as_ptr()
         } else {
-            tab32.as_ptr()
+            TAB32.as_ptr()
         };
         let mut leaf: i32 = *codebook_count1.offset((bs_cache >> 32i32 - 4i32) as (isize)) as (i32);
         if leaf & 8i32 == 0 {
@@ -2498,9 +2499,9 @@ unsafe extern "C" fn L3_huffman(
     (*bs).pos = layer3gr_limit;
 }
 
-unsafe extern "C" fn L3_midside_stereo(mut left: *mut f32, mut n: i32) {
+unsafe  fn l3_midside_stereo(mut left: *mut f32, mut n: i32) {
     let mut i: i32 = 0i32;
-    let mut right: *mut f32 = left.offset(576isize);
+    let right: *mut f32 = left.offset(576isize);
     'loop1: loop {
         if !(i < n) {
             break;
@@ -2513,11 +2514,11 @@ unsafe extern "C" fn L3_midside_stereo(mut left: *mut f32, mut n: i32) {
     }
 }
 
-unsafe extern "C" fn L3_stereo_top_band(
+unsafe  fn l3_stereo_top_band(
     mut right: *const f32,
-    mut sfb: *const u8,
-    mut nbands: i32,
-    mut max_band: *mut i32,
+    sfb: *const u8,
+    nbands: i32,
+    max_band: *mut i32,
 ) {
     let mut _currentBlock;
     let mut i: i32;
@@ -2560,11 +2561,11 @@ unsafe extern "C" fn L3_stereo_top_band(
     }
 }
 
-unsafe extern "C" fn L3_intensity_stereo_band(
-    mut left: *mut f32,
-    mut n: i32,
-    mut kl: f32,
-    mut kr: f32,
+unsafe  fn l3_intensity_stereo_band(
+    left: *mut f32,
+    n: i32,
+    kl: f32,
+    kr: f32,
 ) {
     let mut i: i32;
     i = 0i32;
@@ -2578,15 +2579,15 @@ unsafe extern "C" fn L3_intensity_stereo_band(
     }
 }
 
-unsafe extern "C" fn L3_stereo_process(
+unsafe  fn l3_stereo_process(
     mut left: *mut f32,
-    mut ist_pos: *const u8,
-    mut sfb: *const u8,
-    mut hdr: *const u8,
-    mut max_band: *mut i32,
-    mut mpeg2_sh: i32,
+    ist_pos: *const u8,
+    sfb: *const u8,
+    hdr: *const u8,
+    max_band: *mut i32,
+    mpeg2_sh: i32,
 ) {
-    static mut g_pan: [f32; 14] = [
+    static mut L_PAN: [f32; 14] = [
         0i32 as (f32),
         1i32 as (f32),
         0.21132487f32,
@@ -2603,7 +2604,7 @@ unsafe extern "C" fn L3_stereo_process(
         0i32 as (f32),
     ];
     let mut i: u32;
-    let mut max_pos: u32 = (if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
+    let max_pos: u32 = (if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
         7i32
     } else {
         64i32
@@ -2623,11 +2624,11 @@ unsafe extern "C" fn L3_stereo_process(
                 1i32 as (f32)
             };
             if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-                kl = g_pan[2u32.wrapping_mul(ipos) as (usize)];
-                kr = g_pan[2u32.wrapping_mul(ipos).wrapping_add(1u32) as (usize)];
+                kl = L_PAN[2u32.wrapping_mul(ipos) as (usize)];
+                kr = L_PAN[2u32.wrapping_mul(ipos).wrapping_add(1u32) as (usize)];
             } else {
                 kl = 1i32 as (f32);
-                kr = L3_ldexp_q2(
+                kr = l3_ldexp_q2(
                     1i32 as (f32),
                     (ipos.wrapping_add(1u32) >> 1i32 << mpeg2_sh) as (i32),
                 );
@@ -2636,26 +2637,26 @@ unsafe extern "C" fn L3_stereo_process(
                     kr = 1i32 as (f32);
                 }
             }
-            L3_intensity_stereo_band(left, *sfb.offset(i as (isize)) as (i32), kl * s, kr * s);
+            l3_intensity_stereo_band(left, *sfb.offset(i as (isize)) as (i32), kl * s, kr * s);
         } else if *hdr.offset(3isize) as (i32) & 0x20i32 != 0 {
-            L3_midside_stereo(left, *sfb.offset(i as (isize)) as (i32));
+            l3_midside_stereo(left, *sfb.offset(i as (isize)) as (i32));
         }
         left = left.offset(*sfb.offset(i as (isize)) as (isize));
         i = i.wrapping_add(1u32);
     }
 }
 
-unsafe extern "C" fn L3_intensity_stereo(
-    mut left: *mut f32,
-    mut ist_pos: *mut u8,
-    mut gr: *const Struct5,
-    mut hdr: *const u8,
+unsafe fn l3_intensity_stereo(
+    left: *mut f32,
+    ist_pos: *mut u8,
+    gr: *const L3GrInfo,
+    hdr: *const u8,
 ) {
     let mut max_band: [i32; 3] = [0; 3];
     let mut n_sfb: i32 = (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32);
     let mut i: i32;
     let mut max_blocks: i32 = if (*gr).n_short_sfb != 0 { 3i32 } else { 1i32 };
-    L3_stereo_top_band(
+    l3_stereo_top_band(
         left.offset(576isize) as (*const f32),
         (*gr).sfbtab,
         n_sfb,
@@ -2704,7 +2705,7 @@ unsafe extern "C" fn L3_intensity_stereo(
         } as (u8);
         i = i + 1;
     }
-    L3_stereo_process(
+    l3_stereo_process(
         left,
         ist_pos as (*const u8),
         (*gr).sfbtab,
@@ -2714,7 +2715,7 @@ unsafe extern "C" fn L3_intensity_stereo(
     );
 }
 
-unsafe extern "C" fn L3_reorder(mut grbuf: *mut f32, mut scratch: *mut f32, mut sfb: *const u8) {
+unsafe  fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
     let mut i: i32;
     let mut len: i32;
     let mut src: *mut f32 = grbuf;
@@ -2761,8 +2762,8 @@ unsafe extern "C" fn L3_reorder(mut grbuf: *mut f32, mut scratch: *mut f32, mut 
     );
 }
 
-unsafe extern "C" fn L3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
-    static mut g_aa: [[f32; 8]; 2] = [
+unsafe  fn l3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
+    static mut G_AA: [[f32; 8]; 2] = [
         [
             0.85749293f32,
             0.88174200f32,
@@ -2796,9 +2797,9 @@ unsafe extern "C" fn L3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
             let mut u: f32 = *grbuf.offset((18i32 + i) as (isize));
             let mut d: f32 = *grbuf.offset((17i32 - i) as (isize));
             *grbuf.offset((18i32 + i) as (isize)) =
-                u * g_aa[0usize][i as (usize)] - d * g_aa[1usize][i as (usize)];
+                u * G_AA[0usize][i as (usize)] - d * G_AA[1usize][i as (usize)];
             *grbuf.offset((17i32 - i) as (isize)) =
-                u * g_aa[1usize][i as (usize)] + d * g_aa[0usize][i as (usize)];
+                u * G_AA[1usize][i as (usize)] + d * G_AA[0usize][i as (usize)];
             i = i + 1;
         }
         nbands = nbands - 1;
@@ -2806,7 +2807,7 @@ unsafe extern "C" fn L3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
     }
 }
 
-unsafe extern "C" fn L3_dct3_9(mut y: *mut f32) {
+unsafe  fn l3_dct3_9(y: *mut f32) {
     let mut s0: f32;
     let mut s1: f32;
     let mut s2: f32;
@@ -2857,15 +2858,15 @@ unsafe extern "C" fn L3_dct3_9(mut y: *mut f32) {
     *y.offset(8isize) = s4 + s7;
 }
 
-unsafe extern "C" fn L3_imdct36(
+unsafe  fn l3_imdct36(
     mut grbuf: *mut f32,
     mut overlap: *mut f32,
-    mut window: *const f32,
-    mut nbands: i32,
+    window: *const f32,
+    nbands: i32,
 ) {
     let mut i: i32;
     let mut j: i32;
-    static mut g_twid9: [f32; 18] = [
+    static mut G_TWID9: [f32; 18] = [
         0.73727734f32,
         0.79335334f32,
         0.84339145f32,
@@ -2909,8 +2910,8 @@ unsafe extern "C" fn L3_imdct36(
                 + *grbuf.offset((4i32 * i + 4i32) as (isize)));
             i = i + 1;
         }
-        L3_dct3_9(co.as_mut_ptr());
-        L3_dct3_9(si.as_mut_ptr());
+        l3_dct3_9(co.as_mut_ptr());
+        l3_dct3_9(si.as_mut_ptr());
         si[1usize] = -si[1usize];
         si[3usize] = -si[3usize];
         si[5usize] = -si[5usize];
@@ -2921,10 +2922,10 @@ unsafe extern "C" fn L3_imdct36(
                 break;
             }
             let mut ovl: f32 = *overlap.offset(i as (isize));
-            let mut sum: f32 = co[i as (usize)] * g_twid9[(9i32 + i) as (usize)]
-                + si[i as (usize)] * g_twid9[(0i32 + i) as (usize)];
-            *overlap.offset(i as (isize)) = co[i as (usize)] * g_twid9[(0i32 + i) as (usize)]
-                - si[i as (usize)] * g_twid9[(9i32 + i) as (usize)];
+            let mut sum: f32 = co[i as (usize)] * G_TWID9[(9i32 + i) as (usize)]
+                + si[i as (usize)] * G_TWID9[(0i32 + i) as (usize)];
+            *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID9[(0i32 + i) as (usize)]
+                - si[i as (usize)] * G_TWID9[(9i32 + i) as (usize)];
             *grbuf.offset(i as (isize)) = ovl * *window.offset((0i32 + i) as (isize))
                 - sum * *window.offset((9i32 + i) as (isize));
             *grbuf.offset((17i32 - i) as (isize)) = ovl * *window.offset((9i32 + i) as (isize))
@@ -2937,7 +2938,7 @@ unsafe extern "C" fn L3_imdct36(
     }
 }
 
-unsafe extern "C" fn L3_idct3(mut x0: f32, mut x1: f32, mut x2: f32, mut dst: *mut f32) {
+unsafe  fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: *mut f32) {
     let mut m1: f32 = x1 * 0.86602540f32;
     let mut a1: f32 = x0 - x2 * 0.5f32;
     *dst.offset(1isize) = x0 + x2;
@@ -2945,8 +2946,8 @@ unsafe extern "C" fn L3_idct3(mut x0: f32, mut x1: f32, mut x2: f32, mut dst: *m
     *dst.offset(2isize) = a1 - m1;
 }
 
-unsafe extern "C" fn L3_imdct12(mut x: *mut f32, mut dst: *mut f32, mut overlap: *mut f32) {
-    static mut g_twid3: [f32; 6] = [
+unsafe  fn l3_imdct12(x: *mut f32, dst: *mut f32, overlap: *mut f32) {
+    static mut G_TWID3: [f32; 6] = [
         0.79335334f32,
         0.92387953f32,
         0.99144486f32,
@@ -2957,13 +2958,13 @@ unsafe extern "C" fn L3_imdct12(mut x: *mut f32, mut dst: *mut f32, mut overlap:
     let mut co: [f32; 3] = [0.0; 3];
     let mut si: [f32; 3] = [0.0; 3];
     let mut i: i32;
-    L3_idct3(
+    l3_idct3(
         -*x.offset(0isize),
         *x.offset(6isize) + *x.offset(3isize),
         *x.offset(12isize) + *x.offset(9isize),
         co.as_mut_ptr(),
     );
-    L3_idct3(
+    l3_idct3(
         *x.offset(15isize),
         *x.offset(12isize) - *x.offset(9isize),
         *x.offset(6isize) - *x.offset(3isize),
@@ -2976,19 +2977,19 @@ unsafe extern "C" fn L3_imdct12(mut x: *mut f32, mut dst: *mut f32, mut overlap:
             break;
         }
         let mut ovl: f32 = *overlap.offset(i as (isize));
-        let mut sum: f32 = co[i as (usize)] * g_twid3[(3i32 + i) as (usize)]
-            + si[i as (usize)] * g_twid3[(0i32 + i) as (usize)];
-        *overlap.offset(i as (isize)) = co[i as (usize)] * g_twid3[(0i32 + i) as (usize)]
-            - si[i as (usize)] * g_twid3[(3i32 + i) as (usize)];
+        let mut sum: f32 = co[i as (usize)] * G_TWID3[(3i32 + i) as (usize)]
+            + si[i as (usize)] * G_TWID3[(0i32 + i) as (usize)];
+        *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID3[(0i32 + i) as (usize)]
+            - si[i as (usize)] * G_TWID3[(3i32 + i) as (usize)];
         *dst.offset(i as (isize)) =
-            ovl * g_twid3[(2i32 - i) as (usize)] - sum * g_twid3[(5i32 - i) as (usize)];
+            ovl * G_TWID3[(2i32 - i) as (usize)] - sum * G_TWID3[(5i32 - i) as (usize)];
         *dst.offset((5i32 - i) as (isize)) =
-            ovl * g_twid3[(5i32 - i) as (usize)] + sum * g_twid3[(2i32 - i) as (usize)];
+            ovl * G_TWID3[(5i32 - i) as (usize)] + sum * G_TWID3[(2i32 - i) as (usize)];
         i = i + 1;
     }
 }
 
-unsafe extern "C" fn L3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, mut nbands: i32) {
+unsafe  fn l3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, mut nbands: i32) {
     'loop0: loop {
         if !(nbands > 0i32) {
             break;
@@ -3004,17 +3005,17 @@ unsafe extern "C" fn L3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, 
             overlap as (*const ::std::os::raw::c_void),
             6usize.wrapping_mul(::std::mem::size_of::<f32>()),
         );
-        L3_imdct12(
+        l3_imdct12(
             tmp.as_mut_ptr(),
             grbuf.offset(6isize),
             overlap.offset(6isize),
         );
-        L3_imdct12(
+        l3_imdct12(
             tmp.as_mut_ptr().offset(1isize),
             grbuf.offset(12isize),
             overlap.offset(6isize),
         );
-        L3_imdct12(
+        l3_imdct12(
             tmp.as_mut_ptr().offset(2isize),
             overlap,
             overlap.offset(6isize),
@@ -3025,13 +3026,13 @@ unsafe extern "C" fn L3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, 
     }
 }
 
-unsafe extern "C" fn L3_imdct_gr(
+unsafe  fn l3_imdct_gr(
     mut grbuf: *mut f32,
     mut overlap: *mut f32,
-    mut block_type: u32,
-    mut n_long_bands: u32,
+    block_type: u32,
+    n_long_bands: u32,
 ) {
-    static mut g_mdct_window: [[f32; 18]; 2] = [
+    static mut G_MDCT_WINDOW: [[f32; 18]; 2] = [
         [
             0.99904822f32,
             0.99144486f32,
@@ -3074,28 +3075,28 @@ unsafe extern "C" fn L3_imdct_gr(
         ],
     ];
     if n_long_bands != 0 {
-        L3_imdct36(
+        l3_imdct36(
             grbuf,
             overlap,
-            g_mdct_window[0usize].as_ptr(),
+            G_MDCT_WINDOW[0usize].as_ptr(),
             n_long_bands as (i32),
         );
         grbuf = grbuf.offset(18u32.wrapping_mul(n_long_bands) as (isize));
         overlap = overlap.offset(9u32.wrapping_mul(n_long_bands) as (isize));
     }
     if block_type == 2u32 {
-        L3_imdct_short(grbuf, overlap, 32u32.wrapping_sub(n_long_bands) as (i32));
+        l3_imdct_short(grbuf, overlap, 32u32.wrapping_sub(n_long_bands) as (i32));
     } else {
-        L3_imdct36(
+        l3_imdct36(
             grbuf,
             overlap,
-            g_mdct_window[(block_type == 3u32) as (usize)].as_ptr(),
+            G_MDCT_WINDOW[(block_type == 3u32) as (usize)].as_ptr(),
             32u32.wrapping_sub(n_long_bands) as (i32),
         );
     }
 }
 
-unsafe extern "C" fn L3_change_sign(mut grbuf: *mut f32) {
+unsafe  fn l3_change_sign(mut grbuf: *mut f32) {
     let mut b: i32;
     let mut i: i32;
     b = 0i32;
@@ -3117,11 +3118,11 @@ unsafe extern "C" fn L3_change_sign(mut grbuf: *mut f32) {
     }
 }
 
-unsafe extern "C" fn L3_decode(
-    mut h: *mut Struct1,
-    mut s: *mut Struct4,
-    mut gr_info: *mut Struct5,
-    mut nch: i32,
+unsafe  fn l3_decode(
+    h: *mut Mp3Dec,
+    s: *mut Mp3DecScratch,
+    mut gr_info: *mut L3GrInfo,
+    nch: i32,
 ) {
     let mut ch: i32;
     ch = 0i32;
@@ -3131,32 +3132,32 @@ unsafe extern "C" fn L3_decode(
         }
         let mut layer3gr_limit: i32 =
             (*s).bs.pos + (*gr_info.offset(ch as (isize))).part_23_length as (i32);
-        L3_decode_scalefactors(
+        l3_decode_scalefactors(
             (*h).header.as_mut_ptr() as (*const u8),
             (*s).ist_pos[ch as (usize)].as_mut_ptr(),
-            &mut (*s).bs as (*mut Struct3),
-            gr_info.offset(ch as (isize)) as (*const Struct5),
+            &mut (*s).bs as (*mut Bs),
+            gr_info.offset(ch as (isize)) as (*const L3GrInfo),
             (*s).scf.as_mut_ptr(),
             ch,
         );
-        L3_huffman(
+        l3_huffman(
             (*s).grbuf[ch as (usize)].as_mut_ptr(),
-            &mut (*s).bs as (*mut Struct3),
-            gr_info.offset(ch as (isize)) as (*const Struct5),
+            &mut (*s).bs as (*mut Bs),
+            gr_info.offset(ch as (isize)) as (*const L3GrInfo),
             (*s).scf.as_mut_ptr() as (*const f32),
             layer3gr_limit,
         );
         ch = ch + 1;
     }
     if (*h).header[3usize] as (i32) & 0x10i32 != 0 {
-        L3_intensity_stereo(
+        l3_intensity_stereo(
             (*s).grbuf[0usize].as_mut_ptr(),
             (*s).ist_pos[1usize].as_mut_ptr(),
-            gr_info as (*const Struct5),
+            gr_info as (*const L3GrInfo),
             (*h).header.as_mut_ptr() as (*const u8),
         );
     } else if (*h).header[3usize] as (i32) & 0xe0i32 == 0x60i32 {
-        L3_midside_stereo((*s).grbuf[0usize].as_mut_ptr(), 576i32);
+        l3_midside_stereo((*s).grbuf[0usize].as_mut_ptr(), 576i32);
     }
     ch = 0i32;
     'loop7: loop {
@@ -3175,7 +3176,7 @@ unsafe extern "C" fn L3_decode(
                 as (i32);
         if (*gr_info).n_short_sfb != 0 {
             aa_bands = n_long_bands - 1i32;
-            L3_reorder(
+            l3_reorder(
                 (*s).grbuf[ch as (usize)]
                     .as_mut_ptr()
                     .offset((n_long_bands * 18i32) as (isize)),
@@ -3183,20 +3184,20 @@ unsafe extern "C" fn L3_decode(
                 (*gr_info).sfbtab.offset((*gr_info).n_long_sfb as (isize)),
             );
         }
-        L3_antialias((*s).grbuf[ch as (usize)].as_mut_ptr(), aa_bands);
-        L3_imdct_gr(
+        l3_antialias((*s).grbuf[ch as (usize)].as_mut_ptr(), aa_bands);
+        l3_imdct_gr(
             (*s).grbuf[ch as (usize)].as_mut_ptr(),
             (*h).mdct_overlap[ch as (usize)].as_mut_ptr(),
             (*gr_info).block_type as (u32),
             n_long_bands as (u32),
         );
-        L3_change_sign((*s).grbuf[ch as (usize)].as_mut_ptr());
+        l3_change_sign((*s).grbuf[ch as (usize)].as_mut_ptr());
         ch = ch + 1;
         gr_info = gr_info.offset(1isize);
     }
 }
 
-unsafe extern "C" fn L3_save_reservoir(mut h: *mut Struct1, mut s: *mut Struct4) {
+unsafe  fn l3_save_reservoir(h: *mut Mp3Dec, s: *mut Mp3DecScratch) {
     let mut pos: i32 = (((*s).bs.pos + 7i32) as (u32)).wrapping_div(8u32) as (i32);
     let mut remains: i32 = ((*s).bs.limit as (u32))
         .wrapping_div(8u32)
@@ -3216,12 +3217,12 @@ unsafe extern "C" fn L3_save_reservoir(mut h: *mut Struct1, mut s: *mut Struct4)
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn mp3dec_decode_frame(
-    mut dec: *mut Struct1,
-    mut mp3: *const u8,
-    mut mp3_bytes: i32,
+pub unsafe  fn mp3dec_decode_frame(
+    dec: *mut Mp3Dec,
+    mp3: *const u8,
+    mp3_bytes: i32,
     mut pcm: *mut i16,
-    mut info: *mut Struct2,
+    info: *mut FrameInfo,
 ) -> i32 {
     let mut _currentBlock;
     let mut i: i32 = 0i32;
@@ -3229,12 +3230,12 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
     let mut frame_size: i32 = 0i32;
     let mut success: i32 = 1i32;
     let mut hdr: *const u8;
-    let mut bs_frame: [Struct3; 1] = [Struct3 {
+    let mut bs_frame: [Bs; 1] = [Bs {
         buf: ::std::ptr::null(),
         pos: 0,
         limit: 0,
     }];
-    let mut scratch: Struct4 = Struct4 {
+    let mut scratch: Mp3DecScratch = Mp3DecScratch {
         bs: bs_frame[0],
         maindata: [0; 2815],
         gr_info: ::std::mem::uninitialized(),
@@ -3259,7 +3260,7 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
         memset(
             dec as (*mut ::std::os::raw::c_void),
             0i32,
-            ::std::mem::size_of::<Struct1>(),
+            ::std::mem::size_of::<Mp3Dec>(),
         );
         i = mp3d_find_frame(
             mp3,
@@ -3296,15 +3297,15 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
         }
         if (*info).layer == 3i32 {
             let mut main_data_begin: i32 =
-                L3_read_side_info(bs_frame.as_mut_ptr(), scratch.gr_info.as_mut_ptr(), hdr);
+                l3_read_side_info(bs_frame.as_mut_ptr(), scratch.gr_info.as_mut_ptr(), hdr);
             if main_data_begin < 0i32 || bs_frame[0usize].pos > bs_frame[0usize].limit {
                 mp3dec_init(dec);
                 return 0i32;
             } else {
-                success = L3_restore_reservoir(
+                success = l3_restore_reservoir(
                     dec,
                     bs_frame.as_mut_ptr(),
-                    &mut scratch as (*mut Struct4),
+                    &mut scratch as (*mut Mp3DecScratch),
                     main_data_begin,
                 );
                 if success != 0 {
@@ -3322,9 +3323,9 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
                             0i32,
                             ((576i32 * 2i32) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
                         );
-                        L3_decode(
+                        l3_decode(
                             dec,
-                            &mut scratch as (*mut Struct4),
+                            &mut scratch as (*mut Mp3DecScratch),
                             scratch
                                 .gr_info
                                 .as_mut_ptr()
@@ -3343,11 +3344,11 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
                         pcm = pcm.offset((576i32 * (*info).channels) as (isize));
                     }
                 }
-                L3_save_reservoir(dec, &mut scratch as (*mut Struct4));
+                l3_save_reservoir(dec, &mut scratch as (*mut Mp3DecScratch));
             }
         } else {
             let mut sci: [Struct6; 1] = ::std::mem::uninitialized();
-            L12_read_scale_info(hdr, bs_frame.as_mut_ptr(), sci.as_mut_ptr());
+            l12_read_scale_info(hdr, bs_frame.as_mut_ptr(), sci.as_mut_ptr());
             memset(
                 scratch.grbuf[0usize].as_mut_ptr() as (*mut ::std::os::raw::c_void),
                 0i32,
@@ -3361,7 +3362,7 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
                     break;
                 }
                 if 12i32 == {
-                    i = i + L12_dequantize_granule(
+                    i = i + l12_dequantize_granule(
                         scratch.grbuf[0usize].as_mut_ptr().offset(i as (isize)),
                         bs_frame.as_mut_ptr(),
                         sci.as_mut_ptr(),
@@ -3370,7 +3371,7 @@ pub unsafe extern "C" fn mp3dec_decode_frame(
                     i
                 } {
                     i = 0i32;
-                    L12_apply_scf_384(
+                    l12_apply_scf_384(
                         sci.as_mut_ptr(),
                         sci[0usize].scf.as_mut_ptr().offset(igr as (isize)) as (*const f32),
                         scratch.grbuf[0usize].as_mut_ptr(),
@@ -3414,8 +3415,8 @@ fn main() {
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn _c_main() -> i32 {
-    static mut mp3d: Struct1 = Struct1 {
+pub unsafe  fn _c_main() -> i32 {
+    static mut mp3d: Mp3Dec = Mp3Dec {
         mdct_overlap: [[0f32; 288]; 2],
         qmf_state: [0f32; 960],
         reserv: 0i32,
@@ -3423,8 +3424,8 @@ pub unsafe extern "C" fn _c_main() -> i32 {
         header: [0u8; 4],
         reserv_buf: [0u8; 511],
     };
-    mp3dec_init(&mut mp3d as (*mut Struct1));
-    let mut info: Struct2;
+    mp3dec_init(&mut mp3d as (*mut Mp3Dec));
+    let mut info: FrameInfo;
     let mut pcm: [i16; 2304];
     0i32
 }

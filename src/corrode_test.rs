@@ -23,7 +23,8 @@ extern "C" {
 /// for immutable borrows, but with mutable ones this behavior
 /// causes a double-borrow.  It SHOULD be safe though, so
 /// this helper does takes a `&mut` to the slice(!) and does
-/// it for us.
+/// it for us.  Panics if you try to increment past the end
+/// of the slice.
 fn increment_by<T>(slice: &mut &mut [T], amount: usize) {
     // TODO: Test and verify!
     let lifetime_hack = unsafe {
@@ -2495,8 +2496,8 @@ fn l3_dct3_9(y: &mut [f32; 9]) {
     y[8] = s4 + s7;
 }
 
-unsafe fn l3_imdct36(mut grbuf: *mut f32, mut overlap: *mut f32, window: *const f32, nbands: i32) {
-    let mut i: i32;
+fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nbands: i32) {
+    let mut i: usize;
     let mut j: i32;
     static G_TWID9: [f32; 18] = [
         0.73727734, 0.79335334, 0.84339145, 0.88701083, 0.92387953, 0.95371695, 0.97629601,
@@ -2510,21 +2511,17 @@ unsafe fn l3_imdct36(mut grbuf: *mut f32, mut overlap: *mut f32, window: *const 
         }
         let mut co: [f32; 9] = [0.0; 9];
         let mut si: [f32; 9] = [0.0; 9];
-        co[0] = -*grbuf.offset(0);
-        si[0] = *grbuf.offset(17);
+        co[0] = -grbuf[0];
+        si[0] = grbuf[17];
         i = 0;
         'loop4: loop {
             if !(i < 4) {
                 break;
             }
-            si[(8 - 2 * i) as usize] =
-                *grbuf.offset((4 * i + 1) as isize) - *grbuf.offset((4 * i + 2) as isize);
-            co[(1 + 2 * i) as usize] =
-                *grbuf.offset((4 * i + 1) as isize) + *grbuf.offset((4 * i + 2) as isize);
-            si[(7 - 2 * i) as usize] =
-                *grbuf.offset((4 * i + 4) as isize) - *grbuf.offset((4 * i + 3) as isize);
-            co[(2 + 2 * i) as usize] =
-                -(*grbuf.offset((4 * i + 3) as isize) + *grbuf.offset((4 * i + 4) as isize));
+            si[(8 - 2 * i)] = grbuf[(4 * i + 1)] - grbuf[(4 * i + 2)];
+            co[(1 + 2 * i)] = grbuf[(4 * i + 1)] + grbuf[(4 * i + 2)];
+            si[(7 - 2 * i)] = grbuf[(4 * i + 4)] - grbuf[(4 * i + 3)];
+            co[(2 + 2 * i)] = -(grbuf[(4 * i + 3)] + grbuf[(4 * i + 4)]);
             i = i + 1;
         }
         l3_dct3_9(&mut co);
@@ -2538,20 +2535,16 @@ unsafe fn l3_imdct36(mut grbuf: *mut f32, mut overlap: *mut f32, window: *const 
             if !(i < 9) {
                 break;
             }
-            let ovl: f32 = *overlap.offset(i as isize);
-            let sum: f32 = co[i as usize] * G_TWID9[(9 + i) as usize]
-                + si[i as usize] * G_TWID9[(0 + i) as usize];
-            *overlap.offset(i as isize) = co[i as usize] * G_TWID9[(0 + i) as usize]
-                - si[i as usize] * G_TWID9[(9 + i) as usize];
-            *grbuf.offset(i as isize) =
-                ovl * *window.offset((0 + i) as isize) - sum * *window.offset((9 + i) as isize);
-            *grbuf.offset((17 - i) as isize) =
-                ovl * *window.offset((9 + i) as isize) + sum * *window.offset((0 + i) as isize);
+            let ovl: f32 = overlap[i];
+            let sum: f32 = co[i] * G_TWID9[(9 + i)] + si[i] * G_TWID9[(0 + i)];
+            overlap[i] = co[i] * G_TWID9[(0 + i)] - si[i] * G_TWID9[(9 + i)];
+            grbuf[i] = ovl * window[(0 + i)] - sum * window[(9 + i)];
+            grbuf[(17 - i)] = ovl * window[(9 + i)] + sum * window[(0 + i)];
             i = i + 1;
         }
         j = j + 1;
-        grbuf = grbuf.offset(18);
-        overlap = overlap.offset(9);
+        increment_by(&mut grbuf, 18);
+        increment_by(&mut overlap, 9);
     }
 }
 
@@ -2563,78 +2556,61 @@ fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
     dst[2] = a1 - m1;
 }
 
-unsafe fn l3_imdct12(x: *mut f32, dst: *mut f32, overlap: *mut f32) {
+fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
     static G_TWID3: [f32; 6] = [
         0.79335334, 0.92387953, 0.99144486, 0.60876143, 0.38268343, 0.13052619,
     ];
     let mut co: [f32; 3] = [0.0; 3];
     let mut si: [f32; 3] = [0.0; 3];
-    let mut i: i32;
-    l3_idct3(
-        -*x.offset(0),
-        *x.offset(6) + *x.offset(3),
-        *x.offset(12) + *x.offset(9),
-        &mut co,
-    );
-    l3_idct3(
-        *x.offset(15),
-        *x.offset(12) - *x.offset(9),
-        *x.offset(6) - *x.offset(3),
-        &mut si,
-    );
+    let mut i: usize;
+    l3_idct3(-x[0], x[6] + x[3], x[12] + x[9], &mut co);
+    l3_idct3(x[15], x[12] - x[9], x[6] - x[3], &mut si);
     si[1] = -si[1];
     i = 0;
     'loop1: loop {
         if !(i < 3) {
             break;
         }
-        let ovl: f32 = *overlap.offset(i as isize);
-        let sum: f32 =
-            co[i as usize] * G_TWID3[(3 + i) as usize] + si[i as usize] * G_TWID3[(0 + i) as usize];
-        *overlap.offset(i as isize) =
-            co[i as usize] * G_TWID3[(0 + i) as usize] - si[i as usize] * G_TWID3[(3 + i) as usize];
-        *dst.offset(i as isize) = ovl * G_TWID3[(2 - i) as usize] - sum * G_TWID3[(5 - i) as usize];
-        *dst.offset((5 - i) as isize) =
-            ovl * G_TWID3[(5 - i) as usize] + sum * G_TWID3[(2 - i) as usize];
+        let ovl: f32 = overlap[i];
+        let sum: f32 = co[i] * G_TWID3[(3 + i)] + si[i] * G_TWID3[(0 + i)];
+        overlap[i] = co[i] * G_TWID3[(0 + i)] - si[i] * G_TWID3[(3 + i)];
+        dst[i] = ovl * G_TWID3[(2 - i)] - sum * G_TWID3[(5 - i)];
+        dst[5 - i] = ovl * G_TWID3[(5 - i)] + sum * G_TWID3[(2 - i)];
         i = i + 1;
     }
 }
 
-unsafe fn l3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, mut nbands: i32) {
+fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i32) {
     'loop0: loop {
         if !(nbands > 0) {
             break;
         }
         let mut tmp: [f32; 18] = [0.0; 18];
-        memcpy(
-            tmp.as_mut_ptr() as (*mut ::std::os::raw::c_void),
-            grbuf as (*const ::std::os::raw::c_void),
-            ::std::mem::size_of::<[f32; 18]>(),
-        );
-        memcpy(
-            grbuf as (*mut ::std::os::raw::c_void),
-            overlap as (*const ::std::os::raw::c_void),
-            6_usize.wrapping_mul(::std::mem::size_of::<f32>()),
-        );
-        l3_imdct12(tmp.as_mut_ptr(), grbuf.offset(6), overlap.offset(6));
-        l3_imdct12(
-            tmp.as_mut_ptr().offset(1),
-            grbuf.offset(12),
-            overlap.offset(6),
-        );
-        l3_imdct12(tmp.as_mut_ptr().offset(2), overlap, overlap.offset(6));
+        // memcpy(
+        //     tmp.as_mut_ptr() as (*mut ::std::os::raw::c_void),
+        //     grbuf.as_ptr() as (*const ::std::os::raw::c_void),
+        //     ::std::mem::size_of::<[f32; 18]>(),
+        // );
+        tmp.copy_from_slice(&grbuf[..18]);
+        // memcpy(
+        //     grbuf.as_mut_ptr() as (*mut ::std::os::raw::c_void),
+        //     overlap.as_ptr() as (*const ::std::os::raw::c_void),
+        //     6_usize.wrapping_mul(::std::mem::size_of::<f32>()),
+        // );
+        grbuf.copy_from_slice(&overlap[..6]);
+        l3_imdct12(&mut tmp[..], &mut grbuf[6..], &mut overlap[6..]);
+        l3_imdct12(&mut tmp[1..], &mut grbuf[12..], &mut overlap[6..]);
+        {
+            let (a, b) = overlap.split_at_mut(6);
+            l3_imdct12(&mut tmp[2..], a, b);
+        }
         nbands = nbands - 1;
-        overlap = overlap.offset(9);
-        grbuf = grbuf.offset(18);
+        increment_by(&mut overlap, 9);
+        increment_by(&mut grbuf, 18);
     }
 }
 
-unsafe fn l3_imdct_gr(
-    mut grbuf: *mut f32,
-    mut overlap: *mut f32,
-    block_type: u32,
-    n_long_bands: u32,
-) {
+fn l3_imdct_gr(mut grbuf: &mut [f32], mut overlap: &mut [f32], block_type: u32, n_long_bands: u32) {
     static G_MDCT_WINDOW: [[f32; 18]; 2] = [
         [
             0.99904822, 0.99144486, 0.97629601, 0.95371695, 0.92387953, 0.88701083, 0.84339145,
@@ -2647,14 +2623,9 @@ unsafe fn l3_imdct_gr(
         ],
     ];
     if n_long_bands != 0 {
-        l3_imdct36(
-            grbuf,
-            overlap,
-            G_MDCT_WINDOW[0].as_ptr(),
-            n_long_bands as (i32),
-        );
-        grbuf = grbuf.offset(18u32.wrapping_mul(n_long_bands) as isize);
-        overlap = overlap.offset(9u32.wrapping_mul(n_long_bands) as isize);
+        l3_imdct36(grbuf, overlap, &G_MDCT_WINDOW[0], n_long_bands as (i32));
+        increment_by(&mut grbuf, 18u32.wrapping_mul(n_long_bands) as usize);
+        increment_by(&mut overlap, 9u32.wrapping_mul(n_long_bands) as usize);
     }
     if block_type == 2u32 {
         l3_imdct_short(grbuf, overlap, 32u32.wrapping_sub(n_long_bands) as (i32));
@@ -2662,17 +2633,17 @@ unsafe fn l3_imdct_gr(
         l3_imdct36(
             grbuf,
             overlap,
-            G_MDCT_WINDOW[(block_type == 3u32) as usize].as_ptr(),
+            &G_MDCT_WINDOW[(block_type == 3u32) as usize],
             32u32.wrapping_sub(n_long_bands) as (i32),
         );
     }
 }
 
-unsafe fn l3_change_sign(mut grbuf: *mut f32) {
+fn l3_change_sign(mut grbuf: &mut [f32]) {
     let mut b: i32;
-    let mut i: i32;
+    let mut i: usize;
     b = 0;
-    grbuf = grbuf.offset(18);
+    increment_by(&mut grbuf, 18);
     'loop1: loop {
         if !(b < 32) {
             break;
@@ -2682,15 +2653,14 @@ unsafe fn l3_change_sign(mut grbuf: *mut f32) {
             if !(i < 18) {
                 break;
             }
-            *grbuf.offset(i as isize) = -*grbuf.offset(i as isize);
+            grbuf[i] = -grbuf[i];
             i = i + 2;
         }
         b = b + 2;
-        grbuf = grbuf.offset(36);
+        increment_by(&mut grbuf, 36);
     }
 }
 
-/// TODO: gr_info should be an array
 unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
     let mut ch: i32;
     ch = 0;
@@ -2752,12 +2722,12 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
         }
         l3_antialias((*s).grbuf[ch as usize].as_mut_ptr(), aa_bands);
         l3_imdct_gr(
-            (*s).grbuf[ch as usize].as_mut_ptr(),
-            (*h).mdct_overlap[ch as usize].as_mut_ptr(),
+            &mut s.grbuf[ch as usize][..],
+            &mut h.mdct_overlap[ch as usize][..],
             gr_info[0].block_type as (u32),
             n_long_bands as (u32),
         );
-        l3_change_sign((*s).grbuf[ch as usize].as_mut_ptr());
+        l3_change_sign(&mut s.grbuf[ch as usize]);
         ch = ch + 1;
         // gr_info = gr_info.offset(1);
         increment_by(&mut gr_info, 1);

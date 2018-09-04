@@ -22,151 +22,151 @@ extern "C" {
 // }
 
 static GPOW43: [f32; 145] = [
-    0i32 as (f32),
-    -1i32 as (f32),
-    -2.519842f32,
-    -4.326749f32,
-    -6.349604f32,
-    -8.549880f32,
-    -10.902724f32,
-    -13.390518f32,
-    -16.000000f32,
-    -18.720754f32,
-    -21.544347f32,
-    -24.463781f32,
-    -27.473142f32,
-    -30.567351f32,
-    -33.741992f32,
-    -36.993181f32,
-    0i32 as (f32),
-    1i32 as (f32),
-    2.519842f32,
-    4.326749f32,
-    6.349604f32,
-    8.549880f32,
-    10.902724f32,
-    13.390518f32,
-    16.000000f32,
-    18.720754f32,
-    21.544347f32,
-    24.463781f32,
-    27.473142f32,
-    30.567351f32,
-    33.741992f32,
-    36.993181f32,
-    40.317474f32,
-    43.711787f32,
-    47.173345f32,
-    50.699631f32,
-    54.288352f32,
-    57.937408f32,
-    61.644865f32,
-    65.408941f32,
-    69.227979f32,
-    73.100443f32,
-    77.024898f32,
-    81.000000f32,
-    85.024491f32,
-    89.097188f32,
-    93.216975f32,
-    97.382800f32,
-    101.593667f32,
-    105.848633f32,
-    110.146801f32,
-    114.487321f32,
-    118.869381f32,
-    123.292209f32,
-    127.755065f32,
-    132.257246f32,
-    136.798076f32,
-    141.376907f32,
-    145.993119f32,
-    150.646117f32,
-    155.335327f32,
-    160.060199f32,
-    164.820202f32,
-    169.614826f32,
-    174.443577f32,
-    179.305980f32,
-    184.201575f32,
-    189.129918f32,
-    194.090580f32,
-    199.083145f32,
-    204.107210f32,
-    209.162385f32,
-    214.248292f32,
-    219.364564f32,
-    224.510845f32,
-    229.686789f32,
-    234.892058f32,
-    240.126328f32,
-    245.389280f32,
-    250.680604f32,
-    256.000000f32,
-    261.347174f32,
-    266.721841f32,
-    272.123723f32,
-    277.552547f32,
-    283.008049f32,
-    288.489971f32,
-    293.998060f32,
-    299.532071f32,
-    305.091761f32,
-    310.676898f32,
-    316.287249f32,
-    321.922592f32,
-    327.582707f32,
-    333.267377f32,
-    338.976394f32,
-    344.709550f32,
-    350.466646f32,
-    356.247482f32,
-    362.051866f32,
-    367.879608f32,
-    373.730522f32,
-    379.604427f32,
-    385.501143f32,
-    391.420496f32,
-    397.362314f32,
-    403.326427f32,
-    409.312672f32,
-    415.320884f32,
-    421.350905f32,
-    427.402579f32,
-    433.475750f32,
-    439.570269f32,
-    445.685987f32,
-    451.822757f32,
-    457.980436f32,
-    464.158883f32,
-    470.357960f32,
-    476.577530f32,
-    482.817459f32,
-    489.077615f32,
-    495.357868f32,
-    501.658090f32,
-    507.978156f32,
-    514.317941f32,
-    520.677324f32,
-    527.056184f32,
-    533.454404f32,
-    539.871867f32,
-    546.308458f32,
-    552.764065f32,
-    559.238575f32,
-    565.731879f32,
-    572.243870f32,
-    578.774440f32,
-    585.323483f32,
-    591.890898f32,
-    598.476581f32,
-    605.080431f32,
-    611.702349f32,
-    618.342238f32,
-    625.000000f32,
-    631.675540f32,
-    638.368763f32,
-    645.079578f32,
+    0 as (f32),
+    -1 as (f32),
+    -2.519842,
+    -4.326749,
+    -6.349604,
+    -8.549880,
+    -10.902724,
+    -13.390518,
+    -16.000000,
+    -18.720754,
+    -21.544347,
+    -24.463781,
+    -27.473142,
+    -30.567351,
+    -33.741992,
+    -36.993181,
+    0 as (f32),
+    1 as (f32),
+    2.519842,
+    4.326749,
+    6.349604,
+    8.549880,
+    10.902724,
+    13.390518,
+    16.000000,
+    18.720754,
+    21.544347,
+    24.463781,
+    27.473142,
+    30.567351,
+    33.741992,
+    36.993181,
+    40.317474,
+    43.711787,
+    47.173345,
+    50.699631,
+    54.288352,
+    57.937408,
+    61.644865,
+    65.408941,
+    69.227979,
+    73.100443,
+    77.024898,
+    81.000000,
+    85.024491,
+    89.097188,
+    93.216975,
+    97.382800,
+    101.593667,
+    105.848633,
+    110.146801,
+    114.487321,
+    118.869381,
+    123.292209,
+    127.755065,
+    132.257246,
+    136.798076,
+    141.376907,
+    145.993119,
+    150.646117,
+    155.335327,
+    160.060199,
+    164.820202,
+    169.614826,
+    174.443577,
+    179.305980,
+    184.201575,
+    189.129918,
+    194.090580,
+    199.083145,
+    204.107210,
+    209.162385,
+    214.248292,
+    219.364564,
+    224.510845,
+    229.686789,
+    234.892058,
+    240.126328,
+    245.389280,
+    250.680604,
+    256.000000,
+    261.347174,
+    266.721841,
+    272.123723,
+    277.552547,
+    283.008049,
+    288.489971,
+    293.998060,
+    299.532071,
+    305.091761,
+    310.676898,
+    316.287249,
+    321.922592,
+    327.582707,
+    333.267377,
+    338.976394,
+    344.709550,
+    350.466646,
+    356.247482,
+    362.051866,
+    367.879608,
+    373.730522,
+    379.604427,
+    385.501143,
+    391.420496,
+    397.362314,
+    403.326427,
+    409.312672,
+    415.320884,
+    421.350905,
+    427.402579,
+    433.475750,
+    439.570269,
+    445.685987,
+    451.822757,
+    457.980436,
+    464.158883,
+    470.357960,
+    476.577530,
+    482.817459,
+    489.077615,
+    495.357868,
+    501.658090,
+    507.978156,
+    514.317941,
+    520.677324,
+    527.056184,
+    533.454404,
+    539.871867,
+    546.308458,
+    552.764065,
+    559.238575,
+    565.731879,
+    572.243870,
+    578.774440,
+    585.323483,
+    591.890898,
+    598.476581,
+    605.080431,
+    611.702349,
+    618.342238,
+    625.000000,
+    631.675540,
+    638.368763,
+    645.079578,
 ];
 
 #[derive(Copy)]
@@ -440,79 +440,65 @@ impl Hdr {
 
 unsafe fn hdr_valid(h: *const u8) -> i32 {
     (*h.offset(0isize) as (i32) == 0xffi32
-        && (*h.offset(1isize) as (i32) & 0xf0i32 == 0xf0i32
-            || *h.offset(1isize) as (i32) & 0xfei32 == 0xe2i32)
-        && (*h.offset(1isize) as (i32) >> 1i32 & 3i32 != 0i32)
-        && (*h.offset(2isize) as (i32) >> 4i32 != 15i32)
-        && (*h.offset(2isize) as (i32) >> 2i32 & 3i32 != 3i32)) as (i32)
+        && (*h.offset(1isize) as (i32) & 0xf0 == 0xf0
+            || *h.offset(1isize) as (i32) & 0xfei32 == 0xe2)
+        && (*h.offset(1isize) as (i32) >> 1 & 3 != 0)
+        && (*h.offset(2isize) as (i32) >> 4 != 15)
+        && (*h.offset(2isize) as (i32) >> 2 & 3 != 3)) as (i32)
 }
 
 unsafe fn hdr_compare(h1: *const u8, h2: *const u8) -> i32 {
     (hdr_valid(h2) != 0
-        && ((*h1.offset(1isize) as (i32) ^ *h2.offset(1isize) as (i32)) & 0xfei32 == 0i32)
-        && ((*h1.offset(2isize) as (i32) ^ *h2.offset(2isize) as (i32)) & 0xci32 == 0i32)
-        && ((*h1.offset(2isize) as (i32) & 0xf0i32 == 0i32) as (i32)
-            ^ (*h2.offset(2isize) as (i32) & 0xf0i32 == 0i32) as (i32) == 0)) as (i32)
+        && ((*h1.offset(1isize) as (i32) ^ *h2.offset(1isize) as (i32)) & 0xfei32 == 0)
+        && ((*h1.offset(2isize) as (i32) ^ *h2.offset(2isize) as (i32)) & 0xci32 == 0)
+        && ((*h1.offset(2isize) as (i32) & 0xf0 == 0) as (i32)
+            ^ (*h2.offset(2isize) as (i32) & 0xf0 == 0) as (i32) == 0)) as (i32)
 }
 
 unsafe fn hdr_frame_samples(h: *const u8) -> u32 {
-    (if *h.offset(1isize) as (i32) & 6i32 == 6i32 {
-        384i32
+    (if *h.offset(1isize) as (i32) & 6 == 6 {
+        384
     } else {
-        1152i32 >> (*h.offset(1isize) as (i32) & 14i32 == 2i32) as (i32)
+        1152 >> (*h.offset(1isize) as (i32) & 14 == 2) as (i32)
     }) as (u32)
 }
 
 pub unsafe fn hdr_bitrate_kbps(h: *const u8) -> u32 {
     static HALFRATE: [[[u8; 15]; 3]; 2] = [
         [
-            [
-                0u8, 4u8, 8u8, 12u8, 16u8, 20u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 72u8,
-                80u8,
-            ],
-            [
-                0u8, 4u8, 8u8, 12u8, 16u8, 20u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 72u8,
-                80u8,
-            ],
-            [
-                0u8, 16u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 72u8, 80u8, 88u8, 96u8, 112u8,
-                128u8,
-            ],
+            [0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80],
+            [0, 4, 8, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 72, 80],
+            [0, 16, 24, 28, 32, 40, 48, 56, 64, 72, 80, 88, 96, 112, 128],
         ],
         [
+            [0, 16, 20, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160],
             [
-                0u8, 16u8, 20u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 80u8, 96u8, 112u8,
-                128u8, 160u8,
+                0, 16, 24, 28, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192,
             ],
             [
-                0u8, 16u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8, 64u8, 80u8, 96u8, 112u8, 128u8,
-                160u8, 192u8,
-            ],
-            [
-                0u8, 16u8, 32u8, 48u8, 64u8, 80u8, 96u8, 112u8, 128u8, 144u8, 160u8, 176u8, 192u8,
-                208u8, 224u8,
+                0, 16, 32, 48, 64, 80, 96, 112, 128, 144, 160, 176, 192, 208, 224,
             ],
         ],
     ];
-    (2i32 * HALFRATE[!(*h.offset(1isize) as (i32) & 0x8i32 == 0) as (usize)]
-        [((*h.offset(1isize) as (i32) >> 1i32 & 3i32) - 1i32) as (usize)]
-        [(*h.offset(2isize) as (i32) >> 4i32) as (usize)] as (i32)) as (u32)
+    (2 * HALFRATE[!(*h.offset(1isize) as (i32) & 0x8 == 0) as (usize)]
+        [((*h.offset(1isize) as (i32) >> 1 & 3) - 1) as (usize)]
+        [(*h.offset(2isize) as (i32) >> 4) as (usize)] as (i32)) as (u32)
 }
 
 pub unsafe fn hdr_sample_rate_hz(h: *const u8) -> u32 {
-    static G_HZ: [u32; 3] = [44100u32, 48000u32, 32000u32];
-    G_HZ[(*h.offset(2isize) as (i32) >> 2i32 & 3i32) as (usize)]
-        >> (*h.offset(1isize) as (i32) & 0x8i32 == 0) as (i32)
-        >> (*h.offset(1isize) as (i32) & 0x10i32 == 0) as (i32)
+    static G_HZ: [u32; 3] = [44100, 48000, 32000];
+    G_HZ[(*h.offset(2isize) as (i32) >> 2 & 3) as (usize)]
+        >> (*h.offset(1isize) as (i32) & 0x8 == 0) as (i32)
+        >> (*h.offset(1isize) as (i32) & 0x10 == 0) as (i32)
 }
 
 pub unsafe fn hdr_frame_bytes(h: *const u8, free_format_size: i32) -> i32 {
     let mut frame_bytes: i32 = hdr_frame_samples(h)
         .wrapping_mul(hdr_bitrate_kbps(h))
-        .wrapping_mul(125u32)
+        .wrapping_mul(125)
         .wrapping_div(hdr_sample_rate_hz(h)) as (i32);
-    if *h.offset(1isize) as (i32) & 6i32 == 6i32 {
-        frame_bytes = frame_bytes & !3i32;
+    if *h.offset(1isize) as (i32) & 6 == 6 {
+        frame_bytes = frame_bytes & !3;
     }
     if frame_bytes != 0 {
         frame_bytes
@@ -522,14 +508,14 @@ pub unsafe fn hdr_frame_bytes(h: *const u8, free_format_size: i32) -> i32 {
 }
 
 pub unsafe fn hdr_padding(h: *const u8) -> i32 {
-    if *h.offset(2isize) as (i32) & 0x2i32 != 0 {
-        (if *h.offset(1isize) as (i32) & 6i32 == 6i32 {
-            4i32
+    if *h.offset(2isize) as (i32) & 0x2 != 0 {
+        (if *h.offset(1isize) as (i32) & 6 == 6 {
+            4
         } else {
-            1i32
+            1
         })
     } else {
-        0i32
+        0
     }
 }
 
@@ -537,16 +523,16 @@ unsafe fn mp3d_match_frame(hdr: *const u8, mp3_bytes: i32, frame_bytes: i32) -> 
     let current_block;
     let mut i: i32;
     let mut nmatch: i32;
-    i = 0i32;
-    nmatch = 0i32;
+    i = 0;
+    nmatch = 0;
     'loop1: loop {
-        if !(nmatch < 10i32) {
+        if !(nmatch < 10) {
             current_block = 2;
             break;
         }
         i = i + (hdr_frame_bytes(hdr.offset(i as (isize)), frame_bytes)
             + hdr_padding(hdr.offset(i as (isize))));
-        if i + 4i32 > mp3_bytes {
+        if i + 4 > mp3_bytes {
             current_block = 7;
             break;
         }
@@ -557,11 +543,11 @@ unsafe fn mp3d_match_frame(hdr: *const u8, mp3_bytes: i32, frame_bytes: i32) -> 
         nmatch = nmatch + 1;
     }
     if current_block == 2 {
-        1i32
+        1
     } else if current_block == 6 {
-        0i32
+        0
     } else {
-        (nmatch > 0i32) as (i32)
+        (nmatch > 0) as (i32)
     }
 }
 
@@ -574,24 +560,24 @@ pub unsafe fn mp3d_find_frame(
     let current_block;
     let mut i: i32;
     let mut k: i32;
-    i = 0i32;
+    i = 0;
     let mut frame_bytes: i32 = hdr_frame_bytes(mp3, *free_format_bytes);
     let mut frame_and_padding: i32 = frame_bytes + hdr_padding(mp3);
     'loop1: loop {
-        if !(i < mp3_bytes - 4i32) {
+        if !(i < mp3_bytes - 4) {
             current_block = 2;
             break;
         }
         if hdr_valid(mp3) != 0 {
-            k = 4i32;
+            k = 4;
             'loop5: loop {
-                if !(frame_bytes == 0 && (k < 2304i32) && (i + 2i32 * k < mp3_bytes - 4i32)) {
+                if !(frame_bytes == 0 && (k < 2304) && (i + 2 * k < mp3_bytes - 4)) {
                     break;
                 }
                 if hdr_compare(mp3, mp3.offset(k as (isize))) != 0 {
                     let fb: i32 = k - hdr_padding(mp3);
                     let nextfb: i32 = fb + hdr_padding(mp3.offset(k as (isize)));
-                    if !(i + k + nextfb + 4i32 > mp3_bytes
+                    if !(i + k + nextfb + 4 > mp3_bytes
                         || hdr_compare(mp3, mp3.offset(k as (isize)).offset(nextfb as (isize)))
                             == 0)
                     {
@@ -610,13 +596,13 @@ pub unsafe fn mp3d_find_frame(
                 current_block = 9;
                 break;
             }
-            *free_format_bytes = 0i32;
+            *free_format_bytes = 0;
         }
         i = i + 1;
         mp3 = mp3.offset(1isize);
     }
     if current_block == 2 {
-        *ptr_frame_bytes = 0i32;
+        *ptr_frame_bytes = 0;
         i
     } else {
         *ptr_frame_bytes = frame_and_padding;
@@ -626,27 +612,27 @@ pub unsafe fn mp3d_find_frame(
 
 unsafe fn get_bits(bs: *mut Bs, n: i32) -> u32 {
     let mut next: u32;
-    let mut cache: u32 = 0u32;
-    let s: u32 = ((*bs).pos & 7i32) as (u32);
+    let mut cache: u32 = 0;
+    let s: u32 = ((*bs).pos & 7) as (u32);
     let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
-    let mut p: *const u8 = (*bs).buf.offset(((*bs).pos >> 3i32) as (isize));
+    let mut p: *const u8 = (*bs).buf.offset(((*bs).pos >> 3) as (isize));
     if {
         (*bs).pos = (*bs).pos + n;
         (*bs).pos
     } > (*bs).limit
     {
-        0u32
+        0
     } else {
         next = (*{
             let _old = p;
             p = p.offset(1isize);
             _old
-        } as (i32) & 255i32 >> s) as (u32);
+        } as (i32) & 255 >> s) as (u32);
         'loop2: loop {
             if !({
-                shl = shl - 8i32;
+                shl = shl - 8;
                 shl
-            } > 0i32)
+            } > 0)
             {
                 break;
             }
@@ -698,90 +684,90 @@ unsafe fn l12_subband_alloc_table(
     sci: &mut L12ScaleInfo,
 ) -> *const L12SubbandAlloc {
     let mut alloc: *const L12SubbandAlloc;
-    let mode: i32 = *hdr.offset(3isize) as (i32) >> 6i32 & 3i32;
+    let mode: i32 = *hdr.offset(3isize) as (i32) >> 6 & 3;
     let mut nbands: i32;
-    let stereo_bands: i32 = if mode == 3i32 {
-        0i32
-    } else if mode == 1i32 {
-        ((*hdr.offset(3isize) as (i32) >> 4i32 & 3i32) << 2i32) + 4i32
+    let stereo_bands: i32 = if mode == 3 {
+        0
+    } else if mode == 1 {
+        ((*hdr.offset(3isize) as (i32) >> 4 & 3) << 2) + 4
     } else {
-        32i32
+        32
     };
-    if *hdr.offset(1isize) as (i32) & 6i32 == 6i32 {
+    if *hdr.offset(1isize) as (i32) & 6 == 6 {
         static G_ALLOC_L1: [L12SubbandAlloc; 1] = [L12SubbandAlloc {
-            tab_offset: 76u8,
-            code_tab_width: 4u8,
-            band_count: 32u8,
+            tab_offset: 76,
+            code_tab_width: 4,
+            band_count: 32,
         }];
         alloc = G_ALLOC_L1.as_ptr();
-        nbands = 32i32;
-    } else if *hdr.offset(1isize) as (i32) & 0x8i32 == 0 {
+        nbands = 32;
+    } else if *hdr.offset(1isize) as (i32) & 0x8 == 0 {
         static G_ALLOC_L2M2: [L12SubbandAlloc; 3] = [
             L12SubbandAlloc {
-                tab_offset: 60u8,
-                code_tab_width: 4u8,
-                band_count: 4u8,
+                tab_offset: 60,
+                code_tab_width: 4,
+                band_count: 4,
             },
             L12SubbandAlloc {
-                tab_offset: 44u8,
-                code_tab_width: 3u8,
-                band_count: 7u8,
+                tab_offset: 44,
+                code_tab_width: 3,
+                band_count: 7,
             },
             L12SubbandAlloc {
-                tab_offset: 44u8,
-                code_tab_width: 2u8,
-                band_count: 19u8,
+                tab_offset: 44,
+                code_tab_width: 2,
+                band_count: 19,
             },
         ];
         alloc = G_ALLOC_L2M2.as_ptr();
-        nbands = 30i32;
+        nbands = 30;
     } else {
         static G_ALLOC_L2M1: [L12SubbandAlloc; 4] = [
             L12SubbandAlloc {
-                tab_offset: 0u8,
-                code_tab_width: 4u8,
-                band_count: 3u8,
+                tab_offset: 0,
+                code_tab_width: 4,
+                band_count: 3,
             },
             L12SubbandAlloc {
-                tab_offset: 16u8,
-                code_tab_width: 4u8,
-                band_count: 8u8,
+                tab_offset: 16,
+                code_tab_width: 4,
+                band_count: 8,
             },
             L12SubbandAlloc {
-                tab_offset: 32u8,
-                code_tab_width: 3u8,
-                band_count: 12u8,
+                tab_offset: 32,
+                code_tab_width: 3,
+                band_count: 12,
             },
             L12SubbandAlloc {
-                tab_offset: 40u8,
-                code_tab_width: 2u8,
-                band_count: 7u8,
+                tab_offset: 40,
+                code_tab_width: 2,
+                band_count: 7,
             },
         ];
-        let sample_rate_idx: i32 = *hdr.offset(2isize) as (i32) >> 2i32 & 3i32;
-        let mut kbps: u32 = hdr_bitrate_kbps(hdr) >> (mode != 3i32) as (i32);
+        let sample_rate_idx: i32 = *hdr.offset(2isize) as (i32) >> 2 & 3;
+        let mut kbps: u32 = hdr_bitrate_kbps(hdr) >> (mode != 3) as (i32);
         if kbps == 0 {
-            kbps = 192u32;
+            kbps = 192;
         }
         alloc = G_ALLOC_L2M1.as_ptr();
-        nbands = 27i32;
-        if kbps < 56u32 {
+        nbands = 27;
+        if kbps < 56 {
             static G_ALLOC_L2M1_LOWRATE: [L12SubbandAlloc; 2] = [
                 L12SubbandAlloc {
-                    tab_offset: 44u8,
-                    code_tab_width: 4u8,
-                    band_count: 2u8,
+                    tab_offset: 44,
+                    code_tab_width: 4,
+                    band_count: 2,
                 },
                 L12SubbandAlloc {
-                    tab_offset: 44u8,
-                    code_tab_width: 3u8,
-                    band_count: 10u8,
+                    tab_offset: 44,
+                    code_tab_width: 3,
+                    band_count: 10,
                 },
             ];
             alloc = G_ALLOC_L2M1_LOWRATE.as_ptr();
-            nbands = if sample_rate_idx == 2i32 { 12i32 } else { 8i32 };
-        } else if kbps >= 96u32 && (sample_rate_idx != 1i32) {
-            nbands = 30i32;
+            nbands = if sample_rate_idx == 2 { 12 } else { 8 };
+        } else if kbps >= 96 && (sample_rate_idx != 1) {
+            nbands = 30;
         }
     }
     (*sci).total_bands = nbands as (u8);
@@ -801,95 +787,94 @@ unsafe fn l12_read_scalefactors(
     mut scf: *mut f32,
 ) {
     static G_DEQ_L12: [f32; 54] = [
-        9.53674316e-07f32 / 3i32 as (f32),
-        7.56931807e-07f32 / 3i32 as (f32),
-        6.00777173e-07f32 / 3i32 as (f32),
-        9.53674316e-07f32 / 7i32 as (f32),
-        7.56931807e-07f32 / 7i32 as (f32),
-        6.00777173e-07f32 / 7i32 as (f32),
-        9.53674316e-07f32 / 15i32 as (f32),
-        7.56931807e-07f32 / 15i32 as (f32),
-        6.00777173e-07f32 / 15i32 as (f32),
-        9.53674316e-07f32 / 31i32 as (f32),
-        7.56931807e-07f32 / 31i32 as (f32),
-        6.00777173e-07f32 / 31i32 as (f32),
-        9.53674316e-07f32 / 63i32 as (f32),
-        7.56931807e-07f32 / 63i32 as (f32),
-        6.00777173e-07f32 / 63i32 as (f32),
-        9.53674316e-07f32 / 127i32 as (f32),
-        7.56931807e-07f32 / 127i32 as (f32),
-        6.00777173e-07f32 / 127i32 as (f32),
-        9.53674316e-07f32 / 255i32 as (f32),
-        7.56931807e-07f32 / 255i32 as (f32),
-        6.00777173e-07f32 / 255i32 as (f32),
-        9.53674316e-07f32 / 511i32 as (f32),
-        7.56931807e-07f32 / 511i32 as (f32),
-        6.00777173e-07f32 / 511i32 as (f32),
-        9.53674316e-07f32 / 1023i32 as (f32),
-        7.56931807e-07f32 / 1023i32 as (f32),
-        6.00777173e-07f32 / 1023i32 as (f32),
-        9.53674316e-07f32 / 2047i32 as (f32),
-        7.56931807e-07f32 / 2047i32 as (f32),
-        6.00777173e-07f32 / 2047i32 as (f32),
-        9.53674316e-07f32 / 4095i32 as (f32),
-        7.56931807e-07f32 / 4095i32 as (f32),
-        6.00777173e-07f32 / 4095i32 as (f32),
-        9.53674316e-07f32 / 8191i32 as (f32),
-        7.56931807e-07f32 / 8191i32 as (f32),
-        6.00777173e-07f32 / 8191i32 as (f32),
-        9.53674316e-07f32 / 16383i32 as (f32),
-        7.56931807e-07f32 / 16383i32 as (f32),
-        6.00777173e-07f32 / 16383i32 as (f32),
-        9.53674316e-07f32 / 32767i32 as (f32),
-        7.56931807e-07f32 / 32767i32 as (f32),
-        6.00777173e-07f32 / 32767i32 as (f32),
-        9.53674316e-07f32 / 65535i32 as (f32),
-        7.56931807e-07f32 / 65535i32 as (f32),
-        6.00777173e-07f32 / 65535i32 as (f32),
-        9.53674316e-07f32 / 3i32 as (f32),
-        7.56931807e-07f32 / 3i32 as (f32),
-        6.00777173e-07f32 / 3i32 as (f32),
-        9.53674316e-07f32 / 5i32 as (f32),
-        7.56931807e-07f32 / 5i32 as (f32),
-        6.00777173e-07f32 / 5i32 as (f32),
-        9.53674316e-07f32 / 9i32 as (f32),
-        7.56931807e-07f32 / 9i32 as (f32),
-        6.00777173e-07f32 / 9i32 as (f32),
+        9.53674316e-07 / 3 as (f32),
+        7.56931807e-07 / 3 as (f32),
+        6.00777173e-07 / 3 as (f32),
+        9.53674316e-07 / 7 as (f32),
+        7.56931807e-07 / 7 as (f32),
+        6.00777173e-07 / 7 as (f32),
+        9.53674316e-07 / 15 as (f32),
+        7.56931807e-07 / 15 as (f32),
+        6.00777173e-07 / 15 as (f32),
+        9.53674316e-07 / 31 as (f32),
+        7.56931807e-07 / 31 as (f32),
+        6.00777173e-07 / 31 as (f32),
+        9.53674316e-07 / 63 as (f32),
+        7.56931807e-07 / 63 as (f32),
+        6.00777173e-07 / 63 as (f32),
+        9.53674316e-07 / 127 as (f32),
+        7.56931807e-07 / 127 as (f32),
+        6.00777173e-07 / 127 as (f32),
+        9.53674316e-07 / 255 as (f32),
+        7.56931807e-07 / 255 as (f32),
+        6.00777173e-07 / 255 as (f32),
+        9.53674316e-07 / 511 as (f32),
+        7.56931807e-07 / 511 as (f32),
+        6.00777173e-07 / 511 as (f32),
+        9.53674316e-07 / 1023 as (f32),
+        7.56931807e-07 / 1023 as (f32),
+        6.00777173e-07 / 1023 as (f32),
+        9.53674316e-07 / 2047 as (f32),
+        7.56931807e-07 / 2047 as (f32),
+        6.00777173e-07 / 2047 as (f32),
+        9.53674316e-07 / 4095 as (f32),
+        7.56931807e-07 / 4095 as (f32),
+        6.00777173e-07 / 4095 as (f32),
+        9.53674316e-07 / 8191 as (f32),
+        7.56931807e-07 / 8191 as (f32),
+        6.00777173e-07 / 8191 as (f32),
+        9.53674316e-07 / 16383 as (f32),
+        7.56931807e-07 / 16383 as (f32),
+        6.00777173e-07 / 16383 as (f32),
+        9.53674316e-07 / 32767 as (f32),
+        7.56931807e-07 / 32767 as (f32),
+        6.00777173e-07 / 32767 as (f32),
+        9.53674316e-07 / 65535 as (f32),
+        7.56931807e-07 / 65535 as (f32),
+        6.00777173e-07 / 65535 as (f32),
+        9.53674316e-07 / 3 as (f32),
+        7.56931807e-07 / 3 as (f32),
+        6.00777173e-07 / 3 as (f32),
+        9.53674316e-07 / 5 as (f32),
+        7.56931807e-07 / 5 as (f32),
+        6.00777173e-07 / 5 as (f32),
+        9.53674316e-07 / 9 as (f32),
+        7.56931807e-07 / 9 as (f32),
+        6.00777173e-07 / 9 as (f32),
     ];
     let mut i: i32;
     let mut m: i32;
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < bands) {
             break;
         }
-        let mut s: f32 = 0i32 as (f32);
+        let mut s: f32 = 0 as (f32);
         let ba: i32 = *{
             let _old = pba;
             pba = pba.offset(1isize);
             _old
         } as (i32);
         let mask: i32 = if ba != 0 {
-            4i32 + (19i32 >> *scfcod.offset(i as (isize)) as (i32) & 3i32)
+            4 + (19 >> *scfcod.offset(i as (isize)) as (i32) & 3)
         } else {
-            0i32
+            0
         };
-        m = 4i32;
+        m = 4;
         'loop4: loop {
             if m == 0 {
                 break;
             }
             if mask & m != 0 {
-                let b: i32 = get_bits(bs, 6i32) as (i32);
-                s = G_DEQ_L12[(ba * 3i32 - 6i32 + b % 3i32) as (usize)]
-                    * (1i32 << 21i32 >> b / 3i32) as (f32);
+                let b: i32 = get_bits(bs, 6) as (i32);
+                s = G_DEQ_L12[(ba * 3 - 6 + b % 3) as (usize)] * (1 << 21 >> b / 3) as (f32);
             }
             *{
                 let _old = scf;
                 scf = scf.offset(1isize);
                 _old
             } = s;
-            m = m >> 1i32;
+            m = m >> 1;
         }
         i = i + 1;
     }
@@ -897,19 +882,17 @@ unsafe fn l12_read_scalefactors(
 
 unsafe fn l12_read_scale_info(hdr: *const u8, bs: &mut Bs, sci: &mut L12ScaleInfo) {
     static G_BITALLOC_CODE_TAB: [u8; 92] = [
-        0u8, 17u8, 3u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 16u8,
-        0u8, 17u8, 18u8, 3u8, 19u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 16u8,
-        0u8, 17u8, 18u8, 3u8, 19u8, 4u8, 5u8, 16u8, 0u8, 17u8, 18u8, 16u8, 0u8, 17u8, 18u8, 19u8,
-        4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 0u8, 17u8, 18u8, 3u8,
-        19u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 0u8, 2u8, 3u8, 4u8, 5u8,
-        6u8, 7u8, 8u8, 9u8, 10u8, 11u8, 12u8, 13u8, 14u8, 15u8, 16u8,
+        0, 17, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0, 17, 18, 3, 19, 4, 5, 6, 7, 8, 9,
+        10, 11, 12, 13, 16, 0, 17, 18, 3, 19, 4, 5, 16, 0, 17, 18, 16, 0, 17, 18, 19, 4, 5, 6, 7,
+        8, 9, 10, 11, 12, 13, 14, 15, 0, 17, 18, 3, 19, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, 2,
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
     ];
     let mut subband_alloc: *const L12SubbandAlloc = l12_subband_alloc_table(hdr, &mut *sci);
     let mut i: i32;
-    let mut k: i32 = 0i32;
-    let mut ba_bits: i32 = 0i32;
+    let mut k: i32 = 0;
+    let mut ba_bits: i32 = 0;
     let mut ba_code_tab: *const u8 = G_BITALLOC_CODE_TAB.as_ptr();
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < (*sci).total_bands as (i32)) {
             break;
@@ -924,30 +907,30 @@ unsafe fn l12_read_scale_info(hdr: *const u8, bs: &mut Bs, sci: &mut L12ScaleInf
             subband_alloc = subband_alloc.offset(1isize);
         }
         ba = *ba_code_tab.offset(get_bits(bs, ba_bits) as (isize));
-        (*sci).bitalloc[(2i32 * i) as (usize)] = ba;
+        (*sci).bitalloc[(2 * i) as (usize)] = ba;
         if i < (*sci).stereo_bands as (i32) {
             ba = *ba_code_tab.offset(get_bits(bs, ba_bits) as (isize));
         }
-        (*sci).bitalloc[(2i32 * i + 1i32) as (usize)] = if (*sci).stereo_bands != 0 {
+        (*sci).bitalloc[(2 * i + 1) as (usize)] = if (*sci).stereo_bands != 0 {
             ba as (i32)
         } else {
-            0i32
+            0
         } as (u8);
         i = i + 1;
     }
-    i = 0i32;
+    i = 0;
     'loop3: loop {
-        if !(i < 2i32 * (*sci).total_bands as (i32)) {
+        if !(i < 2 * (*sci).total_bands as (i32)) {
             break;
         }
         (*sci).scfcod[i as (usize)] = if (*sci).bitalloc[i as (usize)] != 0 {
-            (if *hdr.offset(1isize) as (i32) & 6i32 == 6i32 {
-                2u32
+            (if *hdr.offset(1isize) as (i32) & 6 == 6 {
+                2
             } else {
-                get_bits(bs, 2i32)
+                get_bits(bs, 2)
             })
         } else {
-            6u32
+            6
         } as (u8);
         i = i + 1;
     }
@@ -955,7 +938,7 @@ unsafe fn l12_read_scale_info(hdr: *const u8, bs: &mut Bs, sci: &mut L12ScaleInf
         &mut *bs,
         (*sci).bitalloc.as_mut_ptr(),
         (*sci).scfcod.as_mut_ptr(),
-        (*sci).total_bands as (i32) * 2i32,
+        (*sci).total_bands as (i32) * 2,
         (*sci).scf.as_mut_ptr(),
     );
     i = (*sci).stereo_bands as (i32);
@@ -963,7 +946,7 @@ unsafe fn l12_read_scale_info(hdr: *const u8, bs: &mut Bs, sci: &mut L12ScaleInf
         if !(i < (*sci).total_bands as (i32)) {
             break;
         }
-        (*sci).bitalloc[(2i32 * i + 1i32) as (usize)] = 0u8;
+        (*sci).bitalloc[(2 * i + 1) as (usize)] = 0;
         i = i + 1;
     }
 }
@@ -977,23 +960,23 @@ unsafe fn l12_dequantize_granule(
     let mut i: i32;
     let mut j: i32;
     let mut k: i32;
-    let mut choff: i32 = 576i32;
-    j = 0i32;
+    let mut choff: i32 = 576;
+    j = 0;
     'loop1: loop {
-        if !(j < 4i32) {
+        if !(j < 4) {
             break;
         }
         let mut dst: *mut f32 = grbuf.offset((group_size * j) as (isize));
-        i = 0i32;
+        i = 0;
         'loop4: loop {
-            if !(i < 2i32 * (*sci).total_bands as (i32)) {
+            if !(i < 2 * (*sci).total_bands as (i32)) {
                 break;
             }
             let ba: i32 = (*sci).bitalloc[i as (usize)] as (i32);
-            if ba != 0i32 {
-                if ba < 17i32 {
-                    let half: i32 = (1i32 << ba - 1i32) - 1i32;
-                    k = 0i32;
+            if ba != 0 {
+                if ba < 17 {
+                    let half: i32 = (1 << ba - 1) - 1;
+                    k = 0;
                     'loop13: loop {
                         if !(k < group_size) {
                             break;
@@ -1002,32 +985,29 @@ unsafe fn l12_dequantize_granule(
                         k = k + 1;
                     }
                 } else {
-                    let mod_: u32 = ((2i32 << ba - 17i32) + 1i32) as (u32);
-                    let mut code: u32 = get_bits(
-                        bs,
-                        mod_.wrapping_add(2u32).wrapping_sub(mod_ >> 3i32) as (i32),
-                    );
-                    k = 0i32;
+                    let mod_: u32 = ((2 << ba - 17) + 1) as (u32);
+                    let mut code: u32 =
+                        get_bits(bs, mod_.wrapping_add(2).wrapping_sub(mod_ >> 3) as (i32));
+                    k = 0;
                     'loop9: loop {
                         if !(k < group_size) {
                             break;
                         }
-                        *dst.offset(k as (isize)) = code
-                            .wrapping_rem(mod_)
-                            .wrapping_sub(mod_.wrapping_div(2u32))
-                            as (i32) as (f32);
+                        *dst.offset(k as (isize)) =
+                            code.wrapping_rem(mod_).wrapping_sub(mod_.wrapping_div(2)) as (i32)
+                                as (f32);
                         k = k + 1;
                         code = code.wrapping_div(mod_);
                     }
                 }
             }
             dst = dst.offset(choff as (isize));
-            choff = 18i32 - choff;
+            choff = 18 - choff;
             i = i + 1;
         }
         j = j + 1;
     }
-    group_size * 4i32
+    group_size * 4
 }
 
 unsafe fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: *const f32, mut dst: *mut f32) {
@@ -1035,28 +1015,28 @@ unsafe fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: *const f32, mut dst
     let mut k: i32;
     memcpy(
         dst.offset(576isize)
-            .offset(((*sci).stereo_bands as (i32) * 18i32) as (isize))
+            .offset(((*sci).stereo_bands as (i32) * 18) as (isize))
             as (*mut ::std::os::raw::c_void),
-        dst.offset(((*sci).stereo_bands as (i32) * 18i32) as (isize))
+        dst.offset(((*sci).stereo_bands as (i32) * 18) as (isize))
             as (*const ::std::os::raw::c_void),
-        ((((*sci).total_bands as (i32) - (*sci).stereo_bands as (i32)) * 18i32) as (usize))
+        ((((*sci).total_bands as (i32) - (*sci).stereo_bands as (i32)) * 18) as (usize))
             .wrapping_mul(::std::mem::size_of::<f32>()),
     );
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < (*sci).total_bands as (i32)) {
             break;
         }
-        k = 0i32;
+        k = 0;
         'loop4: loop {
-            if !(k < 12i32) {
+            if !(k < 12) {
                 break;
             }
             let _rhs = *scf.offset(0isize);
-            let _lhs = &mut *dst.offset((k + 0i32) as (isize));
+            let _lhs = &mut *dst.offset((k + 0) as (isize));
             *_lhs = *_lhs * _rhs;
             let _rhs = *scf.offset(3isize);
-            let _lhs = &mut *dst.offset((k + 576i32) as (isize));
+            let _lhs = &mut *dst.offset((k + 576) as (isize));
             *_lhs = *_lhs * _rhs;
             k = k + 1;
         }
@@ -1069,33 +1049,33 @@ unsafe fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: *const f32, mut dst
 #[allow(non_snake_case)]
 unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
     static G_SEC: [f32; 24] = [
-        10.19000816f32,
-        0.50060302f32,
-        0.50241929f32,
-        3.40760851f32,
-        0.50547093f32,
-        0.52249861f32,
-        2.05778098f32,
-        0.51544732f32,
-        0.56694406f32,
-        1.48416460f32,
-        0.53104258f32,
-        0.64682180f32,
-        1.16943991f32,
-        0.55310392f32,
-        0.78815460f32,
-        0.97256821f32,
-        0.58293498f32,
-        1.06067765f32,
-        0.83934963f32,
-        0.62250412f32,
-        1.72244716f32,
-        0.74453628f32,
-        0.67480832f32,
-        5.10114861f32,
+        10.19000816,
+        0.50060302,
+        0.50241929,
+        3.40760851,
+        0.50547093,
+        0.52249861,
+        2.05778098,
+        0.51544732,
+        0.56694406,
+        1.48416460,
+        0.53104258,
+        0.64682180,
+        1.16943991,
+        0.55310392,
+        0.78815460,
+        0.97256821,
+        0.58293498,
+        1.06067765,
+        0.83934963,
+        0.62250412,
+        1.72244716,
+        0.74453628,
+        0.67480832,
+        5.10114861,
     ];
     let mut i: i32;
-    let mut k: i32 = 0i32;
+    let mut k: i32 = 0;
     'loop1: loop {
         if !(k < n) {
             break;
@@ -1103,31 +1083,31 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
         let mut t: [[f32; 8]; 4] = [[0.0; 8]; 4];
         let mut x: *mut f32;
         let mut y: *mut f32 = grbuf.offset(k as (isize));
-        x = t[0usize].as_mut_ptr();
-        i = 0i32;
+        x = t[0].as_mut_ptr();
+        i = 0;
         'loop4: loop {
-            if !(i < 8i32) {
+            if !(i < 8) {
                 break;
             }
-            let x0: f32 = *y.offset((i * 18i32) as (isize));
-            let x1: f32 = *y.offset(((15i32 - i) * 18i32) as (isize));
-            let x2: f32 = *y.offset(((16i32 + i) * 18i32) as (isize));
-            let x3: f32 = *y.offset(((31i32 - i) * 18i32) as (isize));
+            let x0: f32 = *y.offset((i * 18) as (isize));
+            let x1: f32 = *y.offset(((15 - i) * 18) as (isize));
+            let x2: f32 = *y.offset(((16 + i) * 18) as (isize));
+            let x3: f32 = *y.offset(((31 - i) * 18) as (isize));
             let t0: f32 = x0 + x3;
             let t1: f32 = x1 + x2;
-            let t2: f32 = (x1 - x2) * G_SEC[(3i32 * i + 0i32) as (usize)];
-            let t3: f32 = (x0 - x3) * G_SEC[(3i32 * i + 1i32) as (usize)];
+            let t2: f32 = (x1 - x2) * G_SEC[(3 * i + 0) as (usize)];
+            let t3: f32 = (x0 - x3) * G_SEC[(3 * i + 1) as (usize)];
             *x.offset(0isize) = t0 + t1;
-            *x.offset(8isize) = (t0 - t1) * G_SEC[(3i32 * i + 2i32) as (usize)];
+            *x.offset(8isize) = (t0 - t1) * G_SEC[(3 * i + 2) as (usize)];
             *x.offset(16isize) = t3 + t2;
-            *x.offset(24isize) = (t3 - t2) * G_SEC[(3i32 * i + 2i32) as (usize)];
+            *x.offset(24isize) = (t3 - t2) * G_SEC[(3 * i + 2) as (usize)];
             i = i + 1;
             x = x.offset(1isize);
         }
-        x = t[0usize].as_mut_ptr();
-        i = 0i32;
+        x = t[0].as_mut_ptr();
+        i = 0;
         'loop6: loop {
-            if !(i < 4i32) {
+            if !(i < 4) {
                 break;
             }
             let mut x0: f32 = *x.offset(0isize);
@@ -1152,390 +1132,371 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
             x3 = x1 - x2;
             x1 = x1 + x2;
             *x.offset(0isize) = x0 + x1;
-            *x.offset(4isize) = (x0 - x1) * 0.70710677f32;
+            *x.offset(4isize) = (x0 - x1) * 0.70710677;
             x5 = x5 + x6;
-            x6 = (x6 + x7) * 0.70710677f32;
+            x6 = (x6 + x7) * 0.70710677;
             x7 = x7 + xt;
-            x3 = (x3 + x4) * 0.70710677f32;
-            x5 = x5 - x7 * 0.198912367f32;
-            x7 = x7 + x5 * 0.382683432f32;
-            x5 = x5 - x7 * 0.198912367f32;
+            x3 = (x3 + x4) * 0.70710677;
+            x5 = x5 - x7 * 0.198912367;
+            x7 = x7 + x5 * 0.382683432;
+            x5 = x5 - x7 * 0.198912367;
             x0 = xt - x6;
             xt = xt + x6;
-            *x.offset(1isize) = (xt + x7) * 0.50979561f32;
-            *x.offset(2isize) = (x4 + x3) * 0.54119611f32;
-            *x.offset(3isize) = (x0 - x5) * 0.60134488f32;
-            *x.offset(5isize) = (x0 + x5) * 0.89997619f32;
-            *x.offset(6isize) = (x4 - x3) * 1.30656302f32;
-            *x.offset(7isize) = (xt - x7) * 2.56291556f32;
+            *x.offset(1isize) = (xt + x7) * 0.50979561;
+            *x.offset(2isize) = (x4 + x3) * 0.54119611;
+            *x.offset(3isize) = (x0 - x5) * 0.60134488;
+            *x.offset(5isize) = (x0 + x5) * 0.89997619;
+            *x.offset(6isize) = (x4 - x3) * 1.30656302;
+            *x.offset(7isize) = (xt - x7) * 2.56291556;
             i = i + 1;
             x = x.offset(8isize);
         }
-        i = 0i32;
+        i = 0;
         'loop8: loop {
-            if !(i < 7i32) {
+            if !(i < 7) {
                 break;
             }
-            *y.offset((0i32 * 18i32) as (isize)) = t[0usize][i as (usize)];
-            *y.offset((1i32 * 18i32) as (isize)) = t[2usize][i as (usize)]
-                + t[3usize][i as (usize)]
-                + t[3usize][(i + 1i32) as (usize)];
-            *y.offset((2i32 * 18i32) as (isize)) =
-                t[1usize][i as (usize)] + t[1usize][(i + 1i32) as (usize)];
-            *y.offset((3i32 * 18i32) as (isize)) = t[2usize][(i + 1i32) as (usize)]
-                + t[3usize][i as (usize)]
-                + t[3usize][(i + 1i32) as (usize)];
+            *y.offset((0 * 18) as (isize)) = t[0][i as (usize)];
+            *y.offset((1 * 18) as (isize)) =
+                t[2][i as (usize)] + t[3][i as (usize)] + t[3][(i + 1) as (usize)];
+            *y.offset((2 * 18) as (isize)) = t[1][i as (usize)] + t[1][(i + 1) as (usize)];
+            *y.offset((3 * 18) as (isize)) =
+                t[2][(i + 1) as (usize)] + t[3][i as (usize)] + t[3][(i + 1) as (usize)];
             i = i + 1;
-            y = y.offset((4i32 * 18i32) as (isize));
+            y = y.offset((4 * 18) as (isize));
         }
-        *y.offset((0i32 * 18i32) as (isize)) = t[0usize][7usize];
-        *y.offset((1i32 * 18i32) as (isize)) = t[2usize][7usize] + t[3usize][7usize];
-        *y.offset((2i32 * 18i32) as (isize)) = t[1usize][7usize];
-        *y.offset((3i32 * 18i32) as (isize)) = t[3usize][7usize];
+        *y.offset((0 * 18) as (isize)) = t[0][7];
+        *y.offset((1 * 18) as (isize)) = t[2][7] + t[3][7];
+        *y.offset((2 * 18) as (isize)) = t[1][7];
+        *y.offset((3 * 18) as (isize)) = t[3][7];
         k = k + 1;
     }
 }
 
 fn mp3d_scale_pcm(sample: f32) -> i16 {
     if sample as (f64) >= 32766.5f64 {
-        32767i16
+        32767
     } else if sample as (f64) <= -32767.5f64 {
-        -32768i16
+        -32768
     } else {
-        let mut s: i16 = (sample + 0.5f32) as (i16);
-        s = (s as (i32) - (s as (i32) < 0i32) as (i32)) as (i16);
+        let mut s: i16 = (sample + 0.5) as (i16);
+        s = (s as (i32) - (s as (i32) < 0) as (i32)) as (i16);
         s
     }
 }
 
 unsafe fn mp3d_synth_pair(pcm: *mut i16, nch: i32, mut z: *const f32) {
     let mut a: f32;
-    a = (*z.offset((14i32 * 64i32) as (isize)) - *z.offset(0isize)) * 29i32 as (f32);
-    a = a + (*z.offset((1i32 * 64i32) as (isize)) + *z.offset((13i32 * 64i32) as (isize)))
-        * 213i32 as (f32);
-    a = a + (*z.offset((12i32 * 64i32) as (isize)) - *z.offset((2i32 * 64i32) as (isize)))
-        * 459i32 as (f32);
-    a = a + (*z.offset((3i32 * 64i32) as (isize)) + *z.offset((11i32 * 64i32) as (isize)))
-        * 2037i32 as (f32);
-    a = a + (*z.offset((10i32 * 64i32) as (isize)) - *z.offset((4i32 * 64i32) as (isize)))
-        * 5153i32 as (f32);
-    a = a + (*z.offset((5i32 * 64i32) as (isize)) + *z.offset((9i32 * 64i32) as (isize)))
-        * 6574i32 as (f32);
-    a = a + (*z.offset((8i32 * 64i32) as (isize)) - *z.offset((6i32 * 64i32) as (isize)))
-        * 37489i32 as (f32);
-    a = a + *z.offset((7i32 * 64i32) as (isize)) * 75038i32 as (f32);
+    a = (*z.offset((14 * 64) as (isize)) - *z.offset(0isize)) * 29 as (f32);
+    a = a + (*z.offset((1 * 64) as (isize)) + *z.offset((13 * 64) as (isize))) * 213 as (f32);
+    a = a + (*z.offset((12 * 64) as (isize)) - *z.offset((2 * 64) as (isize))) * 459 as (f32);
+    a = a + (*z.offset((3 * 64) as (isize)) + *z.offset((11 * 64) as (isize))) * 2037 as (f32);
+    a = a + (*z.offset((10 * 64) as (isize)) - *z.offset((4 * 64) as (isize))) * 5153 as (f32);
+    a = a + (*z.offset((5 * 64) as (isize)) + *z.offset((9 * 64) as (isize))) * 6574 as (f32);
+    a = a + (*z.offset((8 * 64) as (isize)) - *z.offset((6 * 64) as (isize))) * 37489 as (f32);
+    a = a + *z.offset((7 * 64) as (isize)) * 75038 as (f32);
     *pcm.offset(0isize) = mp3d_scale_pcm(a);
     z = z.offset(2isize);
-    a = *z.offset((14i32 * 64i32) as (isize)) * 104i32 as (f32);
-    a = a + *z.offset((12i32 * 64i32) as (isize)) * 1567i32 as (f32);
-    a = a + *z.offset((10i32 * 64i32) as (isize)) * 9727i32 as (f32);
-    a = a + *z.offset((8i32 * 64i32) as (isize)) * 64019i32 as (f32);
-    a = a + *z.offset((6i32 * 64i32) as (isize)) * -9975i32 as (f32);
-    a = a + *z.offset((4i32 * 64i32) as (isize)) * -45i32 as (f32);
-    a = a + *z.offset((2i32 * 64i32) as (isize)) * 146i32 as (f32);
-    a = a + *z.offset((0i32 * 64i32) as (isize)) * -5i32 as (f32);
-    *pcm.offset((16i32 * nch) as (isize)) = mp3d_scale_pcm(a);
+    a = *z.offset((14 * 64) as (isize)) * 104 as (f32);
+    a = a + *z.offset((12 * 64) as (isize)) * 1567 as (f32);
+    a = a + *z.offset((10 * 64) as (isize)) * 9727 as (f32);
+    a = a + *z.offset((8 * 64) as (isize)) * 64019 as (f32);
+    a = a + *z.offset((6 * 64) as (isize)) * -9975 as (f32);
+    a = a + *z.offset((4 * 64) as (isize)) * -45 as (f32);
+    a = a + *z.offset((2 * 64) as (isize)) * 146 as (f32);
+    a = a + *z.offset((0 * 64) as (isize)) * -5 as (f32);
+    *pcm.offset((16 * nch) as (isize)) = mp3d_scale_pcm(a);
 }
 
 unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
     let mut i: i32;
-    let xr: *mut f32 = xl.offset((576i32 * (nch - 1i32)) as (isize));
-    let dstr: *mut i16 = dstl.offset((nch - 1i32) as (isize));
+    let xr: *mut f32 = xl.offset((576 * (nch - 1)) as (isize));
+    let dstr: *mut i16 = dstl.offset((nch - 1) as (isize));
     static G_WIN: [f32; 240] = [
-        -1i32 as (f32),
-        26i32 as (f32),
-        -31i32 as (f32),
-        208i32 as (f32),
-        218i32 as (f32),
-        401i32 as (f32),
-        -519i32 as (f32),
-        2063i32 as (f32),
-        2000i32 as (f32),
-        4788i32 as (f32),
-        -5517i32 as (f32),
-        7134i32 as (f32),
-        5959i32 as (f32),
-        35640i32 as (f32),
-        -39336i32 as (f32),
-        74992i32 as (f32),
-        -1i32 as (f32),
-        24i32 as (f32),
-        -35i32 as (f32),
-        202i32 as (f32),
-        222i32 as (f32),
-        347i32 as (f32),
-        -581i32 as (f32),
-        2080i32 as (f32),
-        1952i32 as (f32),
-        4425i32 as (f32),
-        -5879i32 as (f32),
-        7640i32 as (f32),
-        5288i32 as (f32),
-        33791i32 as (f32),
-        -41176i32 as (f32),
-        74856i32 as (f32),
-        -1i32 as (f32),
-        21i32 as (f32),
-        -38i32 as (f32),
-        196i32 as (f32),
-        225i32 as (f32),
-        294i32 as (f32),
-        -645i32 as (f32),
-        2087i32 as (f32),
-        1893i32 as (f32),
-        4063i32 as (f32),
-        -6237i32 as (f32),
-        8092i32 as (f32),
-        4561i32 as (f32),
-        31947i32 as (f32),
-        -43006i32 as (f32),
-        74630i32 as (f32),
-        -1i32 as (f32),
-        19i32 as (f32),
-        -41i32 as (f32),
-        190i32 as (f32),
-        227i32 as (f32),
-        244i32 as (f32),
-        -711i32 as (f32),
-        2085i32 as (f32),
-        1822i32 as (f32),
-        3705i32 as (f32),
-        -6589i32 as (f32),
-        8492i32 as (f32),
-        3776i32 as (f32),
-        30112i32 as (f32),
-        -44821i32 as (f32),
-        74313i32 as (f32),
-        -1i32 as (f32),
-        17i32 as (f32),
-        -45i32 as (f32),
-        183i32 as (f32),
-        228i32 as (f32),
-        197i32 as (f32),
-        -779i32 as (f32),
-        2075i32 as (f32),
-        1739i32 as (f32),
-        3351i32 as (f32),
-        -6935i32 as (f32),
-        8840i32 as (f32),
-        2935i32 as (f32),
-        28289i32 as (f32),
-        -46617i32 as (f32),
-        73908i32 as (f32),
-        -1i32 as (f32),
-        16i32 as (f32),
-        -49i32 as (f32),
-        176i32 as (f32),
-        228i32 as (f32),
-        153i32 as (f32),
-        -848i32 as (f32),
-        2057i32 as (f32),
-        1644i32 as (f32),
-        3004i32 as (f32),
-        -7271i32 as (f32),
-        9139i32 as (f32),
-        2037i32 as (f32),
-        26482i32 as (f32),
-        -48390i32 as (f32),
-        73415i32 as (f32),
-        -2i32 as (f32),
-        14i32 as (f32),
-        -53i32 as (f32),
-        169i32 as (f32),
-        227i32 as (f32),
-        111i32 as (f32),
-        -919i32 as (f32),
-        2032i32 as (f32),
-        1535i32 as (f32),
-        2663i32 as (f32),
-        -7597i32 as (f32),
-        9389i32 as (f32),
-        1082i32 as (f32),
-        24694i32 as (f32),
-        -50137i32 as (f32),
-        72835i32 as (f32),
-        -2i32 as (f32),
-        13i32 as (f32),
-        -58i32 as (f32),
-        161i32 as (f32),
-        224i32 as (f32),
-        72i32 as (f32),
-        -991i32 as (f32),
-        2001i32 as (f32),
-        1414i32 as (f32),
-        2330i32 as (f32),
-        -7910i32 as (f32),
-        9592i32 as (f32),
-        70i32 as (f32),
-        22929i32 as (f32),
-        -51853i32 as (f32),
-        72169i32 as (f32),
-        -2i32 as (f32),
-        11i32 as (f32),
-        -63i32 as (f32),
-        154i32 as (f32),
-        221i32 as (f32),
-        36i32 as (f32),
-        -1064i32 as (f32),
-        1962i32 as (f32),
-        1280i32 as (f32),
-        2006i32 as (f32),
-        -8209i32 as (f32),
-        9750i32 as (f32),
-        -998i32 as (f32),
-        21189i32 as (f32),
-        -53534i32 as (f32),
-        71420i32 as (f32),
-        -2i32 as (f32),
-        10i32 as (f32),
-        -68i32 as (f32),
-        147i32 as (f32),
-        215i32 as (f32),
-        2i32 as (f32),
-        -1137i32 as (f32),
-        1919i32 as (f32),
-        1131i32 as (f32),
-        1692i32 as (f32),
-        -8491i32 as (f32),
-        9863i32 as (f32),
-        -2122i32 as (f32),
-        19478i32 as (f32),
-        -55178i32 as (f32),
-        70590i32 as (f32),
-        -3i32 as (f32),
-        9i32 as (f32),
-        -73i32 as (f32),
-        139i32 as (f32),
-        208i32 as (f32),
-        -29i32 as (f32),
-        -1210i32 as (f32),
-        1870i32 as (f32),
-        970i32 as (f32),
-        1388i32 as (f32),
-        -8755i32 as (f32),
-        9935i32 as (f32),
-        -3300i32 as (f32),
-        17799i32 as (f32),
-        -56778i32 as (f32),
-        69679i32 as (f32),
-        -3i32 as (f32),
-        8i32 as (f32),
-        -79i32 as (f32),
-        132i32 as (f32),
-        200i32 as (f32),
-        -57i32 as (f32),
-        -1283i32 as (f32),
-        1817i32 as (f32),
-        794i32 as (f32),
-        1095i32 as (f32),
-        -8998i32 as (f32),
-        9966i32 as (f32),
-        -4533i32 as (f32),
-        16155i32 as (f32),
-        -58333i32 as (f32),
-        68692i32 as (f32),
-        -4i32 as (f32),
-        7i32 as (f32),
-        -85i32 as (f32),
-        125i32 as (f32),
-        189i32 as (f32),
-        -83i32 as (f32),
-        -1356i32 as (f32),
-        1759i32 as (f32),
-        605i32 as (f32),
-        814i32 as (f32),
-        -9219i32 as (f32),
-        9959i32 as (f32),
-        -5818i32 as (f32),
-        14548i32 as (f32),
-        -59838i32 as (f32),
-        67629i32 as (f32),
-        -4i32 as (f32),
-        7i32 as (f32),
-        -91i32 as (f32),
-        117i32 as (f32),
-        177i32 as (f32),
-        -106i32 as (f32),
-        -1428i32 as (f32),
-        1698i32 as (f32),
-        402i32 as (f32),
-        545i32 as (f32),
-        -9416i32 as (f32),
-        9916i32 as (f32),
-        -7154i32 as (f32),
-        12980i32 as (f32),
-        -61289i32 as (f32),
-        66494i32 as (f32),
-        -5i32 as (f32),
-        6i32 as (f32),
-        -97i32 as (f32),
-        111i32 as (f32),
-        163i32 as (f32),
-        -127i32 as (f32),
-        -1498i32 as (f32),
-        1634i32 as (f32),
-        185i32 as (f32),
-        288i32 as (f32),
-        -9585i32 as (f32),
-        9838i32 as (f32),
-        -8540i32 as (f32),
-        11455i32 as (f32),
-        -62684i32 as (f32),
-        65290i32 as (f32),
+        -1 as (f32),
+        26 as (f32),
+        -31 as (f32),
+        208 as (f32),
+        218 as (f32),
+        401 as (f32),
+        -519 as (f32),
+        2063 as (f32),
+        2000 as (f32),
+        4788 as (f32),
+        -5517 as (f32),
+        7134 as (f32),
+        5959 as (f32),
+        35640 as (f32),
+        -39336 as (f32),
+        74992 as (f32),
+        -1 as (f32),
+        24 as (f32),
+        -35 as (f32),
+        202 as (f32),
+        222 as (f32),
+        347 as (f32),
+        -581 as (f32),
+        2080 as (f32),
+        1952 as (f32),
+        4425 as (f32),
+        -5879 as (f32),
+        7640 as (f32),
+        5288 as (f32),
+        33791 as (f32),
+        -41176 as (f32),
+        74856 as (f32),
+        -1 as (f32),
+        21 as (f32),
+        -38 as (f32),
+        196 as (f32),
+        225 as (f32),
+        294 as (f32),
+        -645 as (f32),
+        2087 as (f32),
+        1893 as (f32),
+        4063 as (f32),
+        -6237 as (f32),
+        8092 as (f32),
+        4561 as (f32),
+        31947 as (f32),
+        -43006 as (f32),
+        74630 as (f32),
+        -1 as (f32),
+        19 as (f32),
+        -41 as (f32),
+        190 as (f32),
+        227 as (f32),
+        244 as (f32),
+        -711 as (f32),
+        2085 as (f32),
+        1822 as (f32),
+        3705 as (f32),
+        -6589 as (f32),
+        8492 as (f32),
+        3776 as (f32),
+        30112 as (f32),
+        -44821 as (f32),
+        74313 as (f32),
+        -1 as (f32),
+        17 as (f32),
+        -45 as (f32),
+        183 as (f32),
+        228 as (f32),
+        197 as (f32),
+        -779 as (f32),
+        2075 as (f32),
+        1739 as (f32),
+        3351 as (f32),
+        -6935 as (f32),
+        8840 as (f32),
+        2935 as (f32),
+        28289 as (f32),
+        -46617 as (f32),
+        73908 as (f32),
+        -1 as (f32),
+        16 as (f32),
+        -49 as (f32),
+        176 as (f32),
+        228 as (f32),
+        153 as (f32),
+        -848 as (f32),
+        2057 as (f32),
+        1644 as (f32),
+        3004 as (f32),
+        -7271 as (f32),
+        9139 as (f32),
+        2037 as (f32),
+        26482 as (f32),
+        -48390 as (f32),
+        73415 as (f32),
+        -2 as (f32),
+        14 as (f32),
+        -53 as (f32),
+        169 as (f32),
+        227 as (f32),
+        111 as (f32),
+        -919 as (f32),
+        2032 as (f32),
+        1535 as (f32),
+        2663 as (f32),
+        -7597 as (f32),
+        9389 as (f32),
+        1082 as (f32),
+        24694 as (f32),
+        -50137 as (f32),
+        72835 as (f32),
+        -2 as (f32),
+        13 as (f32),
+        -58 as (f32),
+        161 as (f32),
+        224 as (f32),
+        72 as (f32),
+        -991 as (f32),
+        2001 as (f32),
+        1414 as (f32),
+        2330 as (f32),
+        -7910 as (f32),
+        9592 as (f32),
+        70 as (f32),
+        22929 as (f32),
+        -51853 as (f32),
+        72169 as (f32),
+        -2 as (f32),
+        11 as (f32),
+        -63 as (f32),
+        154 as (f32),
+        221 as (f32),
+        36 as (f32),
+        -1064 as (f32),
+        1962 as (f32),
+        1280 as (f32),
+        2006 as (f32),
+        -8209 as (f32),
+        9750 as (f32),
+        -998 as (f32),
+        21189 as (f32),
+        -53534 as (f32),
+        71420 as (f32),
+        -2 as (f32),
+        10 as (f32),
+        -68 as (f32),
+        147 as (f32),
+        215 as (f32),
+        2 as (f32),
+        -1137 as (f32),
+        1919 as (f32),
+        1131 as (f32),
+        1692 as (f32),
+        -8491 as (f32),
+        9863 as (f32),
+        -2122 as (f32),
+        19478 as (f32),
+        -55178 as (f32),
+        70590 as (f32),
+        -3 as (f32),
+        9 as (f32),
+        -73 as (f32),
+        139 as (f32),
+        208 as (f32),
+        -29 as (f32),
+        -1210 as (f32),
+        1870 as (f32),
+        970 as (f32),
+        1388 as (f32),
+        -8755 as (f32),
+        9935 as (f32),
+        -3300 as (f32),
+        17799 as (f32),
+        -56778 as (f32),
+        69679 as (f32),
+        -3 as (f32),
+        8 as (f32),
+        -79 as (f32),
+        132 as (f32),
+        200 as (f32),
+        -57 as (f32),
+        -1283 as (f32),
+        1817 as (f32),
+        794 as (f32),
+        1095 as (f32),
+        -8998 as (f32),
+        9966 as (f32),
+        -4533 as (f32),
+        16155 as (f32),
+        -58333 as (f32),
+        68692 as (f32),
+        -4 as (f32),
+        7 as (f32),
+        -85 as (f32),
+        125 as (f32),
+        189 as (f32),
+        -83 as (f32),
+        -1356 as (f32),
+        1759 as (f32),
+        605 as (f32),
+        814 as (f32),
+        -9219 as (f32),
+        9959 as (f32),
+        -5818 as (f32),
+        14548 as (f32),
+        -59838 as (f32),
+        67629 as (f32),
+        -4 as (f32),
+        7 as (f32),
+        -91 as (f32),
+        117 as (f32),
+        177 as (f32),
+        -106 as (f32),
+        -1428 as (f32),
+        1698 as (f32),
+        402 as (f32),
+        545 as (f32),
+        -9416 as (f32),
+        9916 as (f32),
+        -7154 as (f32),
+        12980 as (f32),
+        -61289 as (f32),
+        66494 as (f32),
+        -5 as (f32),
+        6 as (f32),
+        -97 as (f32),
+        111 as (f32),
+        163 as (f32),
+        -127 as (f32),
+        -1498 as (f32),
+        1634 as (f32),
+        185 as (f32),
+        288 as (f32),
+        -9585 as (f32),
+        9838 as (f32),
+        -8540 as (f32),
+        11455 as (f32),
+        -62684 as (f32),
+        65290 as (f32),
     ];
-    let zlin: *mut f32 = lins.offset((15i32 * 64i32) as (isize));
+    let zlin: *mut f32 = lins.offset((15 * 64) as (isize));
     let mut w: *const f32 = G_WIN.as_ptr();
-    *zlin.offset((4i32 * 15i32) as (isize)) = *xl.offset((18i32 * 16i32) as (isize));
-    *zlin.offset((4i32 * 15i32 + 1i32) as (isize)) = *xr.offset((18i32 * 16i32) as (isize));
-    *zlin.offset((4i32 * 15i32 + 2i32) as (isize)) = *xl.offset(0isize);
-    *zlin.offset((4i32 * 15i32 + 3i32) as (isize)) = *xr.offset(0isize);
-    *zlin.offset((4i32 * 31i32) as (isize)) = *xl.offset((1i32 + 18i32 * 16i32) as (isize));
-    *zlin.offset((4i32 * 31i32 + 1i32) as (isize)) = *xr.offset((1i32 + 18i32 * 16i32) as (isize));
-    *zlin.offset((4i32 * 31i32 + 2i32) as (isize)) = *xl.offset(1isize);
-    *zlin.offset((4i32 * 31i32 + 3i32) as (isize)) = *xr.offset(1isize);
+    *zlin.offset((4 * 15) as (isize)) = *xl.offset((18 * 16) as (isize));
+    *zlin.offset((4 * 15 + 1) as (isize)) = *xr.offset((18 * 16) as (isize));
+    *zlin.offset((4 * 15 + 2) as (isize)) = *xl.offset(0isize);
+    *zlin.offset((4 * 15 + 3) as (isize)) = *xr.offset(0isize);
+    *zlin.offset((4 * 31) as (isize)) = *xl.offset((1 + 18 * 16) as (isize));
+    *zlin.offset((4 * 31 + 1) as (isize)) = *xr.offset((1 + 18 * 16) as (isize));
+    *zlin.offset((4 * 31 + 2) as (isize)) = *xl.offset(1isize);
+    *zlin.offset((4 * 31 + 3) as (isize)) = *xr.offset(1isize);
     mp3d_synth_pair(
         dstr,
         nch,
-        lins.offset((4i32 * 15i32) as (isize)).offset(1isize) as (*const f32),
+        lins.offset((4 * 15) as (isize)).offset(1isize) as (*const f32),
     );
     mp3d_synth_pair(
-        dstr.offset((32i32 * nch) as (isize)),
+        dstr.offset((32 * nch) as (isize)),
         nch,
-        lins.offset((4i32 * 15i32) as (isize))
+        lins.offset((4 * 15) as (isize))
             .offset(64isize)
             .offset(1isize) as (*const f32),
     );
+    mp3d_synth_pair(dstl, nch, lins.offset((4 * 15) as (isize)) as (*const f32));
     mp3d_synth_pair(
-        dstl,
+        dstl.offset((32 * nch) as (isize)),
         nch,
-        lins.offset((4i32 * 15i32) as (isize)) as (*const f32),
+        lins.offset((4 * 15) as (isize)).offset(64isize) as (*const f32),
     );
-    mp3d_synth_pair(
-        dstl.offset((32i32 * nch) as (isize)),
-        nch,
-        lins.offset((4i32 * 15i32) as (isize)).offset(64isize) as (*const f32),
-    );
-    i = 14i32;
+    i = 14;
     'loop1: loop {
-        if !(i >= 0i32) {
+        if !(i >= 0) {
             break;
         }
         let mut a: [f32; 4] = [0.0; 4];
         let mut b: [f32; 4] = [0.0; 4];
-        *zlin.offset((4i32 * i) as (isize)) = *xl.offset((18i32 * (31i32 - i)) as (isize));
-        *zlin.offset((4i32 * i + 1i32) as (isize)) = *xr.offset((18i32 * (31i32 - i)) as (isize));
-        *zlin.offset((4i32 * i + 2i32) as (isize)) =
-            *xl.offset((1i32 + 18i32 * (31i32 - i)) as (isize));
-        *zlin.offset((4i32 * i + 3i32) as (isize)) =
-            *xr.offset((1i32 + 18i32 * (31i32 - i)) as (isize));
-        *zlin.offset((4i32 * (i + 16i32)) as (isize)) =
-            *xl.offset((1i32 + 18i32 * (1i32 + i)) as (isize));
-        *zlin.offset((4i32 * (i + 16i32) + 1i32) as (isize)) =
-            *xr.offset((1i32 + 18i32 * (1i32 + i)) as (isize));
-        *zlin.offset((4i32 * (i - 16i32) + 2i32) as (isize)) =
-            *xl.offset((18i32 * (1i32 + i)) as (isize));
-        *zlin.offset((4i32 * (i - 16i32) + 3i32) as (isize)) =
-            *xr.offset((18i32 * (1i32 + i)) as (isize));
+        *zlin.offset((4 * i) as (isize)) = *xl.offset((18 * (31 - i)) as (isize));
+        *zlin.offset((4 * i + 1) as (isize)) = *xr.offset((18 * (31 - i)) as (isize));
+        *zlin.offset((4 * i + 2) as (isize)) = *xl.offset((1 + 18 * (31 - i)) as (isize));
+        *zlin.offset((4 * i + 3) as (isize)) = *xr.offset((1 + 18 * (31 - i)) as (isize));
+        *zlin.offset((4 * (i + 16)) as (isize)) = *xl.offset((1 + 18 * (1 + i)) as (isize));
+        *zlin.offset((4 * (i + 16) + 1) as (isize)) = *xr.offset((1 + 18 * (1 + i)) as (isize));
+        *zlin.offset((4 * (i - 16) + 2) as (isize)) = *xl.offset((18 * (1 + i)) as (isize));
+        *zlin.offset((4 * (i - 16) + 3) as (isize)) = *xr.offset((18 * (1 + i)) as (isize));
         let mut j: i32;
         let w0: f32 = *{
             let _old = w;
@@ -1547,12 +1508,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 0i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 0i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 0 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 0) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop4: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             b[j as (usize)] = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1570,12 +1530,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 1i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 1i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 1 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 1) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop6: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1597,12 +1556,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 2i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 2i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 2 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 2) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop8: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1624,12 +1582,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 3i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 3i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 3 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 3) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop10: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1651,12 +1608,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 4i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 4i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 4 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 4) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop12: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1678,12 +1634,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 5i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 5i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 5 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 5) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop14: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1705,12 +1660,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 6i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 6i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 6 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 6) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop16: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1732,12 +1686,11 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             w = w.offset(1isize);
             _old
         };
-        let vz: *mut f32 = &mut *zlin.offset((4i32 * i - 7i32 * 64i32) as (isize)) as (*mut f32);
-        let vy: *mut f32 =
-            &mut *zlin.offset((4i32 * i - (15i32 - 7i32) * 64i32) as (isize)) as (*mut f32);
-        j = 0i32;
+        let vz: *mut f32 = &mut *zlin.offset((4 * i - 7 * 64) as (isize)) as (*mut f32);
+        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 7) * 64) as (isize)) as (*mut f32);
+        j = 0;
         'loop18: loop {
-            if !(j < 4i32) {
+            if !(j < 4) {
                 break;
             }
             let _rhs = *vz.offset(j as (isize)) * w1 + *vy.offset(j as (isize)) * w0;
@@ -1748,14 +1701,14 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
             *_lhs = *_lhs + _rhs;
             j = j + 1;
         }
-        *dstr.offset(((15i32 - i) * nch) as (isize)) = mp3d_scale_pcm(a[1usize]);
-        *dstr.offset(((17i32 + i) * nch) as (isize)) = mp3d_scale_pcm(b[1usize]);
-        *dstl.offset(((15i32 - i) * nch) as (isize)) = mp3d_scale_pcm(a[0usize]);
-        *dstl.offset(((17i32 + i) * nch) as (isize)) = mp3d_scale_pcm(b[0usize]);
-        *dstr.offset(((47i32 - i) * nch) as (isize)) = mp3d_scale_pcm(a[3usize]);
-        *dstr.offset(((49i32 + i) * nch) as (isize)) = mp3d_scale_pcm(b[3usize]);
-        *dstl.offset(((47i32 - i) * nch) as (isize)) = mp3d_scale_pcm(a[2usize]);
-        *dstl.offset(((49i32 + i) * nch) as (isize)) = mp3d_scale_pcm(b[2usize]);
+        *dstr.offset(((15 - i) * nch) as (isize)) = mp3d_scale_pcm(a[1]);
+        *dstr.offset(((17 + i) * nch) as (isize)) = mp3d_scale_pcm(b[1]);
+        *dstl.offset(((15 - i) * nch) as (isize)) = mp3d_scale_pcm(a[0]);
+        *dstl.offset(((17 + i) * nch) as (isize)) = mp3d_scale_pcm(b[0]);
+        *dstr.offset(((47 - i) * nch) as (isize)) = mp3d_scale_pcm(a[3]);
+        *dstr.offset(((49 + i) * nch) as (isize)) = mp3d_scale_pcm(b[3]);
+        *dstl.offset(((47 - i) * nch) as (isize)) = mp3d_scale_pcm(a[2]);
+        *dstl.offset(((49 + i) * nch) as (isize)) = mp3d_scale_pcm(b[2]);
         i = i - 1;
     }
 }
@@ -1769,50 +1722,50 @@ unsafe fn mp3d_synth_granule(
     lins: *mut f32,
 ) {
     let mut i: i32;
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < nch) {
             break;
         }
-        mp3d_DCT_II(grbuf.offset((576i32 * i) as (isize)), nbands);
+        mp3d_DCT_II(grbuf.offset((576 * i) as (isize)), nbands);
         i = i + 1;
     }
     memcpy(
         lins as (*mut ::std::os::raw::c_void),
         qmf_state as (*const ::std::os::raw::c_void),
         ::std::mem::size_of::<f32>()
-            .wrapping_mul(15usize)
-            .wrapping_mul(64usize),
+            .wrapping_mul(15)
+            .wrapping_mul(64),
     );
-    i = 0i32;
+    i = 0;
     'loop3: loop {
         if !(i < nbands) {
             break;
         }
         mp3d_synth(
             grbuf.offset(i as (isize)),
-            pcm.offset((32i32 * nch * i) as (isize)),
+            pcm.offset((32 * nch * i) as (isize)),
             nch,
-            lins.offset((i * 64i32) as (isize)),
+            lins.offset((i * 64) as (isize)),
         );
-        i = i + 2i32;
+        i = i + 2;
     }
-    if nch == 1i32 {
-        i = 0i32;
+    if nch == 1 {
+        i = 0;
         'loop7: loop {
-            if !(i < 15i32 * 64i32) {
+            if !(i < 15 * 64) {
                 break;
             }
-            *qmf_state.offset(i as (isize)) = *lins.offset((nbands * 64i32 + i) as (isize));
-            i = i + 2i32;
+            *qmf_state.offset(i as (isize)) = *lins.offset((nbands * 64 + i) as (isize));
+            i = i + 2;
         }
     } else {
         memcpy(
             qmf_state as (*mut ::std::os::raw::c_void),
-            lins.offset((nbands * 64i32) as (isize)) as (*const ::std::os::raw::c_void),
+            lins.offset((nbands * 64) as (isize)) as (*const ::std::os::raw::c_void),
             ::std::mem::size_of::<f32>()
-                .wrapping_mul(15usize)
-                .wrapping_mul(64usize),
+                .wrapping_mul(15)
+                .wrapping_mul(64),
         );
     }
 }
@@ -1822,78 +1775,62 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: *const u8) 
     let current_block;
     static G_SCF_LONG: [[u8; 23]; 8] = [
         [
-            6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 14u8, 16u8, 20u8, 24u8, 28u8, 32u8,
-            38u8, 46u8, 52u8, 60u8, 68u8, 58u8, 54u8, 0u8,
+            6, 6, 6, 6, 6, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 38, 46, 52, 60, 68, 58, 54, 0,
         ],
         [
-            12u8, 12u8, 12u8, 12u8, 12u8, 12u8, 16u8, 20u8, 24u8, 28u8, 32u8, 40u8, 48u8, 56u8,
-            64u8, 76u8, 90u8, 2u8, 2u8, 2u8, 2u8, 2u8, 0u8,
+            12, 12, 12, 12, 12, 12, 16, 20, 24, 28, 32, 40, 48, 56, 64, 76, 90, 2, 2, 2, 2, 2, 0,
         ],
         [
-            6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 14u8, 16u8, 20u8, 24u8, 28u8, 32u8,
-            38u8, 46u8, 52u8, 60u8, 68u8, 58u8, 54u8, 0u8,
+            6, 6, 6, 6, 6, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 38, 46, 52, 60, 68, 58, 54, 0,
         ],
         [
-            6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 14u8, 16u8, 18u8, 22u8, 26u8, 32u8,
-            38u8, 46u8, 54u8, 62u8, 70u8, 76u8, 36u8, 0u8,
+            6, 6, 6, 6, 6, 6, 8, 10, 12, 14, 16, 18, 22, 26, 32, 38, 46, 54, 62, 70, 76, 36, 0,
         ],
         [
-            6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 14u8, 16u8, 20u8, 24u8, 28u8, 32u8,
-            38u8, 46u8, 52u8, 60u8, 68u8, 58u8, 54u8, 0u8,
+            6, 6, 6, 6, 6, 6, 8, 10, 12, 14, 16, 20, 24, 28, 32, 38, 46, 52, 60, 68, 58, 54, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 8u8, 8u8, 10u8, 12u8, 16u8, 20u8, 24u8, 28u8,
-            34u8, 42u8, 50u8, 54u8, 76u8, 158u8, 0u8,
+            4, 4, 4, 4, 4, 4, 6, 6, 8, 8, 10, 12, 16, 20, 24, 28, 34, 42, 50, 54, 76, 158, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 10u8, 12u8, 16u8, 18u8, 22u8, 28u8,
-            34u8, 40u8, 46u8, 54u8, 54u8, 192u8, 0u8,
+            4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 10, 12, 16, 18, 22, 28, 34, 40, 46, 54, 54, 192, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 8u8, 10u8, 12u8, 16u8, 20u8, 24u8, 30u8, 38u8,
-            46u8, 56u8, 68u8, 84u8, 102u8, 26u8, 0u8,
+            4, 4, 4, 4, 4, 4, 6, 6, 8, 10, 12, 16, 20, 24, 30, 38, 46, 56, 68, 84, 102, 26, 0,
         ],
     ];
     static G_SCF_SHORT: [[u8; 40]; 8] = [
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8, 8u8, 10u8, 10u8,
-            10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 24u8, 24u8, 24u8, 30u8,
-            30u8, 30u8, 40u8, 40u8, 40u8, 18u8, 18u8, 18u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10, 12, 12, 12, 14, 14, 14, 18,
+            18, 18, 24, 24, 24, 30, 30, 30, 40, 40, 40, 18, 18, 18, 0,
         ],
         [
-            8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 12u8, 12u8, 12u8, 16u8, 16u8, 16u8, 20u8,
-            20u8, 20u8, 24u8, 24u8, 24u8, 28u8, 28u8, 28u8, 36u8, 36u8, 36u8, 2u8, 2u8, 2u8, 2u8,
-            2u8, 2u8, 2u8, 2u8, 2u8, 26u8, 26u8, 26u8, 0u8,
+            8, 8, 8, 8, 8, 8, 8, 8, 8, 12, 12, 12, 16, 16, 16, 20, 20, 20, 24, 24, 24, 28, 28, 28,
+            36, 36, 36, 2, 2, 2, 2, 2, 2, 2, 2, 2, 26, 26, 26, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 6u8, 6u8, 6u8, 8u8, 8u8,
-            8u8, 10u8, 10u8, 10u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 26u8, 26u8, 26u8, 32u8,
-            32u8, 32u8, 42u8, 42u8, 42u8, 18u8, 18u8, 18u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 8, 8, 8, 10, 10, 10, 14, 14, 14, 18, 18,
+            18, 26, 26, 26, 32, 32, 32, 42, 42, 42, 18, 18, 18, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8, 8u8, 10u8, 10u8,
-            10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 24u8, 24u8, 24u8, 32u8,
-            32u8, 32u8, 44u8, 44u8, 44u8, 12u8, 12u8, 12u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10, 12, 12, 12, 14, 14, 14, 18,
+            18, 18, 24, 24, 24, 32, 32, 32, 44, 44, 44, 12, 12, 12, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8, 8u8, 10u8, 10u8,
-            10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 24u8, 24u8, 24u8, 30u8,
-            30u8, 30u8, 40u8, 40u8, 40u8, 18u8, 18u8, 18u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10, 12, 12, 12, 14, 14, 14, 18,
+            18, 18, 24, 24, 24, 30, 30, 30, 40, 40, 40, 18, 18, 18, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8,
-            8u8, 10u8, 10u8, 10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 18u8, 18u8, 18u8, 22u8,
-            22u8, 22u8, 30u8, 30u8, 30u8, 56u8, 56u8, 56u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 8, 8, 10, 10, 10, 12, 12, 12, 14, 14,
+            14, 18, 18, 18, 22, 22, 22, 30, 30, 30, 56, 56, 56, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 6u8, 6u8,
-            6u8, 10u8, 10u8, 10u8, 12u8, 12u8, 12u8, 14u8, 14u8, 14u8, 16u8, 16u8, 16u8, 20u8,
-            20u8, 20u8, 26u8, 26u8, 26u8, 66u8, 66u8, 66u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 6, 6, 6, 10, 10, 10, 12, 12, 12, 14, 14,
+            14, 16, 16, 16, 20, 20, 20, 26, 26, 26, 66, 66, 66, 0,
         ],
         [
-            4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 4u8, 6u8, 6u8, 6u8, 8u8, 8u8,
-            8u8, 12u8, 12u8, 12u8, 16u8, 16u8, 16u8, 20u8, 20u8, 20u8, 26u8, 26u8, 26u8, 34u8,
-            34u8, 34u8, 42u8, 42u8, 42u8, 12u8, 12u8, 12u8, 0u8,
+            4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 6, 6, 6, 8, 8, 8, 12, 12, 12, 16, 16, 16, 20, 20,
+            20, 26, 26, 26, 34, 34, 34, 42, 42, 42, 12, 12, 12, 0,
         ],
     ];
     // TODO: These... lengths are wrong???  I jus padded them out with 0's
@@ -1932,99 +1869,98 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: *const u8) 
         ],
     ];
     let mut tables: u32;
-    let mut scfsi: u32 = 0u32;
+    let mut scfsi: u32 = 0;
     let main_data_begin: i32;
-    let mut part_23_sum: i32 = 0i32;
-    let mut sr_idx: i32 = (*hdr.offset(2isize) as (i32) >> 2i32 & 3i32)
-        + ((*hdr.offset(1isize) as (i32) >> 3i32 & 1i32)
-            + (*hdr.offset(1isize) as (i32) >> 4i32 & 1i32)) * 3i32;
-    sr_idx = sr_idx - (sr_idx != 0i32) as (i32);
-    let mut gr_count: i32 = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
-        1i32
+    let mut part_23_sum: i32 = 0;
+    let mut sr_idx: i32 = (*hdr.offset(2isize) as (i32) >> 2 & 3)
+        + ((*hdr.offset(1isize) as (i32) >> 3 & 1) + (*hdr.offset(1isize) as (i32) >> 4 & 1)) * 3;
+    sr_idx = sr_idx - (sr_idx != 0) as (i32);
+    let mut gr_count: i32 = if *hdr.offset(3isize) as (i32) & 0xc0 == 0xc0 {
+        1
     } else {
-        2i32
+        2
     };
-    if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-        gr_count = gr_count * 2i32;
-        main_data_begin = get_bits(bs, 9i32) as (i32);
-        scfsi = get_bits(bs, 7i32 + gr_count);
+    if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+        gr_count = gr_count * 2;
+        main_data_begin = get_bits(bs, 9) as (i32);
+        scfsi = get_bits(bs, 7 + gr_count);
     } else {
-        main_data_begin = (get_bits(bs, 8i32 + gr_count) >> gr_count) as (i32);
+        main_data_begin = (get_bits(bs, 8 + gr_count) >> gr_count) as (i32);
     }
     'loop3: loop {
-        if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
-            scfsi = scfsi << 4i32;
+        if *hdr.offset(3isize) as (i32) & 0xc0 == 0xc0 {
+            scfsi = scfsi << 4;
         }
-        (*gr).part_23_length = get_bits(bs, 12i32) as (u16);
+        (*gr).part_23_length = get_bits(bs, 12) as (u16);
         part_23_sum = part_23_sum + (*gr).part_23_length as (i32);
-        (*gr).big_values = get_bits(bs, 9i32) as (u16);
-        if (*gr).big_values as (i32) > 288i32 {
+        (*gr).big_values = get_bits(bs, 9) as (u16);
+        if (*gr).big_values as (i32) > 288 {
             current_block = 20;
             break;
         }
-        (*gr).global_gain = get_bits(bs, 8i32) as (u8);
+        (*gr).global_gain = get_bits(bs, 8) as (u8);
         (*gr).scalefac_compress = get_bits(
             bs,
-            if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-                4i32
+            if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+                4
             } else {
-                9i32
+                9
             },
         ) as (u16);
         (*gr).sfbtab = G_SCF_LONG[sr_idx as (usize)].as_ptr();
-        (*gr).n_long_sfb = 22u8;
-        (*gr).n_short_sfb = 0u8;
-        if get_bits(bs, 1i32) != 0 {
-            (*gr).block_type = get_bits(bs, 2i32) as (u8);
+        (*gr).n_long_sfb = 22;
+        (*gr).n_short_sfb = 0;
+        if get_bits(bs, 1) != 0 {
+            (*gr).block_type = get_bits(bs, 2) as (u8);
             if (*gr).block_type == 0 {
                 current_block = 19;
                 break;
             }
-            (*gr).mixed_block_flag = get_bits(bs, 1i32) as (u8);
-            (*gr).region_count[0usize] = 7u8;
-            (*gr).region_count[1usize] = 255u8;
-            if (*gr).block_type as (i32) == 2i32 {
+            (*gr).mixed_block_flag = get_bits(bs, 1) as (u8);
+            (*gr).region_count[0] = 7;
+            (*gr).region_count[1] = 255;
+            if (*gr).block_type as (i32) == 2 {
                 scfsi = scfsi & 0xf0fu32;
                 if (*gr).mixed_block_flag == 0 {
-                    (*gr).region_count[0usize] = 8u8;
+                    (*gr).region_count[0] = 8;
                     (*gr).sfbtab = G_SCF_SHORT[sr_idx as (usize)].as_ptr();
-                    (*gr).n_long_sfb = 0u8;
-                    (*gr).n_short_sfb = 39u8;
+                    (*gr).n_long_sfb = 0;
+                    (*gr).n_short_sfb = 39;
                 } else {
                     (*gr).sfbtab = G_SCF_MIXED[sr_idx as (usize)].as_ptr();
-                    (*gr).n_long_sfb = if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-                        8i32
+                    (*gr).n_long_sfb = if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+                        8
                     } else {
-                        6i32
+                        6
                     } as (u8);
-                    (*gr).n_short_sfb = 30u8;
+                    (*gr).n_short_sfb = 30;
                 }
             }
-            tables = get_bits(bs, 10i32);
-            tables = tables << 5i32;
-            (*gr).subblock_gain[0usize] = get_bits(bs, 3i32) as (u8);
-            (*gr).subblock_gain[1usize] = get_bits(bs, 3i32) as (u8);
-            (*gr).subblock_gain[2usize] = get_bits(bs, 3i32) as (u8);
+            tables = get_bits(bs, 10);
+            tables = tables << 5;
+            (*gr).subblock_gain[0] = get_bits(bs, 3) as (u8);
+            (*gr).subblock_gain[1] = get_bits(bs, 3) as (u8);
+            (*gr).subblock_gain[2] = get_bits(bs, 3) as (u8);
         } else {
-            (*gr).block_type = 0u8;
-            (*gr).mixed_block_flag = 0u8;
-            tables = get_bits(bs, 15i32);
-            (*gr).region_count[0usize] = get_bits(bs, 4i32) as (u8);
-            (*gr).region_count[1usize] = get_bits(bs, 3i32) as (u8);
-            (*gr).region_count[2usize] = 255u8;
+            (*gr).block_type = 0;
+            (*gr).mixed_block_flag = 0;
+            tables = get_bits(bs, 15);
+            (*gr).region_count[0] = get_bits(bs, 4) as (u8);
+            (*gr).region_count[1] = get_bits(bs, 3) as (u8);
+            (*gr).region_count[2] = 255;
         }
-        (*gr).table_select[0usize] = (tables >> 10i32) as (u8);
-        (*gr).table_select[1usize] = (tables >> 5i32 & 31u32) as (u8);
-        (*gr).table_select[2usize] = (tables & 31u32) as (u8);
-        (*gr).preflag = if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-            get_bits(bs, 1i32)
+        (*gr).table_select[0] = (tables >> 10) as (u8);
+        (*gr).table_select[1] = (tables >> 5 & 31) as (u8);
+        (*gr).table_select[2] = (tables & 31) as (u8);
+        (*gr).preflag = if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+            get_bits(bs, 1)
         } else {
-            ((*gr).scalefac_compress as (i32) >= 500i32) as (u32)
+            ((*gr).scalefac_compress as (i32) >= 500) as (u32)
         } as (u8);
-        (*gr).scalefac_scale = get_bits(bs, 1i32) as (u8);
-        (*gr).count1_table = get_bits(bs, 1i32) as (u8);
-        (*gr).scfsi = (scfsi >> 12i32 & 15u32) as (u8);
-        scfsi = scfsi << 4i32;
+        (*gr).scalefac_scale = get_bits(bs, 1) as (u8);
+        (*gr).count1_table = get_bits(bs, 1) as (u8);
+        (*gr).scfsi = (scfsi >> 12 & 15) as (u8);
+        scfsi = scfsi << 4;
         gr = gr.offset(1isize);
         if {
             gr_count = gr_count - 1;
@@ -2036,15 +1972,15 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: *const u8) 
         }
     }
     if current_block == 16 {
-        (if part_23_sum + (*bs).pos > (*bs).limit + main_data_begin * 8i32 {
-            -1i32
+        (if part_23_sum + (*bs).pos > (*bs).limit + main_data_begin * 8 {
+            -1
         } else {
             main_data_begin
         })
     } else if current_block == 19 {
-        -1i32
+        -1
     } else {
-        -1i32
+        -1
     }
 }
 
@@ -2054,7 +1990,7 @@ unsafe fn l3_restore_reservoir(
     s: *mut Mp3DecScratch,
     main_data_begin: i32,
 ) -> i32 {
-    let frame_bytes: i32 = ((*bs).limit - (*bs).pos) / 8i32;
+    let frame_bytes: i32 = ((*bs).limit - (*bs).pos) / 8;
     let bytes_have: i32 = if (*h).reserv > main_data_begin {
         main_data_begin
     } else {
@@ -2064,10 +2000,10 @@ unsafe fn l3_restore_reservoir(
         (*s).maindata.as_mut_ptr() as (*mut ::std::os::raw::c_void),
         (*h).reserv_buf
             .as_mut_ptr()
-            .offset(if 0i32 < (*h).reserv - main_data_begin {
+            .offset(if 0 < (*h).reserv - main_data_begin {
                 (*h).reserv - main_data_begin
             } else {
-                0i32
+                0
             } as (isize)) as (*const ::std::os::raw::c_void),
         if (*h).reserv > main_data_begin {
             main_data_begin
@@ -2077,7 +2013,7 @@ unsafe fn l3_restore_reservoir(
     );
     memcpy(
         (*s).maindata.as_mut_ptr().offset(bytes_have as (isize)) as (*mut ::std::os::raw::c_void),
-        (*bs).buf.offset(((*bs).pos / 8i32) as (isize)) as (*const ::std::os::raw::c_void),
+        (*bs).buf.offset(((*bs).pos / 8) as (isize)) as (*const ::std::os::raw::c_void),
         frame_bytes as (usize),
     );
     (*s).bs = Bs::new(
@@ -2097,13 +2033,13 @@ unsafe fn l3_read_scalefactors(
 ) {
     let mut i: i32;
     let mut k: i32;
-    i = 0i32;
+    i = 0;
     'loop1: loop {
-        if !(i < 4i32 && (*scf_count.offset(i as (isize)) != 0)) {
+        if !(i < 4 && (*scf_count.offset(i as (isize)) != 0)) {
             break;
         }
         let cnt: i32 = *scf_count.offset(i as (isize)) as (i32);
-        if scfsi & 8i32 != 0 {
+        if scfsi & 8 != 0 {
             memcpy(
                 scf as (*mut ::std::os::raw::c_void),
                 ist_pos as (*const ::std::os::raw::c_void),
@@ -2112,27 +2048,23 @@ unsafe fn l3_read_scalefactors(
         } else {
             let bits: i32 = *scf_size.offset(i as (isize)) as (i32);
             if bits == 0 {
-                // memset(scf as (*mut ::std::os::raw::c_void), 0i32, cnt as (usize));
+                // memset(scf as (*mut ::std::os::raw::c_void), 0, cnt as (usize));
                 // memset(
                 //     ist_pos as (*mut ::std::os::raw::c_void),
-                //     0i32,
+                //     0,
                 //     cnt as (usize),
                 // );
                 ::std::ptr::write_bytes(scf, 0, cnt as usize);
                 ::std::ptr::write_bytes(ist_pos, 0, cnt as usize);
             } else {
-                let max_scf: i32 = if scfsi < 0i32 {
-                    (1i32 << bits) - 1i32
-                } else {
-                    -1i32
-                };
-                k = 0i32;
+                let max_scf: i32 = if scfsi < 0 { (1 << bits) - 1 } else { -1 };
+                k = 0;
                 'loop6: loop {
                     if !(k < cnt) {
                         break;
                     }
                     let s: i32 = get_bits(bitbuf, bits) as (i32);
-                    *ist_pos.offset(k as (isize)) = if s == max_scf { -1i32 } else { s } as (u8);
+                    *ist_pos.offset(k as (isize)) = if s == max_scf { -1 } else { s } as (u8);
                     *scf.offset(k as (isize)) = s as (u8);
                     k = k + 1;
                 }
@@ -2141,11 +2073,11 @@ unsafe fn l3_read_scalefactors(
         ist_pos = ist_pos.offset(cnt as (isize));
         scf = scf.offset(cnt as (isize));
         i = i + 1;
-        scfsi = scfsi * 2i32;
+        scfsi = scfsi * 2;
     }
     *scf.offset(0isize) = {
         let _rhs = {
-            let _rhs = 0i32;
+            let _rhs = 0;
             let _lhs = &mut *scf.offset(2isize);
             *_lhs = _rhs as (u8);
             *_lhs
@@ -2158,23 +2090,19 @@ unsafe fn l3_read_scalefactors(
 
 fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
     static G_EXPFRAC: [f32; 4] = [
-        9.31322575e-10f32,
-        7.83145814e-10f32,
-        6.58544508e-10f32,
-        5.53767716e-10f32,
+        9.31322575e-10,
+        7.83145814e-10,
+        6.58544508e-10,
+        5.53767716e-10,
     ];
     let mut e: i32;
     'loop1: loop {
-        e = if 30i32 * 4i32 > exp_q2 {
-            exp_q2
-        } else {
-            30i32 * 4i32
-        };
-        y = y * (G_EXPFRAC[(e & 3i32) as (usize)] * (1i32 << 30i32 >> (e >> 2i32)) as (f32));
+        e = if 30 * 4 > exp_q2 { exp_q2 } else { 30 * 4 };
+        y = y * (G_EXPFRAC[(e & 3) as (usize)] * (1 << 30 >> (e >> 2)) as (f32));
         if !({
             exp_q2 = exp_q2 - e;
             exp_q2
-        } > 0i32)
+        } > 0)
         {
             break;
         }
@@ -2192,16 +2120,15 @@ unsafe fn l3_decode_scalefactors(
 ) {
     static G_SCF_PARTITIONS: [[u8; 28]; 3] = [
         [
-            6u8, 5u8, 5u8, 5u8, 6u8, 5u8, 5u8, 5u8, 6u8, 5u8, 7u8, 3u8, 11u8, 10u8, 0u8, 0u8, 7u8,
-            7u8, 7u8, 0u8, 6u8, 6u8, 6u8, 3u8, 8u8, 8u8, 5u8, 0u8,
+            6, 5, 5, 5, 6, 5, 5, 5, 6, 5, 7, 3, 11, 10, 0, 0, 7, 7, 7, 0, 6, 6, 6, 3, 8, 8, 5, 0,
         ],
         [
-            8u8, 9u8, 6u8, 12u8, 6u8, 9u8, 9u8, 9u8, 6u8, 9u8, 12u8, 6u8, 15u8, 18u8, 0u8, 0u8,
-            6u8, 15u8, 12u8, 0u8, 6u8, 12u8, 9u8, 6u8, 6u8, 18u8, 9u8, 0u8,
+            8, 9, 6, 12, 6, 9, 9, 9, 6, 9, 12, 6, 15, 18, 0, 0, 6, 15, 12, 0, 6, 12, 9, 6, 6, 18,
+            9, 0,
         ],
         [
-            9u8, 9u8, 6u8, 12u8, 9u8, 9u8, 9u8, 9u8, 9u8, 9u8, 12u8, 6u8, 18u8, 18u8, 0u8, 0u8,
-            12u8, 12u8, 12u8, 0u8, 12u8, 9u8, 9u8, 6u8, 15u8, 12u8, 9u8, 0u8,
+            9, 9, 6, 12, 9, 9, 9, 9, 9, 9, 12, 6, 18, 18, 0, 0, 12, 12, 12, 0, 12, 9, 9, 6, 15, 12,
+            9, 0,
         ],
     ];
     let mut scf_partition: *const u8 = G_SCF_PARTITIONS
@@ -2210,46 +2137,43 @@ unsafe fn l3_decode_scalefactors(
     let mut scf_size: [u8; 4] = [0; 4];
     let mut iscf: [u8; 40] = [0; 40];
     let mut i: i32;
-    let scf_shift: i32 = (*gr).scalefac_scale as (i32) + 1i32;
+    let scf_shift: i32 = (*gr).scalefac_scale as (i32) + 1;
     let gain_exp: i32;
     let mut scfsi: i32 = (*gr).scfsi as (i32);
     let gain: f32;
-    if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-        static G_SCFC_DECODE: [u8; 16] = [
-            0u8, 1u8, 2u8, 3u8, 12u8, 5u8, 6u8, 7u8, 9u8, 10u8, 11u8, 13u8, 14u8, 15u8, 18u8, 19u8,
-        ];
+    if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+        static G_SCFC_DECODE: [u8; 16] = [0, 1, 2, 3, 12, 5, 6, 7, 9, 10, 11, 13, 14, 15, 18, 19];
         let part: i32 = G_SCFC_DECODE[(*gr).scalefac_compress as (usize)] as (i32);
-        scf_size[1usize] = {
-            let _rhs = (part >> 2i32) as (u8);
-            let _lhs = &mut scf_size[0usize];
+        scf_size[1] = {
+            let _rhs = (part >> 2) as (u8);
+            let _lhs = &mut scf_size[0];
             *_lhs = _rhs;
             *_lhs
         };
-        scf_size[3usize] = {
-            let _rhs = (part & 3i32) as (u8);
-            let _lhs = &mut scf_size[2usize];
+        scf_size[3] = {
+            let _rhs = (part & 3) as (u8);
+            let _lhs = &mut scf_size[2];
             *_lhs = _rhs;
             *_lhs
         };
     } else {
         static G_MOD: [u8; 24] = [
-            5u8, 5u8, 4u8, 4u8, 5u8, 5u8, 4u8, 1u8, 4u8, 3u8, 1u8, 1u8, 5u8, 6u8, 6u8, 1u8, 4u8,
-            4u8, 4u8, 1u8, 4u8, 3u8, 1u8, 1u8,
+            5, 5, 4, 4, 5, 5, 4, 1, 4, 3, 1, 1, 5, 6, 6, 1, 4, 4, 4, 1, 4, 3, 1, 1,
         ];
         let mut k: i32;
         let mut modprod: i32;
         let mut sfc: i32;
-        let ist: i32 = (*hdr.offset(3isize) as (i32) & 0x10i32 != 0 && (ch != 0)) as (i32);
+        let ist: i32 = (*hdr.offset(3isize) as (i32) & 0x10 != 0 && (ch != 0)) as (i32);
         sfc = (*gr).scalefac_compress as (i32) >> ist;
-        k = ist * 3i32 * 4i32;
+        k = ist * 3 * 4;
         'loop2: loop {
-            if !(sfc >= 0i32) {
+            if !(sfc >= 0) {
                 break;
             }
-            modprod = 1i32;
-            i = 3i32;
+            modprod = 1;
+            i = 3;
             'loop5: loop {
-                if !(i >= 0i32) {
+                if !(i >= 0) {
                     break;
                 }
                 scf_size[i as (usize)] =
@@ -2258,10 +2182,10 @@ unsafe fn l3_decode_scalefactors(
                 i = i - 1;
             }
             sfc = sfc - modprod;
-            k = k + 4i32;
+            k = k + 4;
         }
         scf_partition = scf_partition.offset(k as (isize));
-        scfsi = -16i32;
+        scfsi = -16;
     }
     l3_read_scalefactors(
         iscf.as_mut_ptr(),
@@ -2272,53 +2196,53 @@ unsafe fn l3_decode_scalefactors(
         scfsi,
     );
     if (*gr).n_short_sfb != 0 {
-        let sh: i32 = 3i32 - scf_shift;
-        i = 0i32;
+        let sh: i32 = 3 - scf_shift;
+        i = 0;
         'loop17: loop {
             if !(i < (*gr).n_short_sfb as (i32)) {
                 break;
             }
             {
-                let _rhs = (*gr).subblock_gain[0usize] as (i32) << sh;
-                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 0i32) as (usize)];
+                let _rhs = (*gr).subblock_gain[0] as (i32) << sh;
+                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 0) as (usize)];
                 *_lhs = (*_lhs as (i32) + _rhs) as (u8);
             }
             {
-                let _rhs = (*gr).subblock_gain[1usize] as (i32) << sh;
-                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 1i32) as (usize)];
+                let _rhs = (*gr).subblock_gain[1] as (i32) << sh;
+                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 1) as (usize)];
                 *_lhs = (*_lhs as (i32) + _rhs) as (u8);
             }
             {
-                let _rhs = (*gr).subblock_gain[2usize] as (i32) << sh;
-                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 2i32) as (usize)];
+                let _rhs = (*gr).subblock_gain[2] as (i32) << sh;
+                let _lhs = &mut iscf[((*gr).n_long_sfb as (i32) + i + 2) as (usize)];
                 *_lhs = (*_lhs as (i32) + _rhs) as (u8);
             }
-            i = i + 3i32;
+            i = i + 3;
         }
     } else if (*gr).preflag != 0 {
-        static G_PREAMP: [u8; 10] = [1u8, 1u8, 1u8, 1u8, 2u8, 2u8, 3u8, 3u8, 3u8, 2u8];
-        i = 0i32;
+        static G_PREAMP: [u8; 10] = [1, 1, 1, 1, 2, 2, 3, 3, 3, 2];
+        i = 0;
         'loop13: loop {
-            if !(i < 10i32) {
+            if !(i < 10) {
                 break;
             }
             let _rhs = G_PREAMP[i as (usize)];
-            let _lhs = &mut iscf[(11i32 + i) as (usize)];
+            let _lhs = &mut iscf[(11 + i) as (usize)];
             *_lhs = (*_lhs as (i32) + _rhs as (i32)) as (u8);
             i = i + 1;
         }
     }
-    gain_exp = (*gr).global_gain as (i32) + -1i32 * 4i32 - 210i32
-        - if *hdr.offset(3isize) as (i32) & 0xe0i32 == 0x60i32 {
-            2i32
+    gain_exp = (*gr).global_gain as (i32) + -1 * 4 - 210
+        - if *hdr.offset(3isize) as (i32) & 0xe0 == 0x60 {
+            2
         } else {
-            0i32
+            0
         };
     gain = l3_ldexp_q2(
-        (1i32 << (255i32 + -1i32 * 4i32 - 210i32 + 3i32 & !3i32) / 4i32) as (f32),
-        (255i32 + -1i32 * 4i32 - 210i32 + 3i32 & !3i32) - gain_exp,
+        (1 << (255 + -1 * 4 - 210 + 3 & !3) / 4) as (f32),
+        (255 + -1 * 4 - 210 + 3 & !3) - gain_exp,
     );
-    i = 0i32;
+    i = 0;
     'loop19: loop {
         if !(i < (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32)) {
             break;
@@ -2331,18 +2255,18 @@ unsafe fn l3_decode_scalefactors(
 fn l3_pow_43(mut x: i32) -> f32 {
     let frac: f32;
     let sign: i32;
-    let mut mult: i32 = 256i32;
-    if x < 129i32 {
-        GPOW43[(16i32 + x) as (usize)]
+    let mut mult: i32 = 256;
+    if x < 129 {
+        GPOW43[(16 + x) as (usize)]
     } else {
-        if x < 1024i32 {
-            mult = 16i32;
-            x = x << 3i32;
+        if x < 1024 {
+            mult = 16;
+            x = x << 3;
         }
-        sign = 2i32 * x & 64i32;
-        frac = ((x & 63i32) - sign) as (f32) / ((x & !63i32) + sign) as (f32);
-        GPOW43[(16i32 + (x + sign >> 6i32)) as (usize)]
-            * (1f32 + frac * (4f32 / 3i32 as (f32) + frac * (2f32 / 9i32 as (f32))))
+        sign = 2 * x & 64;
+        frac = ((x & 63) - sign) as (f32) / ((x & !63) + sign) as (f32);
+        GPOW43[(16 + (x + sign >> 6)) as (usize)]
+            * (1.0 + frac * (4.0 / 3.0 as (f32) + frac * (2.0 / 9.0 as (f32))))
             * mult as (f32)
     }
 }
@@ -2355,90 +2279,71 @@ unsafe fn l3_huffman(
     layer3gr_limit: i32,
 ) {
     static TABS: [i16; 512] = [
-        0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16,
-        0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16, 0i16,
-        0i16, 0i16, 785i16, 785i16, 785i16, 785i16, 784i16, 784i16, 784i16, 784i16, 513i16, 513i16,
-        513i16, 513i16, 513i16, 513i16, 513i16, 513i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        -255i16, 1313i16, 1298i16, 1282i16, 785i16, 785i16, 785i16, 785i16, 784i16, 784i16, 784i16,
-        784i16, 769i16, 769i16, 769i16, 769i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 290i16,
-        288i16, -255i16, 1313i16, 1298i16, 1282i16, 769i16, 769i16, 769i16, 769i16, 529i16, 529i16,
-        529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 528i16, 528i16, 528i16, 528i16, 528i16,
-        528i16, 528i16, 528i16, 512i16, 512i16, 512i16, 512i16, 512i16, 512i16, 512i16, 512i16,
-        290i16, 288i16, -253i16, -318i16, -351i16, -367i16, 785i16, 785i16, 785i16, 785i16, 784i16,
-        784i16, 784i16, 784i16, 769i16, 769i16, 769i16, 769i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 819i16, 818i16, 547i16, 547i16, 275i16, 275i16, 275i16, 275i16, 561i16, 560i16,
-        515i16, 546i16, 289i16, 274i16, 288i16, 258i16, -254i16, -287i16, 1329i16, 1299i16,
-        1314i16, 1312i16, 1057i16, 1057i16, 1042i16, 1042i16, 1026i16, 1026i16, 784i16, 784i16,
-        784i16, 784i16, 529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 769i16,
-        769i16, 769i16, 769i16, 768i16, 768i16, 768i16, 768i16, 563i16, 560i16, 306i16, 306i16,
-        291i16, 259i16, -252i16, -413i16, -477i16, -542i16, 1298i16, -575i16, 1041i16, 1041i16,
-        784i16, 784i16, 784i16, 784i16, 769i16, 769i16, 769i16, 769i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, -383i16, -399i16, 1107i16, 1092i16, 1106i16, 1061i16, 849i16, 849i16,
-        789i16, 789i16, 1104i16, 1091i16, 773i16, 773i16, 1076i16, 1075i16, 341i16, 340i16, 325i16,
-        309i16, 834i16, 804i16, 577i16, 577i16, 532i16, 532i16, 516i16, 516i16, 832i16, 818i16,
-        803i16, 816i16, 561i16, 561i16, 531i16, 531i16, 515i16, 546i16, 289i16, 289i16, 288i16,
-        258i16, -252i16, -429i16, -493i16, -559i16, 1057i16, 1057i16, 1042i16, 1042i16, 529i16,
-        529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 529i16, 784i16, 784i16, 784i16, 784i16,
-        769i16, 769i16, 769i16, 769i16, 512i16, 512i16, 512i16, 512i16, 512i16, 512i16, 512i16,
-        512i16, -382i16, 1077i16, -415i16, 1106i16, 1061i16, 1104i16, 849i16, 849i16, 789i16,
-        789i16, 1091i16, 1076i16, 1029i16, 1075i16, 834i16, 834i16, 597i16, 581i16, 340i16, 340i16,
-        339i16, 324i16, 804i16, 833i16, 532i16, 532i16, 832i16, 772i16, 818i16, 803i16, 817i16,
-        787i16, 816i16, 771i16, 290i16, 290i16, 290i16, 290i16, 288i16, 258i16, -253i16, -349i16,
-        -414i16, -447i16, -463i16, 1329i16, 1299i16, -479i16, 1314i16, 1312i16, 1057i16, 1057i16,
-        1042i16, 1042i16, 1026i16, 1026i16, 785i16, 785i16, 785i16, 785i16, 784i16, 784i16, 784i16,
-        784i16, 769i16, 769i16, 769i16, 769i16, 768i16, 768i16, 768i16, 768i16, -319i16, 851i16,
-        821i16, -335i16, 836i16, 850i16, 805i16, 849i16, 341i16, 340i16, 325i16, 336i16, 533i16,
-        533i16, 579i16, 579i16, 564i16, 564i16, 773i16, 832i16, 578i16, 548i16, 563i16, 516i16,
-        321i16, 276i16, 306i16, 291i16, 304i16, 259i16, -251i16, -572i16, -733i16, -830i16,
-        -863i16, -879i16, 1041i16, 1041i16, 784i16, 784i16, 784i16, 784i16, 769i16, 769i16, 769i16,
-        769i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16, 256i16,
-        256i16, 256i16, 256i16, 256i16, 256i16, 256i16, -511i16, -527i16, -543i16, 1396i16,
-        1351i16, 1381i16, 1366i16, 1395i16, 1335i16, 1380i16, -559i16, 1334i16, 1138i16, 1138i16,
-        1063i16, 1063i16, 1350i16, 1392i16, 1031i16, 1031i16, 1062i16, 1062i16, 1364i16, 1363i16,
-        1120i16, 1120i16, 1333i16, 1348i16, 881i16, 881i16, 881i16, 881i16, 375i16, 374i16, 359i16,
-        373i16, 343i16, 358i16, 341i16, 325i16, 791i16, 791i16, 1123i16, 1122i16, -703i16, 1105i16,
-        1045i16, -719i16, 865i16, 865i16, 790i16, 790i16, 774i16, 774i16,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 785, 785, 785, 785, 784, 784, 784, 784, 513, 513, 513, 513, 513, 513, 513, 513, 256,
+        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -255, 1313,
+        1298, 1282, 785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256,
+        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 290, 288, -255, 1313, 1298,
+        1282, 769, 769, 769, 769, 529, 529, 529, 529, 529, 529, 529, 529, 528, 528, 528, 528, 528,
+        528, 528, 528, 512, 512, 512, 512, 512, 512, 512, 512, 290, 288, -253, -318, -351, -367,
+        785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256, 256, 256,
+        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 819, 818, 547, 547, 275, 275, 275, 275,
+        561, 560, 515, 546, 289, 274, 288, 258, -254, -287, 1329, 1299, 1314, 1312, 1057, 1057,
+        1042, 1042, 1026, 1026, 784, 784, 784, 784, 529, 529, 529, 529, 529, 529, 529, 529, 769,
+        769, 769, 769, 768, 768, 768, 768, 563, 560, 306, 306, 291, 259, -252, -413, -477, -542,
+        1298, -575, 1041, 1041, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256, 256,
+        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -383, -399, 1107, 1092, 1106, 1061,
+        849, 849, 789, 789, 1104, 1091, 773, 773, 1076, 1075, 341, 340, 325, 309, 834, 804, 577,
+        577, 532, 532, 516, 516, 832, 818, 803, 816, 561, 561, 531, 531, 515, 546, 289, 289, 288,
+        258, -252, -429, -493, -559, 1057, 1057, 1042, 1042, 529, 529, 529, 529, 529, 529, 529,
+        529, 784, 784, 784, 784, 769, 769, 769, 769, 512, 512, 512, 512, 512, 512, 512, 512, -382,
+        1077, -415, 1106, 1061, 1104, 849, 849, 789, 789, 1091, 1076, 1029, 1075, 834, 834, 597,
+        581, 340, 340, 339, 324, 804, 833, 532, 532, 832, 772, 818, 803, 817, 787, 816, 771, 290,
+        290, 290, 290, 288, 258, -253, -349, -414, -447, -463, 1329, 1299, -479, 1314, 1312, 1057,
+        1057, 1042, 1042, 1026, 1026, 785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769,
+        768, 768, 768, 768, -319, 851, 821, -335, 836, 850, 805, 849, 341, 340, 325, 336, 533, 533,
+        579, 579, 564, 564, 773, 832, 578, 548, 563, 516, 321, 276, 306, 291, 304, 259, -251, -572,
+        -733, -830, -863, -879, 1041, 1041, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256,
+        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -511, -527, -543, 1396,
+        1351, 1381, 1366, 1395, 1335, 1380, -559, 1334, 1138, 1138, 1063, 1063, 1350, 1392, 1031,
+        1031, 1062, 1062, 1364, 1363, 1120, 1120, 1333, 1348, 881, 881, 881, 881, 375, 374, 359,
+        373, 343, 358, 341, 325, 791, 791, 1123, 1122, -703, 1105, 1045, -719, 865, 865, 790, 790,
+        774, 774,
     ];
     static TAB32: [u8; 28] = [
-        130u8, 162u8, 193u8, 209u8, 44u8, 28u8, 76u8, 140u8, 9u8, 9u8, 9u8, 9u8, 9u8, 9u8, 9u8,
-        9u8, 190u8, 254u8, 222u8, 238u8, 126u8, 94u8, 157u8, 157u8, 109u8, 61u8, 173u8, 205u8,
+        130, 162, 193, 209, 44, 28, 76, 140, 9, 9, 9, 9, 9, 9, 9, 9, 190, 254, 222, 238, 126, 94,
+        157, 157, 109, 61, 173, 205,
     ];
     static TAB33: [u8; 16] = [
-        252u8, 236u8, 220u8, 204u8, 188u8, 172u8, 156u8, 140u8, 124u8, 108u8, 92u8, 76u8, 60u8,
-        44u8, 28u8, 12u8,
+        252, 236, 220, 204, 188, 172, 156, 140, 124, 108, 92, 76, 60, 44, 28, 12,
     ];
     static TABINDEX: [i16; 32] = [
-        0i16, 32i16, 64i16, 98i16, 0i16, 132i16, 180i16, 218i16, 292i16, 364i16, 426i16, 538i16,
-        648i16, 746i16, 0i16, 1126i16, 1460i16, 1460i16, 1460i16, 1460i16, 1460i16, 1460i16,
-        1460i16, 1460i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16, 1842i16,
+        0, 32, 64, 98, 0, 132, 180, 218, 292, 364, 426, 538, 648, 746, 0, 1126, 1460, 1460, 1460,
+        1460, 1460, 1460, 1460, 1460, 1842, 1842, 1842, 1842, 1842, 1842, 1842, 1842,
     ];
     static G_LINBITS: [u8; 32] = [
-        0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 1u8, 2u8,
-        3u8, 4u8, 6u8, 8u8, 10u8, 13u8, 4u8, 5u8, 6u8, 7u8, 8u8, 9u8, 11u8, 13u8,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 8, 10, 13, 4, 5, 6, 7, 8, 9,
+        11, 13,
     ];
-    let mut one: f32 = 0.0f32;
-    let mut ireg: i32 = 0i32;
+    let mut one: f32 = 0.0;
+    let mut ireg: i32 = 0;
     let mut big_val_cnt: i32 = (*gr_info).big_values as (i32);
     let mut sfb: *const u8 = (*gr_info).sfbtab;
-    let mut bs_next_ptr: *const u8 = (*bs).buf.offset(((*bs).pos / 8i32) as (isize));
+    let mut bs_next_ptr: *const u8 = (*bs).buf.offset(((*bs).pos / 8) as (isize));
     let mut bs_cache: u32 = (*bs_next_ptr.offset(0isize) as (u32))
-        .wrapping_mul(256u32)
+        .wrapping_mul(256)
         .wrapping_add(*bs_next_ptr.offset(1isize) as (u32))
-        .wrapping_mul(256u32)
+        .wrapping_mul(256)
         .wrapping_add(*bs_next_ptr.offset(2isize) as (u32))
-        .wrapping_mul(256u32)
+        .wrapping_mul(256)
         .wrapping_add(*bs_next_ptr.offset(3isize) as (u32))
-        << ((*bs).pos & 7i32);
+        << ((*bs).pos & 7);
     let mut pairs_to_decode: i32;
     let mut np: i32;
-    let mut bs_sh: i32 = ((*bs).pos & 7i32) - 8i32;
+    let mut bs_sh: i32 = ((*bs).pos & 7) - 8;
     bs_next_ptr = bs_next_ptr.offset(4isize);
     'loop1: loop {
-        if !(big_val_cnt > 0i32) {
+        if !(big_val_cnt > 0) {
             break;
         }
         let tab_num: i32 = (*gr_info).table_select[ireg as (usize)] as (i32);
@@ -2457,7 +2362,7 @@ unsafe fn l3_huffman(
                 let _old = sfb;
                 sfb = sfb.offset(1isize);
                 _old
-            } as (i32) / 2i32;
+            } as (i32) / 2;
             pairs_to_decode = if big_val_cnt > np { np } else { big_val_cnt };
             one = *{
                 let _old = scf;
@@ -2466,33 +2371,33 @@ unsafe fn l3_huffman(
             };
             'loop26: loop {
                 let mut j: i32;
-                let mut w: i32 = 5i32;
-                let mut leaf: i32 = *codebook.offset((bs_cache >> 32i32 - w) as (isize)) as (i32);
+                let mut w: i32 = 5;
+                let mut leaf: i32 = *codebook.offset((bs_cache >> 32 - w) as (isize)) as (i32);
                 'loop27: loop {
-                    if !(leaf < 0i32) {
+                    if !(leaf < 0) {
                         break;
                     }
                     bs_cache = bs_cache << w;
                     bs_sh = bs_sh + w;
-                    w = leaf & 7i32;
-                    leaf = *codebook.offset(
-                        (bs_cache >> 32i32 - w).wrapping_sub((leaf >> 3i32) as (u32)) as (isize),
-                    ) as (i32);
+                    w = leaf & 7;
+                    leaf = *codebook
+                        .offset((bs_cache >> 32 - w).wrapping_sub((leaf >> 3) as (u32)) as (isize))
+                        as (i32);
                 }
-                bs_cache = bs_cache << (leaf >> 8i32);
-                bs_sh = bs_sh + (leaf >> 8i32);
-                j = 0i32;
+                bs_cache = bs_cache << (leaf >> 8);
+                bs_sh = bs_sh + (leaf >> 8);
+                j = 0;
                 'loop29: loop {
-                    if !(j < 2i32) {
+                    if !(j < 2) {
                         break;
                     }
                     let mut lsb: i32 = leaf & 0xfi32;
-                    if lsb == 15i32 && (linbits != 0) {
-                        lsb = (lsb as (u32)).wrapping_add(bs_cache >> 32i32 - linbits) as (i32);
+                    if lsb == 15 && (linbits != 0) {
+                        lsb = (lsb as (u32)).wrapping_add(bs_cache >> 32 - linbits) as (i32);
                         bs_cache = bs_cache << linbits;
                         bs_sh = bs_sh + linbits;
                         'loop37: loop {
-                            if !(bs_sh >= 0i32) {
+                            if !(bs_sh >= 0) {
                                 break;
                             }
                             bs_cache = bs_cache | *{
@@ -2500,26 +2405,24 @@ unsafe fn l3_huffman(
                                 bs_next_ptr = bs_next_ptr.offset(1isize);
                                 _old
                             } as (u32) << bs_sh;
-                            bs_sh = bs_sh - 8i32;
+                            bs_sh = bs_sh - 8;
                         }
-                        *dst = one * l3_pow_43(lsb) * if bs_cache as (i32) < 0i32 {
-                            -1i32
-                        } else {
-                            1i32
-                        } as (f32);
+                        *dst = one
+                            * l3_pow_43(lsb)
+                            * if bs_cache as (i32) < 0 { -1 } else { 1 } as (f32);
                     } else {
-                        *dst = GPOW43[((16i32 + lsb) as (u32))
-                                          .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31i32))
+                        *dst = GPOW43[((16 + lsb) as (u32))
+                                          .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
                                           as (usize)] * one;
                     }
-                    bs_cache = bs_cache << if lsb != 0 { 1i32 } else { 0i32 };
-                    bs_sh = bs_sh + if lsb != 0 { 1i32 } else { 0i32 };
+                    bs_cache = bs_cache << if lsb != 0 { 1 } else { 0 };
+                    bs_sh = bs_sh + if lsb != 0 { 1 } else { 0 };
                     j = j + 1;
                     dst = dst.offset(1isize);
-                    leaf = leaf >> 4i32;
+                    leaf = leaf >> 4;
                 }
                 'loop30: loop {
-                    if !(bs_sh >= 0i32) {
+                    if !(bs_sh >= 0) {
                         break;
                     }
                     bs_cache = bs_cache | *{
@@ -2527,7 +2430,7 @@ unsafe fn l3_huffman(
                         bs_next_ptr = bs_next_ptr.offset(1isize);
                         _old
                     } as (u32) << bs_sh;
-                    bs_sh = bs_sh - 8i32;
+                    bs_sh = bs_sh - 8;
                 }
                 if {
                     pairs_to_decode = pairs_to_decode - 1;
@@ -2540,31 +2443,30 @@ unsafe fn l3_huffman(
             if !({
                 big_val_cnt = big_val_cnt - np;
                 big_val_cnt
-            } > 0i32 && ({
+            } > 0 && ({
                 sfb_cnt = sfb_cnt - 1;
                 sfb_cnt
-            } >= 0i32))
+            } >= 0))
             {
                 break;
             }
         }
     }
-    np = 1i32 - big_val_cnt;
+    np = 1 - big_val_cnt;
     'loop3: loop {
         let codebook_count1: *const u8 = if (*gr_info).count1_table != 0 {
             TAB33.as_ptr()
         } else {
             TAB32.as_ptr()
         };
-        let mut leaf: i32 = *codebook_count1.offset((bs_cache >> 32i32 - 4i32) as (isize)) as (i32);
-        if leaf & 8i32 == 0 {
+        let mut leaf: i32 = *codebook_count1.offset((bs_cache >> 32 - 4) as (isize)) as (i32);
+        if leaf & 8 == 0 {
             leaf = *codebook_count1.offset(
-                ((leaf >> 3i32) as (u32)).wrapping_add(bs_cache << 4i32 >> 32i32 - (leaf & 3i32))
-                    as (isize),
+                ((leaf >> 3) as (u32)).wrapping_add(bs_cache << 4 >> 32 - (leaf & 3)) as (isize),
             ) as (i32);
         }
-        bs_cache = bs_cache << (leaf & 7i32);
-        bs_sh = bs_sh + (leaf & 7i32);
+        bs_cache = bs_cache << (leaf & 7);
+        bs_sh = bs_sh + (leaf & 7);
         if (bs_next_ptr as (isize)).wrapping_sub((*bs).buf as (isize))
             / ::std::mem::size_of::<u8>() as (isize) * 8isize - 24isize
             + bs_sh as (isize) > layer3gr_limit as (isize)
@@ -2580,7 +2482,7 @@ unsafe fn l3_huffman(
                 let _old = sfb;
                 sfb = sfb.offset(1isize);
                 _old
-            } as (i32) / 2i32;
+            } as (i32) / 2;
             if np == 0 {
                 break;
             }
@@ -2590,15 +2492,15 @@ unsafe fn l3_huffman(
                 _old
             };
         }
-        if leaf & 128i32 >> 0i32 != 0 {
-            *dst.offset(0isize) = if bs_cache as (i32) < 0i32 { -one } else { one };
-            bs_cache = bs_cache << 1i32;
-            bs_sh = bs_sh + 1i32;
+        if leaf & 128 >> 0 != 0 {
+            *dst.offset(0isize) = if bs_cache as (i32) < 0 { -one } else { one };
+            bs_cache = bs_cache << 1;
+            bs_sh = bs_sh + 1;
         }
-        if leaf & 128i32 >> 1i32 != 0 {
-            *dst.offset(1isize) = if bs_cache as (i32) < 0i32 { -one } else { one };
-            bs_cache = bs_cache << 1i32;
-            bs_sh = bs_sh + 1i32;
+        if leaf & 128 >> 1 != 0 {
+            *dst.offset(1isize) = if bs_cache as (i32) < 0 { -one } else { one };
+            bs_cache = bs_cache << 1;
+            bs_sh = bs_sh + 1;
         }
         if {
             np = np - 1;
@@ -2609,7 +2511,7 @@ unsafe fn l3_huffman(
                 let _old = sfb;
                 sfb = sfb.offset(1isize);
                 _old
-            } as (i32) / 2i32;
+            } as (i32) / 2;
             if np == 0 {
                 break;
             }
@@ -2619,18 +2521,18 @@ unsafe fn l3_huffman(
                 _old
             };
         }
-        if leaf & 128i32 >> 2i32 != 0 {
-            *dst.offset(2isize) = if bs_cache as (i32) < 0i32 { -one } else { one };
-            bs_cache = bs_cache << 1i32;
-            bs_sh = bs_sh + 1i32;
+        if leaf & 128 >> 2 != 0 {
+            *dst.offset(2isize) = if bs_cache as (i32) < 0 { -one } else { one };
+            bs_cache = bs_cache << 1;
+            bs_sh = bs_sh + 1;
         }
-        if leaf & 128i32 >> 3i32 != 0 {
-            *dst.offset(3isize) = if bs_cache as (i32) < 0i32 { -one } else { one };
-            bs_cache = bs_cache << 1i32;
-            bs_sh = bs_sh + 1i32;
+        if leaf & 128 >> 3 != 0 {
+            *dst.offset(3isize) = if bs_cache as (i32) < 0 { -one } else { one };
+            bs_cache = bs_cache << 1;
+            bs_sh = bs_sh + 1;
         }
         'loop20: loop {
-            if !(bs_sh >= 0i32) {
+            if !(bs_sh >= 0) {
                 break;
             }
             bs_cache = bs_cache | *{
@@ -2638,7 +2540,7 @@ unsafe fn l3_huffman(
                 bs_next_ptr = bs_next_ptr.offset(1isize);
                 _old
             } as (u32) << bs_sh;
-            bs_sh = bs_sh - 8i32;
+            bs_sh = bs_sh - 8;
         }
         dst = dst.offset(4isize);
     }
@@ -2646,7 +2548,7 @@ unsafe fn l3_huffman(
 }
 
 unsafe fn l3_midside_stereo(left: *mut f32, n: i32) {
-    let mut i: i32 = 0i32;
+    let mut i: i32 = 0;
     let right: *mut f32 = left.offset(576isize);
     'loop1: loop {
         if !(i < n) {
@@ -2671,7 +2573,7 @@ unsafe fn l3_stereo_top_band(
     let mut k: i32;
     *max_band.offset(0isize) = {
         let _rhs = {
-            let _rhs = -1i32;
+            let _rhs = -1;
             let _lhs = &mut *max_band.offset(2isize);
             *_lhs = _rhs;
             *_lhs
@@ -2680,27 +2582,27 @@ unsafe fn l3_stereo_top_band(
         *_lhs = _rhs;
         *_lhs
     };
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < nbands) {
             break;
         }
-        k = 0i32;
+        k = 0;
         'loop4: loop {
             if !(k < *sfb.offset(i as (isize)) as (i32)) {
                 current_block = 8;
                 break;
             }
-            if *right.offset(k as (isize)) != 0i32 as (f32)
-                || *right.offset((k + 1i32) as (isize)) != 0i32 as (f32)
+            if *right.offset(k as (isize)) != 0 as (f32)
+                || *right.offset((k + 1) as (isize)) != 0 as (f32)
             {
                 current_block = 7;
                 break;
             }
-            k = k + 2i32;
+            k = k + 2;
         }
         if current_block == 7 {
-            *max_band.offset((i % 3i32) as (isize)) = i;
+            *max_band.offset((i % 3) as (isize)) = i;
         }
         right = right.offset(*sfb.offset(i as (isize)) as (isize));
         i = i + 1;
@@ -2709,12 +2611,12 @@ unsafe fn l3_stereo_top_band(
 
 unsafe fn l3_intensity_stereo_band(left: *mut f32, n: i32, kl: f32, kr: f32) {
     let mut i: i32;
-    i = 0i32;
+    i = 0;
     'loop1: loop {
         if !(i < n) {
             break;
         }
-        *left.offset((i + 576i32) as (isize)) = *left.offset(i as (isize)) * kr;
+        *left.offset((i + 576) as (isize)) = *left.offset(i as (isize)) * kr;
         *left.offset(i as (isize)) = *left.offset(i as (isize)) * kl;
         i = i + 1;
     }
@@ -2729,61 +2631,46 @@ unsafe fn l3_stereo_process(
     mpeg2_sh: i32,
 ) {
     static L_PAN: [f32; 14] = [
-        0i32 as (f32),
-        1i32 as (f32),
-        0.21132487f32,
-        0.78867513f32,
-        0.36602540f32,
-        0.63397460f32,
-        0.5f32,
-        0.5f32,
-        0.63397460f32,
-        0.36602540f32,
-        0.78867513f32,
-        0.21132487f32,
-        1i32 as (f32),
-        0i32 as (f32),
+        0 as (f32), 1 as (f32), 0.21132487, 0.78867513, 0.36602540, 0.63397460, 0.5, 0.5,
+        0.63397460, 0.36602540, 0.78867513, 0.21132487, 1 as (f32), 0 as (f32),
     ];
     let mut i: u32;
-    let max_pos: u32 = (if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-        7i32
+    let max_pos: u32 = (if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+        7
     } else {
-        64i32
+        64
     }) as (u32);
-    i = 0u32;
+    i = 0;
     'loop1: loop {
         if *sfb.offset(i as (isize)) == 0 {
             break;
         }
         let ipos: u32 = *ist_pos.offset(i as (isize)) as (u32);
-        if i as (i32) > *max_band.offset(i.wrapping_rem(3u32) as (isize)) && (ipos < max_pos) {
+        if i as (i32) > *max_band.offset(i.wrapping_rem(3) as (isize)) && (ipos < max_pos) {
             let mut kl: f32;
             let mut kr: f32;
-            let s: f32 = if *hdr.offset(3isize) as (i32) & 0x20i32 != 0 {
-                1.41421356f32
+            let s: f32 = if *hdr.offset(3isize) as (i32) & 0x20 != 0 {
+                1.41421356
             } else {
-                1i32 as (f32)
+                1 as (f32)
             };
-            if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
+            if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
                 kl = L_PAN[2u32.wrapping_mul(ipos) as (usize)];
                 kr = L_PAN[2u32.wrapping_mul(ipos).wrapping_add(1u32) as (usize)];
             } else {
-                kl = 1i32 as (f32);
-                kr = l3_ldexp_q2(
-                    1i32 as (f32),
-                    (ipos.wrapping_add(1u32) >> 1i32 << mpeg2_sh) as (i32),
-                );
-                if ipos & 1u32 != 0 {
+                kl = 1 as (f32);
+                kr = l3_ldexp_q2(1 as (f32), (ipos.wrapping_add(1) >> 1 << mpeg2_sh) as (i32));
+                if ipos & 1 != 0 {
                     kl = kr;
-                    kr = 1i32 as (f32);
+                    kr = 1 as (f32);
                 }
             }
             l3_intensity_stereo_band(left, *sfb.offset(i as (isize)) as (i32), kl * s, kr * s);
-        } else if *hdr.offset(3isize) as (i32) & 0x20i32 != 0 {
+        } else if *hdr.offset(3isize) as (i32) & 0x20 != 0 {
             l3_midside_stereo(left, *sfb.offset(i as (isize)) as (i32));
         }
         left = left.offset(*sfb.offset(i as (isize)) as (isize));
-        i = i.wrapping_add(1u32);
+        i = i.wrapping_add(1);
     }
 }
 
@@ -2796,7 +2683,7 @@ unsafe fn l3_intensity_stereo(
     let mut max_band: [i32; 3] = [0; 3];
     let n_sfb: i32 = (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32);
     let mut i: i32;
-    let max_blocks: i32 = if (*gr).n_short_sfb != 0 { 3i32 } else { 1i32 };
+    let max_blocks: i32 = if (*gr).n_short_sfb != 0 { 3 } else { 1 };
     l3_stereo_top_band(
         left.offset(576isize) as (*const f32),
         (*gr).sfbtab,
@@ -2804,38 +2691,38 @@ unsafe fn l3_intensity_stereo(
         max_band.as_mut_ptr(),
     );
     if (*gr).n_long_sfb != 0 {
-        max_band[0usize] = {
+        max_band[0] = {
             let _rhs = {
-                let _rhs = if if max_band[0usize] < max_band[1usize] {
-                    max_band[1usize]
+                let _rhs = if if max_band[0] < max_band[1] {
+                    max_band[1]
                 } else {
-                    max_band[0usize]
-                } < max_band[2usize]
+                    max_band[0]
+                } < max_band[2]
                 {
-                    max_band[2usize]
-                } else if max_band[0usize] < max_band[1usize] {
-                    max_band[1usize]
+                    max_band[2]
+                } else if max_band[0] < max_band[1] {
+                    max_band[1]
                 } else {
-                    max_band[0usize]
+                    max_band[0]
                 };
-                let _lhs = &mut max_band[2usize];
+                let _lhs = &mut max_band[2];
                 *_lhs = _rhs;
                 *_lhs
             };
-            let _lhs = &mut max_band[1usize];
+            let _lhs = &mut max_band[1];
             *_lhs = _rhs;
             *_lhs
         };
     }
-    i = 0i32;
+    i = 0;
     'loop3: loop {
         if !(i < max_blocks) {
             break;
         }
-        let default_pos: i32 = if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-            3i32
+        let default_pos: i32 = if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+            3
         } else {
-            0i32
+            0
         };
         let itop: i32 = n_sfb - max_blocks + i;
         let prev: i32 = itop - max_blocks;
@@ -2852,7 +2739,7 @@ unsafe fn l3_intensity_stereo(
         (*gr).sfbtab,
         hdr,
         max_band.as_mut_ptr(),
-        (*gr.offset(1isize)).scalefac_compress as (i32) & 1i32,
+        (*gr.offset(1isize)).scalefac_compress as (i32) & 1,
     );
 }
 
@@ -2862,13 +2749,13 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
     let mut src: *mut f32 = grbuf;
     let mut dst: *mut f32 = scratch;
     'loop1: loop {
-        if !(0i32 != {
+        if !(0 != {
             len = *sfb as (i32);
             len
         }) {
             break;
         }
-        i = 0i32;
+        i = 0;
         'loop4: loop {
             if !(i < len) {
                 break;
@@ -2877,22 +2764,22 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
                 let _old = dst;
                 dst = dst.offset(1isize);
                 _old
-            } = *src.offset((0i32 * len) as (isize));
+            } = *src.offset((0 * len) as (isize));
             *{
                 let _old = dst;
                 dst = dst.offset(1isize);
                 _old
-            } = *src.offset((1i32 * len) as (isize));
+            } = *src.offset((1 * len) as (isize));
             *{
                 let _old = dst;
                 dst = dst.offset(1isize);
                 _old
-            } = *src.offset((2i32 * len) as (isize));
+            } = *src.offset((2 * len) as (isize));
             i = i + 1;
             src = src.offset(1isize);
         }
         sfb = sfb.offset(3isize);
-        src = src.offset((2i32 * len) as (isize));
+        src = src.offset((2 * len) as (isize));
     }
     memcpy(
         grbuf as (*mut ::std::os::raw::c_void),
@@ -2906,41 +2793,29 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
 unsafe fn l3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
     static G_AA: [[f32; 8]; 2] = [
         [
-            0.85749293f32,
-            0.88174200f32,
-            0.94962865f32,
-            0.98331459f32,
-            0.99551782f32,
-            0.99916056f32,
-            0.99989920f32,
-            0.99999316f32,
+            0.85749293, 0.88174200, 0.94962865, 0.98331459, 0.99551782, 0.99916056, 0.99989920,
+            0.99999316,
         ],
         [
-            0.51449576f32,
-            0.47173197f32,
-            0.31337745f32,
-            0.18191320f32,
-            0.09457419f32,
-            0.04096558f32,
-            0.01419856f32,
-            0.00369997f32,
+            0.51449576, 0.47173197, 0.31337745, 0.18191320, 0.09457419, 0.04096558, 0.01419856,
+            0.00369997,
         ],
     ];
     'loop1: loop {
-        if !(nbands > 0i32) {
+        if !(nbands > 0) {
             break;
         }
-        let mut i: i32 = 0i32;
+        let mut i: i32 = 0;
         'loop4: loop {
-            if !(i < 8i32) {
+            if !(i < 8) {
                 break;
             }
-            let u: f32 = *grbuf.offset((18i32 + i) as (isize));
-            let d: f32 = *grbuf.offset((17i32 - i) as (isize));
-            *grbuf.offset((18i32 + i) as (isize)) =
-                u * G_AA[0usize][i as (usize)] - d * G_AA[1usize][i as (usize)];
-            *grbuf.offset((17i32 - i) as (isize)) =
-                u * G_AA[1usize][i as (usize)] + d * G_AA[0usize][i as (usize)];
+            let u: f32 = *grbuf.offset((18 + i) as (isize));
+            let d: f32 = *grbuf.offset((17 - i) as (isize));
+            *grbuf.offset((18 + i) as (isize)) =
+                u * G_AA[0][i as (usize)] - d * G_AA[1][i as (usize)];
+            *grbuf.offset((17 - i) as (isize)) =
+                u * G_AA[1][i as (usize)] + d * G_AA[0][i as (usize)];
             i = i + 1;
         }
         nbands = nbands - 1;
@@ -2967,13 +2842,13 @@ fn l3_dct3_9(y: &mut [f32; 9]) {
     s4 = y[4];
     s6 = y[6];
     s8 = y[8];
-    t0 = s0 + s6 * 0.5f32;
+    t0 = s0 + s6 * 0.5;
     s0 = s0 - s6;
-    t4 = (s4 + s2) * 0.93969262f32;
-    t2 = (s8 + s2) * 0.76604444f32;
-    s6 = (s4 - s8) * 0.17364818f32;
+    t4 = (s4 + s2) * 0.93969262;
+    t2 = (s8 + s2) * 0.76604444;
+    s6 = (s4 - s8) * 0.17364818;
     s4 = s4 + (s8 - s2);
-    s2 = s0 - s4 * 0.5f32;
+    s2 = s0 - s4 * 0.5;
     y[4] = s4 + s0;
     s8 = t0 - t2 + s6;
     s0 = t0 - t4 + t2;
@@ -2982,11 +2857,11 @@ fn l3_dct3_9(y: &mut [f32; 9]) {
     s3 = y[3];
     s5 = y[5];
     s7 = y[7];
-    s3 = s3 * 0.86602540f32;
-    t0 = (s5 + s1) * 0.98480775f32;
-    t4 = (s5 - s7) * 0.34202014f32;
-    t2 = (s1 + s7) * 0.64278761f32;
-    s1 = (s1 - s5 - s7) * 0.86602540f32;
+    s3 = s3 * 0.86602540;
+    t0 = (s5 + s1) * 0.98480775;
+    t4 = (s5 - s7) * 0.34202014;
+    t2 = (s1 + s7) * 0.64278761;
+    s1 = (s1 - s5 - s7) * 0.86602540;
     s5 = t0 - s3 - t2;
     s7 = t4 - s3 - t0;
     s3 = t4 + s3 - t2;
@@ -3004,69 +2879,54 @@ unsafe fn l3_imdct36(mut grbuf: *mut f32, mut overlap: *mut f32, window: *const 
     let mut i: i32;
     let mut j: i32;
     static G_TWID9: [f32; 18] = [
-        0.73727734f32,
-        0.79335334f32,
-        0.84339145f32,
-        0.88701083f32,
-        0.92387953f32,
-        0.95371695f32,
-        0.97629601f32,
-        0.99144486f32,
-        0.99904822f32,
-        0.67559021f32,
-        0.60876143f32,
-        0.53729961f32,
-        0.46174861f32,
-        0.38268343f32,
-        0.30070580f32,
-        0.21643961f32,
-        0.13052619f32,
-        0.04361938f32,
+        0.73727734, 0.79335334, 0.84339145, 0.88701083, 0.92387953, 0.95371695, 0.97629601,
+        0.99144486, 0.99904822, 0.67559021, 0.60876143, 0.53729961, 0.46174861, 0.38268343,
+        0.30070580, 0.21643961, 0.13052619, 0.04361938,
     ];
-    j = 0i32;
+    j = 0;
     'loop1: loop {
         if !(j < nbands) {
             break;
         }
         let mut co: [f32; 9] = [0.0; 9];
         let mut si: [f32; 9] = [0.0; 9];
-        co[0usize] = -*grbuf.offset(0isize);
-        si[0usize] = *grbuf.offset(17isize);
-        i = 0i32;
+        co[0] = -*grbuf.offset(0isize);
+        si[0] = *grbuf.offset(17isize);
+        i = 0;
         'loop4: loop {
-            if !(i < 4i32) {
+            if !(i < 4) {
                 break;
             }
-            si[(8i32 - 2i32 * i) as (usize)] = *grbuf.offset((4i32 * i + 1i32) as (isize))
-                - *grbuf.offset((4i32 * i + 2i32) as (isize));
-            co[(1i32 + 2i32 * i) as (usize)] = *grbuf.offset((4i32 * i + 1i32) as (isize))
-                + *grbuf.offset((4i32 * i + 2i32) as (isize));
-            si[(7i32 - 2i32 * i) as (usize)] = *grbuf.offset((4i32 * i + 4i32) as (isize))
-                - *grbuf.offset((4i32 * i + 3i32) as (isize));
-            co[(2i32 + 2i32 * i) as (usize)] = -(*grbuf.offset((4i32 * i + 3i32) as (isize))
-                + *grbuf.offset((4i32 * i + 4i32) as (isize)));
+            si[(8 - 2 * i) as (usize)] =
+                *grbuf.offset((4 * i + 1) as (isize)) - *grbuf.offset((4 * i + 2) as (isize));
+            co[(1 + 2 * i) as (usize)] =
+                *grbuf.offset((4 * i + 1) as (isize)) + *grbuf.offset((4 * i + 2) as (isize));
+            si[(7 - 2 * i) as (usize)] =
+                *grbuf.offset((4 * i + 4) as (isize)) - *grbuf.offset((4 * i + 3) as (isize));
+            co[(2 + 2 * i) as (usize)] =
+                -(*grbuf.offset((4 * i + 3) as (isize)) + *grbuf.offset((4 * i + 4) as (isize)));
             i = i + 1;
         }
         l3_dct3_9(&mut co);
         l3_dct3_9(&mut si);
-        si[1usize] = -si[1usize];
-        si[3usize] = -si[3usize];
-        si[5usize] = -si[5usize];
-        si[7usize] = -si[7usize];
-        i = 0i32;
+        si[1] = -si[1];
+        si[3] = -si[3];
+        si[5] = -si[5];
+        si[7] = -si[7];
+        i = 0;
         'loop6: loop {
-            if !(i < 9i32) {
+            if !(i < 9) {
                 break;
             }
             let ovl: f32 = *overlap.offset(i as (isize));
-            let sum: f32 = co[i as (usize)] * G_TWID9[(9i32 + i) as (usize)]
-                + si[i as (usize)] * G_TWID9[(0i32 + i) as (usize)];
-            *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID9[(0i32 + i) as (usize)]
-                - si[i as (usize)] * G_TWID9[(9i32 + i) as (usize)];
-            *grbuf.offset(i as (isize)) = ovl * *window.offset((0i32 + i) as (isize))
-                - sum * *window.offset((9i32 + i) as (isize));
-            *grbuf.offset((17i32 - i) as (isize)) = ovl * *window.offset((9i32 + i) as (isize))
-                + sum * *window.offset((0i32 + i) as (isize));
+            let sum: f32 = co[i as (usize)] * G_TWID9[(9 + i) as (usize)]
+                + si[i as (usize)] * G_TWID9[(0 + i) as (usize)];
+            *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID9[(0 + i) as (usize)]
+                - si[i as (usize)] * G_TWID9[(9 + i) as (usize)];
+            *grbuf.offset(i as (isize)) =
+                ovl * *window.offset((0 + i) as (isize)) - sum * *window.offset((9 + i) as (isize));
+            *grbuf.offset((17 - i) as (isize)) =
+                ovl * *window.offset((9 + i) as (isize)) + sum * *window.offset((0 + i) as (isize));
             i = i + 1;
         }
         j = j + 1;
@@ -3076,8 +2936,8 @@ unsafe fn l3_imdct36(mut grbuf: *mut f32, mut overlap: *mut f32, window: *const 
 }
 
 fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
-    let m1: f32 = x1 * 0.86602540f32;
-    let a1: f32 = x0 - x2 * 0.5f32;
+    let m1: f32 = x1 * 0.86602540;
+    let a1: f32 = x0 - x2 * 0.5;
     dst[1] = x0 + x2;
     dst[0] = a1 + m1;
     dst[2] = a1 - m1;
@@ -3085,12 +2945,7 @@ fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
 
 unsafe fn l3_imdct12(x: *mut f32, dst: *mut f32, overlap: *mut f32) {
     static G_TWID3: [f32; 6] = [
-        0.79335334f32,
-        0.92387953f32,
-        0.99144486f32,
-        0.60876143f32,
-        0.38268343f32,
-        0.13052619f32,
+        0.79335334, 0.92387953, 0.99144486, 0.60876143, 0.38268343, 0.13052619,
     ];
     let mut co: [f32; 3] = [0.0; 3];
     let mut si: [f32; 3] = [0.0; 3];
@@ -3107,28 +2962,28 @@ unsafe fn l3_imdct12(x: *mut f32, dst: *mut f32, overlap: *mut f32) {
         *x.offset(6isize) - *x.offset(3isize),
         &mut si,
     );
-    si[1usize] = -si[1usize];
-    i = 0i32;
+    si[1] = -si[1];
+    i = 0;
     'loop1: loop {
-        if !(i < 3i32) {
+        if !(i < 3) {
             break;
         }
         let ovl: f32 = *overlap.offset(i as (isize));
-        let sum: f32 = co[i as (usize)] * G_TWID3[(3i32 + i) as (usize)]
-            + si[i as (usize)] * G_TWID3[(0i32 + i) as (usize)];
-        *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID3[(0i32 + i) as (usize)]
-            - si[i as (usize)] * G_TWID3[(3i32 + i) as (usize)];
+        let sum: f32 = co[i as (usize)] * G_TWID3[(3 + i) as (usize)]
+            + si[i as (usize)] * G_TWID3[(0 + i) as (usize)];
+        *overlap.offset(i as (isize)) = co[i as (usize)] * G_TWID3[(0 + i) as (usize)]
+            - si[i as (usize)] * G_TWID3[(3 + i) as (usize)];
         *dst.offset(i as (isize)) =
-            ovl * G_TWID3[(2i32 - i) as (usize)] - sum * G_TWID3[(5i32 - i) as (usize)];
-        *dst.offset((5i32 - i) as (isize)) =
-            ovl * G_TWID3[(5i32 - i) as (usize)] + sum * G_TWID3[(2i32 - i) as (usize)];
+            ovl * G_TWID3[(2 - i) as (usize)] - sum * G_TWID3[(5 - i) as (usize)];
+        *dst.offset((5 - i) as (isize)) =
+            ovl * G_TWID3[(5 - i) as (usize)] + sum * G_TWID3[(2 - i) as (usize)];
         i = i + 1;
     }
 }
 
 unsafe fn l3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, mut nbands: i32) {
     'loop0: loop {
-        if !(nbands > 0i32) {
+        if !(nbands > 0) {
             break;
         }
         let mut tmp: [f32; 18] = [0.0; 18];
@@ -3140,7 +2995,7 @@ unsafe fn l3_imdct_short(mut grbuf: *mut f32, mut overlap: *mut f32, mut nbands:
         memcpy(
             grbuf as (*mut ::std::os::raw::c_void),
             overlap as (*const ::std::os::raw::c_void),
-            6usize.wrapping_mul(::std::mem::size_of::<f32>()),
+            6_usize.wrapping_mul(::std::mem::size_of::<f32>()),
         );
         l3_imdct12(
             tmp.as_mut_ptr(),
@@ -3171,51 +3026,21 @@ unsafe fn l3_imdct_gr(
 ) {
     static G_MDCT_WINDOW: [[f32; 18]; 2] = [
         [
-            0.99904822f32,
-            0.99144486f32,
-            0.97629601f32,
-            0.95371695f32,
-            0.92387953f32,
-            0.88701083f32,
-            0.84339145f32,
-            0.79335334f32,
-            0.73727734f32,
-            0.04361938f32,
-            0.13052619f32,
-            0.21643961f32,
-            0.30070580f32,
-            0.38268343f32,
-            0.46174861f32,
-            0.53729961f32,
-            0.60876143f32,
-            0.67559021f32,
+            0.99904822, 0.99144486, 0.97629601, 0.95371695, 0.92387953, 0.88701083, 0.84339145,
+            0.79335334, 0.73727734, 0.04361938, 0.13052619, 0.21643961, 0.30070580, 0.38268343,
+            0.46174861, 0.53729961, 0.60876143, 0.67559021,
         ],
         [
-            1i32 as (f32),
-            1i32 as (f32),
-            1i32 as (f32),
-            1i32 as (f32),
-            1i32 as (f32),
-            1i32 as (f32),
-            0.99144486f32,
-            0.92387953f32,
-            0.79335334f32,
-            0i32 as (f32),
-            0i32 as (f32),
-            0i32 as (f32),
-            0i32 as (f32),
-            0i32 as (f32),
-            0i32 as (f32),
-            0.13052619f32,
-            0.38268343f32,
-            0.60876143f32,
+            1 as (f32), 1 as (f32), 1 as (f32), 1 as (f32), 1 as (f32), 1 as (f32), 0.99144486,
+            0.92387953, 0.79335334, 0 as (f32), 0 as (f32), 0 as (f32), 0 as (f32), 0 as (f32),
+            0 as (f32), 0.13052619, 0.38268343, 0.60876143,
         ],
     ];
     if n_long_bands != 0 {
         l3_imdct36(
             grbuf,
             overlap,
-            G_MDCT_WINDOW[0usize].as_ptr(),
+            G_MDCT_WINDOW[0].as_ptr(),
             n_long_bands as (i32),
         );
         grbuf = grbuf.offset(18u32.wrapping_mul(n_long_bands) as (isize));
@@ -3236,21 +3061,21 @@ unsafe fn l3_imdct_gr(
 unsafe fn l3_change_sign(mut grbuf: *mut f32) {
     let mut b: i32;
     let mut i: i32;
-    b = 0i32;
+    b = 0;
     grbuf = grbuf.offset(18isize);
     'loop1: loop {
-        if !(b < 32i32) {
+        if !(b < 32) {
             break;
         }
-        i = 1i32;
+        i = 1;
         'loop4: loop {
-            if !(i < 18i32) {
+            if !(i < 18) {
                 break;
             }
             *grbuf.offset(i as (isize)) = -*grbuf.offset(i as (isize));
-            i = i + 2i32;
+            i = i + 2;
         }
-        b = b + 2i32;
+        b = b + 2;
         grbuf = grbuf.offset(36isize);
     }
 }
@@ -3258,7 +3083,7 @@ unsafe fn l3_change_sign(mut grbuf: *mut f32) {
 /// TODO: gr_info should be an array
 unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3GrInfo, nch: i32) {
     let mut ch: i32;
-    ch = 0i32;
+    ch = 0;
     'loop1: loop {
         if !(ch < nch) {
             break;
@@ -3282,38 +3107,37 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3G
         );
         ch = ch + 1;
     }
-    if (*h).header[3usize] as (i32) & 0x10i32 != 0 {
+    if (*h).header[3] as (i32) & 0x10 != 0 {
         l3_intensity_stereo(
-            (*s).grbuf[0usize].as_mut_ptr(),
-            (*s).ist_pos[1usize].as_mut_ptr(),
+            (*s).grbuf[0].as_mut_ptr(),
+            (*s).ist_pos[1].as_mut_ptr(),
             gr_info as (*const L3GrInfo),
             (*h).header.as_mut_ptr() as (*const u8),
         );
-    } else if (*h).header[3usize] as (i32) & 0xe0i32 == 0x60i32 {
-        l3_midside_stereo((*s).grbuf[0usize].as_mut_ptr(), 576i32);
+    } else if (*h).header[3] as (i32) & 0xe0 == 0x60 {
+        l3_midside_stereo((*s).grbuf[0].as_mut_ptr(), 576);
     }
-    ch = 0i32;
+    ch = 0;
     'loop7: loop {
         if !(ch < nch) {
             break;
         }
-        let mut aa_bands: i32 = 31i32;
+        let mut aa_bands: i32 = 31;
         let n_long_bands: i32 = (if (*gr_info).mixed_block_flag != 0 {
-            2i32
+            2
         } else {
-            0i32
+            0
         })
-            << (((*h).header[2usize] as (i32) >> 2i32 & 3i32)
-                + (((*h).header[1usize] as (i32) >> 3i32 & 1i32)
-                    + ((*h).header[1usize] as (i32) >> 4i32 & 1i32)) * 3i32 == 2i32)
-                as (i32);
+            << (((*h).header[2] as (i32) >> 2 & 3)
+                + (((*h).header[1] as (i32) >> 3 & 1) + ((*h).header[1] as (i32) >> 4 & 1)) * 3
+                == 2) as (i32);
         if (*gr_info).n_short_sfb != 0 {
-            aa_bands = n_long_bands - 1i32;
+            aa_bands = n_long_bands - 1;
             l3_reorder(
                 (*s).grbuf[ch as (usize)]
                     .as_mut_ptr()
-                    .offset((n_long_bands * 18i32) as (isize)),
-                (*s).syn[0usize].as_mut_ptr(),
+                    .offset((n_long_bands * 18) as (isize)),
+                (*s).syn[0].as_mut_ptr(),
                 (*gr_info).sfbtab.offset((*gr_info).n_long_sfb as (isize)),
             );
         }
@@ -3331,15 +3155,15 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3G
 }
 
 unsafe fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
-    let mut pos: i32 = (((*s).bs.pos + 7i32) as (u32)).wrapping_div(8u32) as (i32);
+    let mut pos: i32 = (((*s).bs.pos + 7) as (u32)).wrapping_div(8) as (i32);
     let mut remains: i32 = ((*s).bs.limit as (u32))
-        .wrapping_div(8u32)
+        .wrapping_div(8)
         .wrapping_sub(pos as (u32)) as (i32);
-    if remains > 511i32 {
-        pos = pos + (remains - 511i32);
-        remains = 511i32;
+    if remains > 511 {
+        pos = pos + (remains - 511);
+        remains = 511;
     }
-    if remains > 0i32 {
+    if remains > 0 {
         memmove(
             (*h).reserv_buf.as_mut_ptr() as (*mut ::std::os::raw::c_void),
             (*s).maindata.as_mut_ptr().offset(pos as (isize)) as (*const ::std::os::raw::c_void),
@@ -3358,10 +3182,10 @@ pub unsafe fn mp3dec_decode_frame(
 ) -> i32 {
     let mp3_bytes = mp3.len() as i32;
     let current_block;
-    let mut i: i32 = 0i32;
+    let mut i: i32 = 0;
     let mut igr: i32;
-    let mut frame_size: i32 = 0i32;
-    let mut success: i32 = 1i32;
+    let mut frame_size: i32 = 0;
+    let mut success: i32 = 1;
     let hdr: *const u8;
     let mut bs_frame: Bs = Bs {
         buf: ::std::ptr::null(),
@@ -3377,23 +3201,23 @@ pub unsafe fn mp3dec_decode_frame(
         syn: [[0.0; 64]; 33],
         ist_pos: [[0; 39]; 2],
     };
-    if mp3_bytes > 4i32
-        && ((*dec).header[0usize] as (i32) == 0xffi32)
+    if mp3_bytes > 4
+        && ((*dec).header[0] as (i32) == 0xffi32)
         && (hdr_compare((*dec).header.as_mut_ptr() as (*const u8), mp3.as_ptr()) != 0)
     {
         frame_size =
             hdr_frame_bytes(mp3.as_ptr(), (*dec).free_format_bytes) + hdr_padding(mp3.as_ptr());
         if frame_size != mp3_bytes
-            && (frame_size + 4i32 > mp3_bytes
+            && (frame_size + 4 > mp3_bytes
                 || hdr_compare(mp3.as_ptr(), mp3.as_ptr().offset(frame_size as (isize))) == 0)
         {
-            frame_size = 0i32;
+            frame_size = 0;
         }
     }
     if frame_size == 0 {
         // memset(
         //     dec as (*mut ::std::os::raw::c_void),
-        //     0i32,
+        //     0,
         //     ::std::mem::size_of::<Mp3Dec>(),
         // );
         *dec = Mp3Dec::new();
@@ -3405,37 +3229,37 @@ pub unsafe fn mp3dec_decode_frame(
         );
         if frame_size == 0 || i + frame_size > mp3_bytes {
             (*info).frame_bytes = i;
-            return 0i32;
+            return 0;
         }
     }
     hdr = mp3.as_ptr().offset(i as (isize));
     memcpy(
         (*dec).header.as_mut_ptr() as (*mut ::std::os::raw::c_void),
         hdr as (*const ::std::os::raw::c_void),
-        4usize,
+        4,
     );
     (*info).frame_bytes = i + frame_size;
-    (*info).channels = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
-        1i32
+    (*info).channels = if *hdr.offset(3isize) as (i32) & 0xc0 == 0xc0 {
+        1
     } else {
-        2i32
+        2
     };
     (*info).hz = hdr_sample_rate_hz(hdr) as (i32);
-    (*info).layer = 4i32 - (*hdr.offset(1isize) as (i32) >> 1i32 & 3i32);
+    (*info).layer = 4 - (*hdr.offset(1isize) as (i32) >> 1 & 3);
     (*info).bitrate_kbps = hdr_bitrate_kbps(hdr) as (i32);
     if pcm.is_null() {
         hdr_frame_samples(hdr) as (i32)
     } else {
         bs_frame = Bs::new(hdr.offset(4), frame_size - 4);
-        if *hdr.offset(1isize) as (i32) & 1i32 == 0 {
-            get_bits(&mut bs_frame as *mut Bs, 16i32);
+        if *hdr.offset(1isize) as (i32) & 1 == 0 {
+            get_bits(&mut bs_frame as *mut Bs, 16);
         }
-        if (*info).layer == 3i32 {
+        if (*info).layer == 3 {
             let main_data_begin: i32 =
                 l3_read_side_info(&mut bs_frame, scratch.gr_info.as_mut_ptr(), hdr);
-            if main_data_begin < 0i32 || bs_frame.pos > bs_frame.limit {
+            if main_data_begin < 0 || bs_frame.pos > bs_frame.limit {
                 *dec = Mp3Dec::new();
-                return 0i32;
+                return 0;
             } else {
                 success = l3_restore_reservoir(
                     &mut *dec,
@@ -3444,19 +3268,19 @@ pub unsafe fn mp3dec_decode_frame(
                     main_data_begin,
                 );
                 if success != 0 {
-                    igr = 0i32;
+                    igr = 0;
                     'loop19: loop {
-                        if !(igr < if *hdr.offset(1isize) as (i32) & 0x8i32 != 0 {
-                            2i32
+                        if !(igr < if *hdr.offset(1isize) as (i32) & 0x8 != 0 {
+                            2
                         } else {
-                            1i32
+                            1
                         }) {
                             break;
                         }
                         // memset(
-                        //     scratch.grbuf[0usize].as_mut_ptr() as (*mut ::std::os::raw::c_void),
-                        //     0i32,
-                        //     ((576i32 * 2i32) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
+                        //     scratch.grbuf[0].as_mut_ptr() as (*mut ::std::os::raw::c_void),
+                        //     0,
+                        //     ((576 * 2) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
                         // );
                         scratch.clear_grbuf();
                         // fill(&mut scratch.grbuf[0], 0.0);
@@ -3473,14 +3297,14 @@ pub unsafe fn mp3dec_decode_frame(
                         );
                         mp3d_synth_granule(
                             (*dec).qmf_state.as_mut_ptr(),
-                            scratch.grbuf[0usize].as_mut_ptr(),
-                            18i32,
+                            scratch.grbuf[0].as_mut_ptr(),
+                            18,
                             (*info).channels,
                             pcm,
-                            scratch.syn[0usize].as_mut_ptr(),
+                            scratch.syn[0].as_mut_ptr(),
                         );
                         igr = igr + 1;
-                        pcm = pcm.offset((576i32 * (*info).channels) as (isize));
+                        pcm = pcm.offset((576 * (*info).channels) as (isize));
                     }
                 }
                 l3_save_reservoir(&mut *dec, &mut scratch);
@@ -3489,51 +3313,51 @@ pub unsafe fn mp3dec_decode_frame(
             let mut sci: L12ScaleInfo = ::std::mem::uninitialized();
             l12_read_scale_info(hdr, &mut bs_frame, &mut sci);
             // memset(
-            //     scratch.grbuf[0usize].as_mut_ptr() as (*mut ::std::os::raw::c_void),
-            //     0i32,
-            //     ((576i32 * 2i32) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
+            //     scratch.grbuf[0].as_mut_ptr() as (*mut ::std::os::raw::c_void),
+            //     0,
+            //     ((576 * 2) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
             // );
 
             scratch.clear_grbuf();
-            i = 0i32;
-            igr = 0i32;
+            i = 0;
+            igr = 0;
             'loop10: loop {
-                if !(igr < 3i32) {
+                if !(igr < 3) {
                     current_block = 21;
                     break;
                 }
-                if 12i32 == {
+                if 12 == {
                     i = i + l12_dequantize_granule(
-                        scratch.grbuf[0usize].as_mut_ptr().offset(i as (isize)),
+                        scratch.grbuf[0].as_mut_ptr().offset(i as (isize)),
                         &mut bs_frame,
                         &mut sci,
-                        (*info).layer | 1i32,
+                        (*info).layer | 1,
                     );
                     i
                 } {
-                    i = 0i32;
+                    i = 0;
                     // BUGGO Gotta defeat the borrow checker here;
                     // borrowing both sci and sci.scf
                     l12_apply_scf_384(
                         &mut *(&mut sci as *mut L12ScaleInfo),
                         sci.scf.as_mut_ptr().offset(igr as (isize)) as (*const f32),
-                        scratch.grbuf[0usize].as_mut_ptr(),
+                        scratch.grbuf[0].as_mut_ptr(),
                     );
                     mp3d_synth_granule(
                         (*dec).qmf_state.as_mut_ptr(),
-                        scratch.grbuf[0usize].as_mut_ptr(),
-                        12i32,
+                        scratch.grbuf[0].as_mut_ptr(),
+                        12,
                         (*info).channels,
                         pcm,
-                        scratch.syn[0usize].as_mut_ptr(),
+                        scratch.syn[0].as_mut_ptr(),
                     );
                     // memset(
-                    //     scratch.grbuf[0usize].as_mut_ptr() as (*mut ::std::os::raw::c_void),
-                    //     0i32,
-                    //     ((576i32 * 2i32) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
+                    //     scratch.grbuf[0].as_mut_ptr() as (*mut ::std::os::raw::c_void),
+                    //     0,
+                    //     ((576 * 2) as (usize)).wrapping_mul(::std::mem::size_of::<f32>()),
                     // );
                     scratch.clear_grbuf();
-                    pcm = pcm.offset((384i32 * (*info).channels) as (isize));
+                    pcm = pcm.offset((384 * (*info).channels) as (isize));
                 }
                 if bs_frame.pos > bs_frame.limit {
                     current_block = 15;
@@ -3544,7 +3368,7 @@ pub unsafe fn mp3dec_decode_frame(
             if current_block == 21 {
             } else {
                 *dec = Mp3Dec::new();
-                return 0i32;
+                return 0;
             }
         }
         (success as (u32))

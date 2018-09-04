@@ -25,13 +25,27 @@ extern "C" {
 /// this helper does takes a `&mut` to the slice(!) and does
 /// it for us.  Panics if you try to increment past the end
 /// of the slice.
-fn increment_by<T>(slice: &mut &mut [T], amount: usize) {
-    // TODO: Test and verify!
+fn increment_by_mut<T>(slice: &mut &mut [T], amount: usize) {
     let lifetime_hack = unsafe {
         let slice_ptr = slice.as_mut_ptr();
         ::std::slice::from_raw_parts_mut(slice_ptr, slice.len())
     };
     *slice = &mut lifetime_hack[amount..]
+}
+
+/// Same as `increment_by_mut()` but operates on a mutable
+/// reference to an immutable slice.
+///
+/// This is less common than the other way around, 'cause
+/// we're usually stepping down buffers that are being filled,
+/// or altered, but let's follow std's convention of naming
+/// const vs. mut.
+fn increment_by<T>(slice: &mut &[T], amount: usize) {
+    let lifetime_hack = unsafe {
+        let slice_ptr = slice.as_ptr();
+        ::std::slice::from_raw_parts(slice_ptr, slice.len())
+    };
+    *slice = &lifetime_hack[amount..]
 }
 
 static GPOW43: [f32; 145] = [
@@ -128,7 +142,7 @@ impl Clone for Bs {
 #[derive(Copy)]
 #[repr(C)]
 pub struct L3GrInfo {
-    pub sfbtab: *const u8,
+    pub sfbtab: &'static [u8],
     pub part_23_length: u16,
     pub big_values: u16,
     pub scalefac_compress: u16,
@@ -406,7 +420,7 @@ fn mp3d_match_frame(hdr: &[u8], mp3_bytes: i32, frame_bytes: i32) -> i32 {
     let mut nmatch: i32;
     i = 0;
     nmatch = 0;
-    'loop1: loop {
+    loop {
         if !(nmatch < 10) {
             current_block = 2;
             break;
@@ -444,14 +458,14 @@ pub unsafe fn mp3d_find_frame(
     i = 0;
     let mut frame_bytes: i32 = hdr_frame_bytes(mp3, *free_format_bytes);
     let mut frame_and_padding: i32 = frame_bytes + hdr_padding(mp3);
-    'loop1: loop {
+    loop {
         if !(i < mp3_bytes - 4) {
             current_block = 2;
             break;
         }
         if hdr_valid(mp3) != 0 {
             k = 4;
-            'loop5: loop {
+            loop {
                 if !(frame_bytes == 0 && (k < 2304) && (i + 2 * k < mp3_bytes - 4)) {
                     break;
                 }
@@ -509,7 +523,7 @@ unsafe fn get_bits(bs: &mut Bs, n: i32) -> u32 {
             p = p.offset(1);
             _old
         } as (i32) & 255 >> s) as (u32);
-        'loop2: loop {
+        loop {
             if !({
                 shl = shl - 8;
                 shl
@@ -723,7 +737,7 @@ unsafe fn l12_read_scalefactors(
     let mut i: i32;
     let mut m: i32;
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < bands) {
             break;
         }
@@ -739,7 +753,7 @@ unsafe fn l12_read_scalefactors(
             0
         };
         m = 4;
-        'loop4: loop {
+        loop {
             if m == 0 {
                 break;
             }
@@ -771,7 +785,7 @@ unsafe fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
     let mut ba_bits: i32 = 0;
     let mut ba_code_tab: *const u8 = G_BITALLOC_CODE_TAB.as_ptr();
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < (*sci).total_bands as (i32)) {
             break;
         }
@@ -797,7 +811,7 @@ unsafe fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
         i = i + 1;
     }
     i = 0;
-    'loop3: loop {
+    loop {
         if !(i < 2 * (*sci).total_bands as (i32)) {
             break;
         }
@@ -820,7 +834,7 @@ unsafe fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
         (*sci).scf.as_mut_ptr(),
     );
     i = (*sci).stereo_bands as (i32);
-    'loop5: loop {
+    loop {
         if !(i < (*sci).total_bands as (i32)) {
             break;
         }
@@ -840,13 +854,13 @@ unsafe fn l12_dequantize_granule(
     let mut k: i32;
     let mut choff: i32 = 576;
     j = 0;
-    'loop1: loop {
+    loop {
         if !(j < 4) {
             break;
         }
         let mut dst: *mut f32 = grbuf.offset((group_size * j) as isize);
         i = 0;
-        'loop4: loop {
+        loop {
             if !(i < 2 * (*sci).total_bands as (i32)) {
                 break;
             }
@@ -855,7 +869,7 @@ unsafe fn l12_dequantize_granule(
                 if ba < 17 {
                     let half: i32 = (1 << ba - 1) - 1;
                     k = 0;
-                    'loop13: loop {
+                    loop {
                         if !(k < group_size) {
                             break;
                         }
@@ -867,7 +881,7 @@ unsafe fn l12_dequantize_granule(
                     let mut code: u32 =
                         get_bits(bs, mod_.wrapping_add(2).wrapping_sub(mod_ >> 3) as (i32));
                     k = 0;
-                    'loop9: loop {
+                    loop {
                         if !(k < group_size) {
                             break;
                         }
@@ -900,12 +914,12 @@ unsafe fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: *const f32, mut dst
             .wrapping_mul(::std::mem::size_of::<f32>()),
     );
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < (*sci).total_bands as (i32)) {
             break;
         }
         k = 0;
-        'loop4: loop {
+        loop {
             if !(k < 12) {
                 break;
             }
@@ -953,7 +967,7 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
     ];
     let mut i: i32;
     let mut k: i32 = 0;
-    'loop1: loop {
+    loop {
         if !(k < n) {
             break;
         }
@@ -962,7 +976,7 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
         let mut y: *mut f32 = grbuf.offset(k as isize);
         x = t[0].as_mut_ptr();
         i = 0;
-        'loop4: loop {
+        loop {
             if !(i < 8) {
                 break;
             }
@@ -983,7 +997,7 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
         }
         x = t[0].as_mut_ptr();
         i = 0;
-        'loop6: loop {
+        loop {
             if !(i < 4) {
                 break;
             }
@@ -1029,7 +1043,7 @@ unsafe fn mp3d_DCT_II(grbuf: *mut f32, n: i32) {
             x = x.offset(8);
         }
         i = 0;
-        'loop8: loop {
+        loop {
             if !(i < 7) {
                 break;
             }
@@ -1140,7 +1154,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         lins.offset((4 * 15) as isize).offset(64) as (*const f32),
     );
     i = 14;
-    'loop1: loop {
+    loop {
         if !(i >= 0) {
             break;
         }
@@ -1168,7 +1182,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 0 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 0) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop4: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1190,7 +1204,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 1 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 1) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop6: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1216,7 +1230,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 2 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 2) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop8: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1242,7 +1256,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 3 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 3) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop10: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1268,7 +1282,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 4 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 4) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop12: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1294,7 +1308,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 5 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 5) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop14: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1320,7 +1334,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 6 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 6) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop16: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1346,7 +1360,7 @@ unsafe fn mp3d_synth(xl: *mut f32, dstl: *mut i16, nch: i32, lins: *mut f32) {
         let vz: *mut f32 = &mut *zlin.offset((4 * i - 7 * 64) as isize) as (*mut f32);
         let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 7) * 64) as isize) as (*mut f32);
         j = 0;
-        'loop18: loop {
+        loop {
             if !(j < 4) {
                 break;
             }
@@ -1380,7 +1394,7 @@ unsafe fn mp3d_synth_granule(
 ) {
     let mut i: i32;
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < nch) {
             break;
         }
@@ -1395,7 +1409,7 @@ unsafe fn mp3d_synth_granule(
             .wrapping_mul(64),
     );
     i = 0;
-    'loop3: loop {
+    loop {
         if !(i < nbands) {
             break;
         }
@@ -1410,7 +1424,7 @@ unsafe fn mp3d_synth_granule(
     }
     if nch == 1 {
         i = 0;
-        'loop7: loop {
+        loop {
             if !(i < 15 * 64) {
                 break;
             }
@@ -1541,7 +1555,7 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
     } else {
         main_data_begin = (get_bits(bs, 8 + gr_count) >> gr_count) as (i32);
     }
-    'loop3: loop {
+    loop {
         if hdr[3] as (i32) & 0xc0 == 0xc0 {
             scfsi = scfsi << 4;
         }
@@ -1555,7 +1569,7 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
         (*gr).global_gain = get_bits(bs, 8) as (u8);
         (*gr).scalefac_compress =
             get_bits(bs, if hdr[1] as (i32) & 0x8 != 0 { 4 } else { 9 }) as (u16);
-        (*gr).sfbtab = G_SCF_LONG[sr_idx as usize].as_ptr();
+        (*gr).sfbtab = &G_SCF_LONG[sr_idx as usize];
         (*gr).n_long_sfb = 22;
         (*gr).n_short_sfb = 0;
         if get_bits(bs, 1) != 0 {
@@ -1571,11 +1585,11 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
                 scfsi = scfsi & 0xf0fu32;
                 if (*gr).mixed_block_flag == 0 {
                     (*gr).region_count[0] = 8;
-                    (*gr).sfbtab = G_SCF_SHORT[sr_idx as usize].as_ptr();
+                    (*gr).sfbtab = &G_SCF_SHORT[sr_idx as usize];
                     (*gr).n_long_sfb = 0;
                     (*gr).n_short_sfb = 39;
                 } else {
-                    (*gr).sfbtab = G_SCF_MIXED[sr_idx as usize].as_ptr();
+                    (*gr).sfbtab = &G_SCF_MIXED[sr_idx as usize];
                     (*gr).n_long_sfb = if hdr[1] as (i32) & 0x8 != 0 { 8 } else { 6 } as (u8);
                     (*gr).n_short_sfb = 30;
                 }
@@ -1678,7 +1692,7 @@ unsafe fn l3_read_scalefactors(
     let mut i: i32;
     let mut k: i32;
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < 4 && (*scf_count.offset(i as isize) != 0)) {
             break;
         }
@@ -1703,7 +1717,7 @@ unsafe fn l3_read_scalefactors(
             } else {
                 let max_scf: i32 = if scfsi < 0 { (1 << bits) - 1 } else { -1 };
                 k = 0;
-                'loop6: loop {
+                loop {
                     if !(k < cnt) {
                         break;
                     }
@@ -1740,7 +1754,7 @@ fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
         5.53767716e-10,
     ];
     let mut e: i32;
-    'loop1: loop {
+    loop {
         e = if 30 * 4 > exp_q2 { exp_q2 } else { 30 * 4 };
         y = y * (G_EXPFRAC[(e & 3) as usize] * (1 << 30 >> (e >> 2)) as f32);
         if !({
@@ -1810,13 +1824,13 @@ unsafe fn l3_decode_scalefactors(
         let ist: i32 = (hdr[3] as (i32) & 0x10 != 0 && (ch != 0)) as (i32);
         sfc = (*gr).scalefac_compress as (i32) >> ist;
         k = ist * 3 * 4;
-        'loop2: loop {
+        loop {
             if !(sfc >= 0) {
                 break;
             }
             modprod = 1;
             i = 3;
-            'loop5: loop {
+            loop {
                 if !(i >= 0) {
                     break;
                 }
@@ -1841,7 +1855,7 @@ unsafe fn l3_decode_scalefactors(
     if (*gr).n_short_sfb != 0 {
         let sh: i32 = 3 - scf_shift;
         i = 0;
-        'loop17: loop {
+        loop {
             if !(i < (*gr).n_short_sfb as (i32)) {
                 break;
             }
@@ -1865,7 +1879,7 @@ unsafe fn l3_decode_scalefactors(
     } else if (*gr).preflag != 0 {
         static G_PREAMP: [u8; 10] = [1, 1, 1, 1, 2, 2, 3, 3, 3, 2];
         i = 0;
-        'loop13: loop {
+        loop {
             if !(i < 10) {
                 break;
             }
@@ -1883,7 +1897,7 @@ unsafe fn l3_decode_scalefactors(
         (255 + -1 * 4 - 210 + 3 & !3) - gain_exp,
     );
     i = 0;
-    'loop19: loop {
+    loop {
         if !(i < (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32)) {
             break;
         }
@@ -1968,7 +1982,7 @@ unsafe fn l3_huffman(
     let mut one: f32 = 0.0;
     let mut ireg: i32 = 0;
     let mut big_val_cnt: i32 = (*gr_info).big_values as (i32);
-    let mut sfb: *const u8 = (*gr_info).sfbtab;
+    let mut sfb: &[u8] = (*gr_info).sfbtab;
     let mut bs_next_ptr: *const u8 = (*bs).buf.offset(((*bs).pos / 8) as isize);
     let mut bs_cache: u32 = (*bs_next_ptr.offset(0) as (u32))
         .wrapping_mul(256)
@@ -1982,7 +1996,7 @@ unsafe fn l3_huffman(
     let mut np: i32;
     let mut bs_sh: i32 = ((*bs).pos & 7) - 8;
     bs_next_ptr = bs_next_ptr.offset(4);
-    'loop1: loop {
+    loop {
         if !(big_val_cnt > 0) {
             break;
         }
@@ -1995,11 +2009,12 @@ unsafe fn l3_huffman(
                                     } as usize] as (i32);
         let codebook: *const i16 = TABS.as_ptr().offset(TABINDEX[tab_num as usize] as isize);
         let linbits: i32 = G_LINBITS[tab_num as usize] as (i32);
-        'loop25: loop {
-            np = *{
+        loop {
+            np = {
                 let _old = sfb;
-                sfb = sfb.offset(1);
-                _old
+                // sfb = sfb.offset(1);
+                increment_by(&mut sfb, 1);
+                _old[0]
             } as (i32) / 2;
             pairs_to_decode = if big_val_cnt > np { np } else { big_val_cnt };
             one = *{
@@ -2007,11 +2022,11 @@ unsafe fn l3_huffman(
                 scf = scf.offset(1);
                 _old
             };
-            'loop26: loop {
+            loop {
                 let mut j: i32;
                 let mut w: i32 = 5;
                 let mut leaf: i32 = *codebook.offset((bs_cache >> 32 - w) as isize) as (i32);
-                'loop27: loop {
+                loop {
                     if !(leaf < 0) {
                         break;
                     }
@@ -2025,7 +2040,7 @@ unsafe fn l3_huffman(
                 bs_cache = bs_cache << (leaf >> 8);
                 bs_sh = bs_sh + (leaf >> 8);
                 j = 0;
-                'loop29: loop {
+                loop {
                     if !(j < 2) {
                         break;
                     }
@@ -2034,7 +2049,7 @@ unsafe fn l3_huffman(
                         lsb = (lsb as (u32)).wrapping_add(bs_cache >> 32 - linbits) as (i32);
                         bs_cache = bs_cache << linbits;
                         bs_sh = bs_sh + linbits;
-                        'loop37: loop {
+                        loop {
                             if !(bs_sh >= 0) {
                                 break;
                             }
@@ -2059,7 +2074,7 @@ unsafe fn l3_huffman(
                     dst = dst.offset(1);
                     leaf = leaf >> 4;
                 }
-                'loop30: loop {
+                loop {
                     if !(bs_sh >= 0) {
                         break;
                     }
@@ -2091,7 +2106,7 @@ unsafe fn l3_huffman(
         }
     }
     np = 1 - big_val_cnt;
-    'loop3: loop {
+    loop {
         let codebook_count1: *const u8 = if (*gr_info).count1_table != 0 {
             TAB33.as_ptr()
         } else {
@@ -2116,9 +2131,9 @@ unsafe fn l3_huffman(
             np
         } == 0
         {
-            np = *{
-                let _old = sfb;
-                sfb = sfb.offset(1);
+            np = {
+                let _old = sfb[0];
+                increment_by(&mut sfb, 1);
                 _old
             } as (i32) / 2;
             if np == 0 {
@@ -2145,9 +2160,9 @@ unsafe fn l3_huffman(
             np
         } == 0
         {
-            np = *{
-                let _old = sfb;
-                sfb = sfb.offset(1);
+            np = {
+                let _old = sfb[0];
+                increment_by(&mut sfb, 1);
                 _old
             } as (i32) / 2;
             if np == 0 {
@@ -2169,7 +2184,7 @@ unsafe fn l3_huffman(
             bs_cache = bs_cache << 1;
             bs_sh = bs_sh + 1;
         }
-        'loop20: loop {
+        loop {
             if !(bs_sh >= 0) {
                 break;
             }
@@ -2185,17 +2200,18 @@ unsafe fn l3_huffman(
     (*bs).pos = layer3gr_limit;
 }
 
-unsafe fn l3_midside_stereo(left: *mut f32, n: i32) {
-    let mut i: i32 = 0;
-    let right: *mut f32 = left.offset(576);
-    'loop1: loop {
-        if !(i < n) {
+fn l3_midside_stereo(left: &mut [f32], n: i32) {
+    let mut i: usize = 0;
+    // let right = &mut left[576..];
+    let (left, right) = left.split_at_mut(576);
+    loop {
+        if !(i < (n as usize)) {
             break;
         }
-        let a: f32 = *left.offset(i as isize);
-        let b: f32 = *right.offset(i as isize);
-        *left.offset(i as isize) = a + b;
-        *right.offset(i as isize) = a - b;
+        let a: f32 = left[i];
+        let b: f32 = right[i];
+        left[i] = a + b;
+        right[i] = a - b;
         i = i + 1;
     }
 }
@@ -2221,12 +2237,12 @@ unsafe fn l3_stereo_top_band(
         *_lhs
     };
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < nbands) {
             break;
         }
         k = 0;
-        'loop4: loop {
+        loop {
             if !(k < *sfb.offset(i as isize) as (i32)) {
                 current_block = 8;
                 break;
@@ -2245,40 +2261,40 @@ unsafe fn l3_stereo_top_band(
     }
 }
 
-unsafe fn l3_intensity_stereo_band(left: *mut f32, n: i32, kl: f32, kr: f32) {
-    let mut i: i32;
+fn l3_intensity_stereo_band(left: &mut [f32], n: i32, kl: f32, kr: f32) {
+    let mut i: usize;
     i = 0;
-    'loop1: loop {
-        if !(i < n) {
+    loop {
+        if !(i < (n as usize)) {
             break;
         }
-        *left.offset((i + 576) as isize) = *left.offset(i as isize) * kr;
-        *left.offset(i as isize) = *left.offset(i as isize) * kl;
+        left[i + 576] = left[i] * kr;
+        left[i] = left[i] * kl;
         i = i + 1;
     }
 }
 
-unsafe fn l3_stereo_process(
-    mut left: *mut f32,
-    ist_pos: *const u8,
-    sfb: *const u8,
+fn l3_stereo_process(
+    mut left: &mut [f32],
+    ist_pos: &[u8],
+    sfb: &[u8],
     hdr: &[u8],
-    max_band: *mut i32,
+    max_band: &mut [i32],
     mpeg2_sh: i32,
 ) {
     static L_PAN: [f32; 14] = [
         0.0, 1.0, 0.21132487, 0.78867513, 0.36602540, 0.63397460, 0.5, 0.5, 0.63397460, 0.36602540,
         0.78867513, 0.21132487, 1.0, 0.0,
     ];
-    let mut i: u32;
+    let mut i: usize;
     let max_pos: u32 = (if hdr[1] as (i32) & 0x8 != 0 { 7 } else { 64 }) as (u32);
     i = 0;
-    'loop1: loop {
-        if *sfb.offset(i as isize) == 0 {
+    loop {
+        if sfb[i] == 0 {
             break;
         }
-        let ipos: u32 = *ist_pos.offset(i as isize) as (u32);
-        if i as (i32) > *max_band.offset(i.wrapping_rem(3) as isize) && (ipos < max_pos) {
+        let ipos: u32 = ist_pos[i] as u32;
+        if i as (i32) > max_band[i.wrapping_rem(3)] && (ipos < max_pos) {
             let mut kl: f32;
             let mut kr: f32;
             let s: f32 = if hdr[3] as (i32) & 0x20 != 0 {
@@ -2297,27 +2313,29 @@ unsafe fn l3_stereo_process(
                     kr = 1.0;
                 }
             }
-            l3_intensity_stereo_band(left, *sfb.offset(i as isize) as (i32), kl * s, kr * s);
+            l3_intensity_stereo_band(left, sfb[i] as (i32), kl * s, kr * s);
         } else if hdr[3] as (i32) & 0x20 != 0 {
-            l3_midside_stereo(left, *sfb.offset(i as isize) as (i32));
+            l3_midside_stereo(left, sfb[i] as i32);
         }
-        left = left.offset(*sfb.offset(i as isize) as isize);
+        increment_by_mut(&mut left, sfb[i] as usize);
         i = i.wrapping_add(1);
     }
 }
 
-unsafe fn l3_intensity_stereo(left: *mut f32, ist_pos: *mut u8, gr: *const L3GrInfo, hdr: &[u8]) {
+unsafe fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrInfo], hdr: &[u8]) {
     let mut max_band: [i32; 3] = [0; 3];
-    let n_sfb: i32 = (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32);
+    let n_sfb: i32 = gr[0].n_long_sfb as (i32) + gr[0].n_short_sfb as (i32);
     let mut i: i32;
-    let max_blocks: i32 = if (*gr).n_short_sfb != 0 { 3 } else { 1 };
+    let max_blocks: i32 = if gr[0].n_short_sfb != 0 { 3 } else { 1 };
     l3_stereo_top_band(
-        left.offset(576) as (*const f32),
-        (*gr).sfbtab,
+        left[576..].as_ptr(),
+        gr[0].sfbtab.as_ptr(),
         n_sfb,
         max_band.as_mut_ptr(),
     );
-    if (*gr).n_long_sfb != 0 {
+    if gr[0].n_long_sfb != 0 {
+        // TODO: This can be drastically cleaned up,
+        // see https://github.com/lieff/minimp3/blob/master/minimp3.h#L926
         max_band[0] = {
             let _rhs = {
                 let _rhs = if if max_band[0] < max_band[1] {
@@ -2342,27 +2360,27 @@ unsafe fn l3_intensity_stereo(left: *mut f32, ist_pos: *mut u8, gr: *const L3GrI
         };
     }
     i = 0;
-    'loop3: loop {
+    loop {
         if !(i < max_blocks) {
             break;
         }
         let default_pos: i32 = if hdr[1] as (i32) & 0x8 != 0 { 3 } else { 0 };
         let itop: i32 = n_sfb - max_blocks + i;
         let prev: i32 = itop - max_blocks;
-        *ist_pos.offset(itop as isize) = if max_band[i as usize] >= prev {
-            default_pos
+        ist_pos[itop as usize] = if max_band[i as usize] >= prev {
+            default_pos as u8
         } else {
-            *ist_pos.offset(prev as isize) as (i32)
-        } as (u8);
+            ist_pos[prev as usize]
+        };
         i = i + 1;
     }
     l3_stereo_process(
         left,
-        ist_pos as (*const u8),
-        (*gr).sfbtab,
+        ist_pos,
+        gr[0].sfbtab,
         hdr,
-        max_band.as_mut_ptr(),
-        (*gr.offset(1)).scalefac_compress as (i32) & 1,
+        &mut max_band,
+        gr[1].scalefac_compress as (i32) & 1,
     );
 }
 
@@ -2371,7 +2389,7 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
     let mut len: i32;
     let mut src: *mut f32 = grbuf;
     let mut dst: *mut f32 = scratch;
-    'loop1: loop {
+    loop {
         if !(0 != {
             len = *sfb as (i32);
             len
@@ -2379,10 +2397,11 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
             break;
         }
         i = 0;
-        'loop4: loop {
+        loop {
             if !(i < len) {
                 break;
             }
+            // TODO: Ugh, postincrement operators.
             *{
                 let _old = dst;
                 dst = dst.offset(1);
@@ -2413,7 +2432,7 @@ unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
     );
 }
 
-unsafe fn l3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
+fn l3_antialias(mut grbuf: &mut [f32], mut nbands: i32) {
     static G_AA: [[f32; 8]; 2] = [
         [
             0.85749293, 0.88174200, 0.94962865, 0.98331459, 0.99551782, 0.99916056, 0.99989920,
@@ -2424,23 +2443,23 @@ unsafe fn l3_antialias(mut grbuf: *mut f32, mut nbands: i32) {
             0.00369997,
         ],
     ];
-    'loop1: loop {
+    loop {
         if !(nbands > 0) {
             break;
         }
-        let mut i: i32 = 0;
-        'loop4: loop {
+        let mut i: usize = 0;
+        loop {
             if !(i < 8) {
                 break;
             }
-            let u: f32 = *grbuf.offset((18 + i) as isize);
-            let d: f32 = *grbuf.offset((17 - i) as isize);
-            *grbuf.offset((18 + i) as isize) = u * G_AA[0][i as usize] - d * G_AA[1][i as usize];
-            *grbuf.offset((17 - i) as isize) = u * G_AA[1][i as usize] + d * G_AA[0][i as usize];
+            let u: f32 = grbuf[18 + i];
+            let d: f32 = grbuf[17 - i];
+            grbuf[18 + i] = u * G_AA[0][i] - d * G_AA[1][i];
+            grbuf[17 - i] = u * G_AA[1][i] + d * G_AA[0][i];
             i = i + 1;
         }
         nbands = nbands - 1;
-        grbuf = grbuf.offset(18);
+        increment_by_mut(&mut grbuf, 18);
     }
 }
 
@@ -2505,7 +2524,7 @@ fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nb
         0.30070580, 0.21643961, 0.13052619, 0.04361938,
     ];
     j = 0;
-    'loop1: loop {
+    loop {
         if !(j < nbands) {
             break;
         }
@@ -2514,7 +2533,7 @@ fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nb
         co[0] = -grbuf[0];
         si[0] = grbuf[17];
         i = 0;
-        'loop4: loop {
+        loop {
             if !(i < 4) {
                 break;
             }
@@ -2531,7 +2550,7 @@ fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nb
         si[5] = -si[5];
         si[7] = -si[7];
         i = 0;
-        'loop6: loop {
+        loop {
             if !(i < 9) {
                 break;
             }
@@ -2543,8 +2562,8 @@ fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nb
             i = i + 1;
         }
         j = j + 1;
-        increment_by(&mut grbuf, 18);
-        increment_by(&mut overlap, 9);
+        increment_by_mut(&mut grbuf, 18);
+        increment_by_mut(&mut overlap, 9);
     }
 }
 
@@ -2567,7 +2586,7 @@ fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
     l3_idct3(x[15], x[12] - x[9], x[6] - x[3], &mut si);
     si[1] = -si[1];
     i = 0;
-    'loop1: loop {
+    loop {
         if !(i < 3) {
             break;
         }
@@ -2581,7 +2600,7 @@ fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
 }
 
 fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i32) {
-    'loop0: loop {
+    loop {
         if !(nbands > 0) {
             break;
         }
@@ -2605,8 +2624,8 @@ fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i3
             l3_imdct12(&mut tmp[2..], a, b);
         }
         nbands = nbands - 1;
-        increment_by(&mut overlap, 9);
-        increment_by(&mut grbuf, 18);
+        increment_by_mut(&mut overlap, 9);
+        increment_by_mut(&mut grbuf, 18);
     }
 }
 
@@ -2624,8 +2643,8 @@ fn l3_imdct_gr(mut grbuf: &mut [f32], mut overlap: &mut [f32], block_type: u32, 
     ];
     if n_long_bands != 0 {
         l3_imdct36(grbuf, overlap, &G_MDCT_WINDOW[0], n_long_bands as (i32));
-        increment_by(&mut grbuf, 18u32.wrapping_mul(n_long_bands) as usize);
-        increment_by(&mut overlap, 9u32.wrapping_mul(n_long_bands) as usize);
+        increment_by_mut(&mut grbuf, 18u32.wrapping_mul(n_long_bands) as usize);
+        increment_by_mut(&mut overlap, 9u32.wrapping_mul(n_long_bands) as usize);
     }
     if block_type == 2u32 {
         l3_imdct_short(grbuf, overlap, 32u32.wrapping_sub(n_long_bands) as (i32));
@@ -2643,13 +2662,13 @@ fn l3_change_sign(mut grbuf: &mut [f32]) {
     let mut b: i32;
     let mut i: usize;
     b = 0;
-    increment_by(&mut grbuf, 18);
-    'loop1: loop {
+    increment_by_mut(&mut grbuf, 18);
+    loop {
         if !(b < 32) {
             break;
         }
         i = 1;
-        'loop4: loop {
+        loop {
             if !(i < 18) {
                 break;
             }
@@ -2657,14 +2676,14 @@ fn l3_change_sign(mut grbuf: &mut [f32]) {
             i = i + 2;
         }
         b = b + 2;
-        increment_by(&mut grbuf, 36);
+        increment_by_mut(&mut grbuf, 36);
     }
 }
 
 unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
     let mut ch: i32;
     ch = 0;
-    'loop1: loop {
+    loop {
         if !(ch < nch) {
             break;
         }
@@ -2687,17 +2706,12 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
         ch = ch + 1;
     }
     if (*h).header[3] as (i32) & 0x10 != 0 {
-        l3_intensity_stereo(
-            (*s).grbuf[0].as_mut_ptr(),
-            (*s).ist_pos[1].as_mut_ptr(),
-            &gr_info[0] as (*const L3GrInfo),
-            &h.header,
-        );
+        l3_intensity_stereo(&mut s.grbuf[0], &mut s.ist_pos[1], gr_info, &h.header);
     } else if (*h).header[3] as (i32) & 0xe0 == 0x60 {
-        l3_midside_stereo((*s).grbuf[0].as_mut_ptr(), 576);
+        l3_midside_stereo(&mut s.grbuf[0], 576);
     }
     ch = 0;
-    'loop7: loop {
+    loop {
         if !(ch < nch) {
             break;
         }
@@ -2717,10 +2731,10 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
                     .as_mut_ptr()
                     .offset((n_long_bands * 18) as isize),
                 (*s).syn[0].as_mut_ptr(),
-                gr_info[0].sfbtab.offset(gr_info[0].n_long_sfb as isize),
+                gr_info[0].sfbtab[gr_info[0].n_long_sfb as usize..].as_ptr(),
             );
         }
-        l3_antialias((*s).grbuf[ch as usize].as_mut_ptr(), aa_bands);
+        l3_antialias(&mut s.grbuf[ch as usize][..], aa_bands);
         l3_imdct_gr(
             &mut s.grbuf[ch as usize][..],
             &mut h.mdct_overlap[ch as usize][..],
@@ -2730,7 +2744,7 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
         l3_change_sign(&mut s.grbuf[ch as usize]);
         ch = ch + 1;
         // gr_info = gr_info.offset(1);
-        increment_by(&mut gr_info, 1);
+        increment_by_mut(&mut gr_info, 1);
     }
 }
 
@@ -2847,7 +2861,7 @@ pub unsafe fn mp3dec_decode_frame(
                 );
                 if success != 0 {
                     igr = 0;
-                    'loop19: loop {
+                    loop {
                         if !(igr < if hdr[1] as (i32) & 0x8 != 0 { 2 } else { 1 }) {
                             break;
                         }
@@ -2880,7 +2894,7 @@ pub unsafe fn mp3dec_decode_frame(
                         //     ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
                         // };
                         // pcm = &mut pcm_lifetime_hack[(576 * info.channels) as usize..];
-                        increment_by(&mut pcm, (576 * info.channels) as usize);
+                        increment_by_mut(&mut pcm, (576 * info.channels) as usize);
                     }
                 }
                 l3_save_reservoir(&mut *dec, &mut scratch);
@@ -2897,7 +2911,7 @@ pub unsafe fn mp3dec_decode_frame(
             scratch.clear_grbuf();
             i = 0;
             igr = 0;
-            'loop10: loop {
+            loop {
                 if !(igr < 3) {
                     current_block = 21;
                     break;
@@ -2940,7 +2954,7 @@ pub unsafe fn mp3dec_decode_frame(
                     //     ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
                     // };
                     // pcm = &mut pcm_lifetime_hack[(384 * info.channels) as usize..]
-                    increment_by(&mut pcm, (384 * info.channels) as usize);
+                    increment_by_mut(&mut pcm, (384 * info.channels) as usize);
                 }
                 if bs_frame.pos > bs_frame.limit {
                     current_block = 15;
@@ -2965,18 +2979,18 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 
-    use super::increment_by;
+    use super::increment_by_mut;
     #[test]
-    fn test_increment_by() {
+    fn test_increment_by_mut() {
         let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
         let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
-        increment_by(&mut slice_to_mongle, 1);
+        increment_by_mut(&mut slice_to_mongle, 1);
         assert_eq!(&slice[1..], slice_to_mongle);
-        increment_by(&mut slice_to_mongle, 1);
+        increment_by_mut(&mut slice_to_mongle, 1);
         assert_eq!(&slice[2..], slice_to_mongle);
-        increment_by(&mut slice_to_mongle, 2);
+        increment_by_mut(&mut slice_to_mongle, 2);
         assert_eq!(&slice[4..], slice_to_mongle);
-        increment_by(&mut slice_to_mongle, 2);
+        increment_by_mut(&mut slice_to_mongle, 2);
         let empty: &[i32] = &[];
         assert_eq!(empty, slice_to_mongle);
         assert_eq!(&slice[6..], slice_to_mongle);
@@ -2987,6 +3001,6 @@ mod tests {
     fn test_increment_too_far() {
         let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
         let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
-        increment_by(&mut slice_to_mongle, 99);
+        increment_by_mut(&mut slice_to_mongle, 99);
     }
 }

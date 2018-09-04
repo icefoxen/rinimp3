@@ -236,8 +236,9 @@ pub unsafe fn mp3dec_iterate_buf(
         'loop3: loop {
             let mut free_format_bytes: i32 = 0i32;
             let mut frame_size: i32 = 0i32;
+            let buf_slice = ::std::slice::from_raw_parts(buf, buf_size);
             let i: i32 = mp3d_find_frame(
-                buf,
+                buf_slice,
                 buf_size as (i32),
                 &mut free_format_bytes as (*mut i32),
                 &mut frame_size as (*mut i32),
@@ -248,21 +249,22 @@ pub unsafe fn mp3dec_iterate_buf(
                 if frame_size == 0 {
                     break;
                 }
-                let hdr: *const u8 = buf;
-                frame_info.channels = if *hdr.offset(3isize) as (i32) & 0xc0i32 == 0xc0i32 {
+                let hdr: &[u8] = ::std::slice::from_raw_parts(buf, buf_size);
+                frame_info.channels = if hdr[3] as (i32) & 0xc0i32 == 0xc0i32 {
                     1i32
                 } else {
                     2i32
                 };
                 frame_info.hz = hdr_sample_rate_hz(hdr) as (i32);
-                frame_info.layer = 4i32 - (*hdr.offset(1isize) as (i32) >> 1i32 & 3i32);
+                // TODO: Double-check precedence on this next line
+                frame_info.layer = 4i32 - hdr[1] as (i32) >> 1i32 & 3i32;
                 frame_info.bitrate_kbps = hdr_bitrate_kbps(hdr) as (i32);
                 frame_info.frame_bytes = frame_size;
                 if callback(
                     user_data,
-                    hdr,
+                    hdr.as_ptr(),
                     frame_size,
-                    ((hdr as (isize)).wrapping_sub(orig_buf as (isize))
+                    ((hdr.as_ptr() as (isize)).wrapping_sub(orig_buf as (isize))
                         / ::std::mem::size_of::<u8>() as (isize)) as (usize),
                     &mut frame_info as (*mut FrameInfo),
                 ) != 0

@@ -100,7 +100,7 @@ pub unsafe fn mp3dec_load_buf(
 ) {
     let orig_buf_size: usize = buf_size;
     let mut pcm: [i16; 2304] = [0; 2304];
-    let mut frame_info: FrameInfo = ::std::mem::uninitialized();
+    let mut frame_info: FrameInfo = ::std::mem::zeroed();
     memset(
         info as (*mut ::std::os::raw::c_void),
         0i32,
@@ -120,11 +120,10 @@ pub unsafe fn mp3dec_load_buf(
         let mut samples: i32;
         'loop2: loop {
             samples = mp3dec_decode_frame(
-                dec,
-                buf,
-                buf_size as (i32),
+                &mut *dec,
+                ::std::slice::from_raw_parts(buf, buf_size),
                 pcm.as_mut_ptr(),
-                &mut frame_info as (*mut FrameInfo),
+                &mut frame_info,
             );
             buf = buf.offset(frame_info.frame_bytes as (isize));
             buf_size = buf_size.wrapping_sub(frame_info.frame_bytes as (usize));
@@ -171,11 +170,10 @@ pub unsafe fn mp3dec_load_buf(
                                 as (*mut i16);
                     }
                     samples = mp3dec_decode_frame(
-                        dec,
-                        buf,
-                        buf_size as (i32),
+                        &mut *dec,
+                        ::std::slice::from_raw_parts(buf, buf_size),
                         (*info).buffer.offset((*info).samples as (isize)),
-                        &mut frame_info as (*mut FrameInfo),
+                        &mut frame_info,
                     );
                     frame_bytes = frame_info.frame_bytes;
                     buf = buf.offset(frame_bytes as (isize));
@@ -223,7 +221,7 @@ pub unsafe fn mp3dec_iterate_buf(
     callback: unsafe fn(*mut ::std::os::raw::c_void, *const u8, i32, usize, *mut FrameInfo) -> i32,
     user_data: *mut ::std::os::raw::c_void,
 ) {
-    let mut frame_info: FrameInfo = ::std::mem::uninitialized();
+    let mut frame_info: FrameInfo = ::std::mem::zeroed();
     memset(
         &mut frame_info as (*mut FrameInfo) as (*mut ::std::os::raw::c_void),
         0i32,
@@ -370,7 +368,7 @@ impl Clone for stat {
 
 unsafe fn mp3dec_open_file(file_name: *const u8, map_info: *mut Struct10) -> i32 {
     let mut file: i32;
-    let mut st: stat = ::std::mem::uninitialized();
+    let mut st: stat = ::std::mem::zeroed();
     memset(
         map_info as (*mut ::std::os::raw::c_void),
         0i32,
@@ -433,7 +431,7 @@ pub unsafe fn mp3dec_load(
     user_data: *mut ::std::os::raw::c_void,
 ) -> i32 {
     let ret: i32;
-    let mut map_info: Struct10 = ::std::mem::uninitialized();
+    let mut map_info: Struct10 = ::std::mem::zeroed();
     if {
         ret = mp3dec_open_file(file_name, &mut map_info as (*mut Struct10));
         ret
@@ -461,7 +459,7 @@ pub unsafe fn mp3dec_iterate(
     user_data: *mut ::std::os::raw::c_void,
 ) -> i32 {
     let ret: i32;
-    let mut map_info: Struct10 = ::std::mem::uninitialized();
+    let mut map_info: Struct10 = ::std::mem::zeroed();
     if {
         ret = mp3dec_open_file(file_name, &mut map_info as (*mut Struct10));
         ret
@@ -597,14 +595,14 @@ unsafe fn decode_file(
     file_out: *mut IoFile,
     wave_out: i32,
 ) {
-    let mut mp3d: Mp3Dec = ::std::mem::uninitialized();
+    let mut mp3d: Mp3Dec = ::std::mem::zeroed();
     let mut i: i32;
     let data_bytes: i32;
     let mut total_samples: i32 = 0i32;
     let mut maxdiff: i32 = 0i32;
     let mut mse: f64 = 0.0f64;
     let psnr: f64;
-    let mut info: Struct8 = ::std::mem::uninitialized();
+    let mut info: Struct8 = ::std::mem::zeroed();
     unsafe fn callback(
         _: *mut ::std::os::raw::c_void,
         _: usize,

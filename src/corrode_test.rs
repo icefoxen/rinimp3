@@ -4,11 +4,6 @@ extern "C" {
         __src: *const ::std::os::raw::c_void,
         __n: usize,
     ) -> *mut ::std::os::raw::c_void;
-    fn memmove(
-        __dest: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
 }
 
 /// Silly helper function
@@ -20,6 +15,23 @@ extern "C" {
 //         *v = val;
 //     }
 // }
+
+/// This function is here to take care of the common C
+/// idiom of looping down a pointer to an array and bumping
+/// the position of the pointer each iteration of the loop.
+/// This works fine in Rust just by doing `s = s[1..];`
+/// for immutable borrows, but with mutable ones this behavior
+/// causes a double-borrow.  It SHOULD be safe though, so
+/// this helper does takes a `&mut` to the slice(!) and does
+/// it for us.
+fn increment_by<T>(slice: &mut &mut [T], amount: usize) {
+    // TODO: Test and verify!
+    let lifetime_hack = unsafe {
+        let slice_ptr = slice.as_mut_ptr();
+        ::std::slice::from_raw_parts_mut(slice_ptr, slice.len())
+    };
+    *slice = &mut lifetime_hack[amount..]
+}
 
 static GPOW43: [f32; 145] = [
     0.0, -1.0, -2.519842, -4.326749, -6.349604, -8.549880, -10.902724, -13.390518, -16.000000,
@@ -2679,27 +2691,26 @@ unsafe fn l3_change_sign(mut grbuf: *mut f32) {
 }
 
 /// TODO: gr_info should be an array
-unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3GrInfo, nch: i32) {
+unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
     let mut ch: i32;
     ch = 0;
     'loop1: loop {
         if !(ch < nch) {
             break;
         }
-        let layer3gr_limit: i32 =
-            (*s).bs.pos + (*gr_info.offset(ch as isize)).part_23_length as (i32);
+        let layer3gr_limit: i32 = (*s).bs.pos + (gr_info[ch as usize]).part_23_length as (i32);
         l3_decode_scalefactors(
             &h.header,
             (*s).ist_pos[ch as usize].as_mut_ptr(),
             &mut (*s).bs,
-            &*gr_info.offset(ch as isize),
+            &gr_info[ch as usize],
             (*s).scf.as_mut_ptr(),
             ch,
         );
         l3_huffman(
             (*s).grbuf[ch as usize].as_mut_ptr(),
             &mut (*s).bs,
-            &*gr_info.offset(ch as isize),
+            &gr_info[ch as usize],
             (*s).scf.as_mut_ptr() as (*const f32),
             layer3gr_limit,
         );
@@ -2709,7 +2720,7 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3G
         l3_intensity_stereo(
             (*s).grbuf[0].as_mut_ptr(),
             (*s).ist_pos[1].as_mut_ptr(),
-            gr_info as (*const L3GrInfo),
+            &gr_info[0] as (*const L3GrInfo),
             &h.header,
         );
     } else if (*h).header[3] as (i32) & 0xe0 == 0x60 {
@@ -2721,7 +2732,7 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3G
             break;
         }
         let mut aa_bands: i32 = 31;
-        let n_long_bands: i32 = (if (*gr_info).mixed_block_flag != 0 {
+        let n_long_bands: i32 = (if gr_info[0].mixed_block_flag != 0 {
             2
         } else {
             0
@@ -2729,30 +2740,31 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: *mut L3G
             << (((*h).header[2] as (i32) >> 2 & 3)
                 + (((*h).header[1] as (i32) >> 3 & 1) + ((*h).header[1] as (i32) >> 4 & 1)) * 3
                 == 2) as (i32);
-        if (*gr_info).n_short_sfb != 0 {
+        if gr_info[0].n_short_sfb != 0 {
             aa_bands = n_long_bands - 1;
             l3_reorder(
                 (*s).grbuf[ch as usize]
                     .as_mut_ptr()
                     .offset((n_long_bands * 18) as isize),
                 (*s).syn[0].as_mut_ptr(),
-                (*gr_info).sfbtab.offset((*gr_info).n_long_sfb as isize),
+                gr_info[0].sfbtab.offset(gr_info[0].n_long_sfb as isize),
             );
         }
         l3_antialias((*s).grbuf[ch as usize].as_mut_ptr(), aa_bands);
         l3_imdct_gr(
             (*s).grbuf[ch as usize].as_mut_ptr(),
             (*h).mdct_overlap[ch as usize].as_mut_ptr(),
-            (*gr_info).block_type as (u32),
+            gr_info[0].block_type as (u32),
             n_long_bands as (u32),
         );
         l3_change_sign((*s).grbuf[ch as usize].as_mut_ptr());
         ch = ch + 1;
-        gr_info = gr_info.offset(1);
+        // gr_info = gr_info.offset(1);
+        increment_by(&mut gr_info, 1);
     }
 }
 
-unsafe fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
+fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
     let mut pos: i32 = (((*s).bs.pos + 7) as (u32)).wrapping_div(8) as (i32);
     let mut remains: i32 = ((*s).bs.limit as (u32))
         .wrapping_div(8)
@@ -2762,11 +2774,15 @@ unsafe fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
         remains = 511;
     }
     if remains > 0 {
-        memmove(
-            (*h).reserv_buf.as_mut_ptr() as (*mut ::std::os::raw::c_void),
-            (*s).maindata.as_mut_ptr().offset(pos as isize) as (*const ::std::os::raw::c_void),
-            remains as usize,
-        );
+        // memmove(
+        //     (*h).reserv_buf.as_mut_ptr() as (*mut ::std::os::raw::c_void),
+        //     (*s).maindata.as_mut_ptr().offset(pos as isize) as (*const ::std::os::raw::c_void),
+        //     remains as usize,
+        // );
+        // TODO: slice_end might be totally unnecessary here?
+        let slice_end = (pos + remains) as usize;
+        let from_slice = &s.maindata[pos as usize..slice_end];
+        h.reserv_buf.copy_from_slice(from_slice)
     }
     (*h).reserv = remains;
 }
@@ -2871,16 +2887,12 @@ pub unsafe fn mp3dec_decode_frame(
                         //     ((576 * 2) as usize).wrapping_mul(::std::mem::size_of::<f32>()),
                         // );
                         scratch.clear_grbuf();
-                        // fill(&mut scratch.grbuf[0], 0.0);
-                        // fill(&mut scratch.grbuf[1], 0.0);
+                        let gr_offset = (igr * (*info).channels) as usize;
                         l3_decode(
                             &mut *dec,
                             // BUGGO: Defeat borrow checker
                             &mut *(&mut scratch as *mut Mp3DecScratch),
-                            scratch
-                                .gr_info
-                                .as_mut_ptr()
-                                .offset((igr * (*info).channels) as isize),
+                            &mut scratch.gr_info[gr_offset..],
                             (*info).channels,
                         );
                         mp3d_synth_granule(
@@ -2893,11 +2905,12 @@ pub unsafe fn mp3dec_decode_frame(
                         );
                         igr = igr + 1;
                         // pcm = pcm.offset((576 * (*info).channels) as isize);
-                        let pcm_lifetime_hack = unsafe {
-                            let pcm_ptr = pcm.as_mut_ptr();
-                            ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
-                        };
-                        pcm = &mut pcm_lifetime_hack[(576 * info.channels) as usize..];
+                        // let pcm_lifetime_hack = unsafe {
+                        //     let pcm_ptr = pcm.as_mut_ptr();
+                        //     ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
+                        // };
+                        // pcm = &mut pcm_lifetime_hack[(576 * info.channels) as usize..];
+                        increment_by(&mut pcm, (576 * info.channels) as usize);
                     }
                 }
                 l3_save_reservoir(&mut *dec, &mut scratch);
@@ -2952,11 +2965,12 @@ pub unsafe fn mp3dec_decode_frame(
                     scratch.clear_grbuf();
                     // pcm = pcm.offset((384 * (*info).channels) as isize);
                     // BUGGO: Borrow checker defeat here.
-                    let pcm_lifetime_hack = unsafe {
-                        let pcm_ptr = pcm.as_mut_ptr();
-                        ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
-                    };
-                    pcm = &mut pcm_lifetime_hack[(384 * info.channels) as usize..]
+                    // let pcm_lifetime_hack = unsafe {
+                    //     let pcm_ptr = pcm.as_mut_ptr();
+                    //     ::std::slice::from_raw_parts_mut(pcm_ptr, pcm.len())
+                    // };
+                    // pcm = &mut pcm_lifetime_hack[(384 * info.channels) as usize..]
+                    increment_by(&mut pcm, (384 * info.channels) as usize);
                 }
                 if bs_frame.pos > bs_frame.limit {
                     current_block = 15;
@@ -2971,5 +2985,38 @@ pub unsafe fn mp3dec_decode_frame(
             }
         }
         (success as (u32)).wrapping_mul(hdr_frame_samples(&dec.header)) as (i32)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn it_works() {
+        assert_eq!(2 + 2, 4);
+    }
+
+    use super::increment_by;
+    #[test]
+    fn test_increment_by() {
+        let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
+        let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
+        increment_by(&mut slice_to_mongle, 1);
+        assert_eq!(&slice[1..], slice_to_mongle);
+        increment_by(&mut slice_to_mongle, 1);
+        assert_eq!(&slice[2..], slice_to_mongle);
+        increment_by(&mut slice_to_mongle, 2);
+        assert_eq!(&slice[4..], slice_to_mongle);
+        increment_by(&mut slice_to_mongle, 2);
+        let empty: &[i32] = &[];
+        assert_eq!(empty, slice_to_mongle);
+        assert_eq!(&slice[6..], slice_to_mongle);
+    }
+
+    #[test]
+    #[should_panic]
+    fn test_increment_too_far() {
+        let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
+        let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
+        increment_by(&mut slice_to_mongle, 99);
     }
 }

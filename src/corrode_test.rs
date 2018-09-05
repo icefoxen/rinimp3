@@ -2050,9 +2050,11 @@ unsafe fn l3_huffman(
                     bs_cache = bs_cache << w;
                     bs_sh = bs_sh + w;
                     w = leaf & 7;
-                    leaf = *codebook
-                        .offset((bs_cache >> 32 - w).wrapping_sub((leaf >> 3) as (u32)) as isize)
-                        as (i32);
+                    // TODO: Check that this shouldn't be `wrapping_shr(32) - w, though that doesn't seem sensible.
+                    leaf = *codebook.offset(
+                        (bs_cache.wrapping_shr((32 - w) as u32)).wrapping_sub((leaf >> 3) as (u32))
+                            as isize,
+                    ) as (i32);
                 }
                 // bs_cache = bs_cache << (leaf >> 8);
                 bs_cache = bs_cache.wrapping_shl((leaf >> 8) as u32);
@@ -2236,6 +2238,24 @@ fn l3_midside_stereo(left: &mut [f32], n: i32) {
     }
 }
 
+/// This is sometimes passed a `float[2][576]` and is sometimes,
+/// it seems, passed a float array of length >= 1152.  We now
+/// have two different functions for the different cases of this.
+/// TODO: Can we get rid of the previous version of this?
+fn l3_midside_stereo_b(left: &mut [f32], right: &mut [f32], n: i32) {
+    let mut i: usize = 0;
+    loop {
+        if !(i < (n as usize)) {
+            break;
+        }
+        let a: f32 = left[i];
+        let b: f32 = right[i];
+        left[i] = a + b;
+        right[i] = a - b;
+        i = i + 1;
+    }
+}
+
 fn l3_stereo_top_band(mut right: &[f32], sfb: &[u8], nbands: i32, max_band: &mut [i32]) {
     let mut current_block;
     let mut i: usize;
@@ -2404,6 +2424,12 @@ fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[u8]) {
     let mut dst = 0;
     while sfb[0] != 0 {
         let len = sfb[0] as usize;
+        println!(
+            "LEN: {}, grbuf: {}, scratch: {}",
+            len,
+            grbuf.len(),
+            scratch.len()
+        );
         for _ in 0..len {
             scratch[dst] = grbuf[src + (0 * len)];
             dst += 1;
@@ -2718,25 +2744,40 @@ fn l3_imdct_gr(mut grbuf: &mut [f32], mut overlap: &mut [f32], block_type: u32, 
     }
 }
 
+/// I am rather confused about why this function uses two
+/// nested loops instead of one.
 fn l3_change_sign(mut grbuf: &mut [f32]) {
-    let mut b: i32;
-    let mut i: usize;
-    b = 0;
+    // let mut b: i32;
+    // let mut i: usize;
+    // b = 0;
+    // increment_by_mut(&mut grbuf, 18);
+    // loop {
+    //     if !(b < 32) {
+    //         break;
+    //     }
+    //     i = 1;
+    //     loop {
+    //         if !(i < 18) {
+    //             break;
+    //         }
+    //         grbuf[i] = -grbuf[i];
+    //         i = i + 2;
+    //     }
+    //     b = b + 2;
+    //     increment_by_mut(&mut grbuf, 36);
+    // }
+    let mut b = 0;
     increment_by_mut(&mut grbuf, 18);
-    loop {
-        if !(b < 32) {
-            break;
-        }
-        i = 1;
-        loop {
-            if !(i < 18) {
-                break;
-            }
+    while b < 32 {
+        let mut i = 0;
+        while i < 18 {
             grbuf[i] = -grbuf[i];
-            i = i + 2;
+            i += 2;
         }
         b = b + 2;
-        increment_by_mut(&mut grbuf, 36);
+        if grbuf.len() >= 36 {
+            increment_by_mut(&mut grbuf, 36);
+        }
     }
 }
 
@@ -2768,7 +2809,8 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
     if (*h).header[3] as (i32) & 0x10 != 0 {
         l3_intensity_stereo(&mut s.grbuf[0], &mut s.ist_pos[1], gr_info, &h.header);
     } else if (*h).header[3] as (i32) & 0xe0 == 0x60 {
-        l3_midside_stereo(&mut s.grbuf[0], 576);
+        let (left, right) = s.grbuf.split_at_mut(1);
+        l3_midside_stereo_b(&mut left[0], &mut right[0], 576);
     }
     ch = 0;
     loop {
@@ -2811,6 +2853,7 @@ fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
     let mut remains: i32 = ((*s).bs.limit as (u32))
         .wrapping_div(8)
         .wrapping_sub(pos as (u32)) as (i32);
+    // TODO: remains can probably be way simpler.
     if remains > 511 {
         pos = pos + (remains - 511);
         remains = 511;
@@ -2821,10 +2864,9 @@ fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
         //     (*s).maindata.as_mut_ptr().offset(pos as isize) as (*const ::std::os::raw::c_void),
         //     remains as usize,
         // );
-        // TODO: slice_end might be totally unnecessary here?
         let slice_end = (pos + remains) as usize;
         let from_slice = &s.maindata[pos as usize..slice_end];
-        h.reserv_buf.copy_from_slice(from_slice)
+        h.reserv_buf[..from_slice.len()].copy_from_slice(from_slice);
     }
     (*h).reserv = remains;
 }

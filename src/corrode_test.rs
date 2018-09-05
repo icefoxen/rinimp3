@@ -386,7 +386,6 @@ pub fn hdr_bitrate_kbps(h: &[u8]) -> u32 {
     let i1 = if (h[1] & 0x8) == 0 { 0 } else { 1 };
     let i2 = (((h[1] >> 1) & 3) - 1) as usize;
     let i3 = (h[2] >> 4) as usize;
-    // println!("{}, {}, {}, {}", i1, i2, i3, h[1]);
     debug_assert!(i1 < HALFRATE.len());
     debug_assert!(i2 < HALFRATE[0].len());
     debug_assert!(i3 < HALFRATE[0][0].len());
@@ -2055,7 +2054,8 @@ unsafe fn l3_huffman(
                         .offset((bs_cache >> 32 - w).wrapping_sub((leaf >> 3) as (u32)) as isize)
                         as (i32);
                 }
-                bs_cache = bs_cache << (leaf >> 8);
+                // bs_cache = bs_cache << (leaf >> 8);
+                bs_cache = bs_cache.wrapping_shl((leaf >> 8) as u32);
                 bs_sh = bs_sh + (leaf >> 8);
                 j = 0;
                 loop {
@@ -2096,11 +2096,12 @@ unsafe fn l3_huffman(
                     if !(bs_sh >= 0) {
                         break;
                     }
-                    bs_cache = bs_cache | *{
+                    bs_cache = (bs_cache | *{
                         let _old = bs_next_ptr;
                         bs_next_ptr = bs_next_ptr.offset(1);
                         _old
-                    } as (u32) << bs_sh;
+                    } as (u32))
+                        .wrapping_shl(bs_sh as u32);
                     bs_sh = bs_sh - 8;
                 }
                 if {
@@ -2220,6 +2221,7 @@ unsafe fn l3_huffman(
 
 fn l3_midside_stereo(left: &mut [f32], n: i32) {
     let mut i: usize = 0;
+    println!("LEN: {}", left.len());
     // let right = &mut left[576..];
     let (left, right) = left.split_at_mut(576);
     loop {

@@ -1,4 +1,4 @@
 #!/bin/sh
-for v in vectors/*; do
+for v in vectors/*.pcm vectors/*.bit; do
     cargo run --release --bin minimp3_test -- $v
 done;

@@ -339,7 +339,9 @@ impl Hdr {
     }
 }
 */
-
+// TODO: All the horrible bit-tests in the `hdr_` functions
+// are macros in the C version; can we translate them back to
+// functions?
 fn hdr_valid(h: &[u8]) -> i32 {
     (h[0] as (i32) == 0xffi32
         && (h[1] as (i32) & 0xf0 == 0xf0 || h[1] as (i32) & 0xfei32 == 0xe2)
@@ -381,8 +383,15 @@ pub fn hdr_bitrate_kbps(h: &[u8]) -> u32 {
             ],
         ],
     ];
-    (2 * HALFRATE[!(h[1] as (i32) & 0x8 == 0) as usize][((h[1] as (i32) >> 1 & 3) - 1) as usize]
-        [(h[2] as (i32) >> 4) as usize] as (i32)) as (u32)
+    let i1 = if (h[1] & 0x8) == 0 { 0 } else { 1 };
+    let i2 = (((h[1] >> 1) & 3) - 1) as usize;
+    let i3 = (h[2] >> 4) as usize;
+    // println!("{}, {}, {}, {}", i1, i2, i3, h[1]);
+    debug_assert!(i1 < HALFRATE.len());
+    debug_assert!(i2 < HALFRATE[0].len());
+    debug_assert!(i3 < HALFRATE[0][0].len());
+
+    2 * HALFRATE[i1][i2][i3] as u32
 }
 
 pub fn hdr_sample_rate_hz(h: &[u8]) -> u32 {
@@ -457,14 +466,16 @@ pub unsafe fn mp3d_find_frame(
     let mut i: i32;
     let mut k: i32;
     i = 0;
-    let mut frame_bytes: i32 = hdr_frame_bytes(mp3, *free_format_bytes);
-    let mut frame_and_padding: i32 = frame_bytes + hdr_padding(mp3);
+    let mut frame_bytes: i32;
+    let mut frame_and_padding: i32 = 0;
     loop {
         if !(i < mp3_bytes - 4) {
             current_block = 2;
             break;
         }
         if hdr_valid(mp3) != 0 {
+            frame_bytes = hdr_frame_bytes(mp3, *free_format_bytes);
+            frame_and_padding = frame_bytes + hdr_padding(mp3);
             k = 4;
             loop {
                 if !(frame_bytes == 0 && (k < 2304) && (i + 2 * k < mp3_bytes - 4)) {

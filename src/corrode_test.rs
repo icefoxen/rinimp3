@@ -120,7 +120,9 @@ impl Clone for FrameInfo {
 pub struct Bs<'a> {
     // pub buf: *const u8,
     pub buf: &'a [u8],
+    // TODO: Should be usize
     pub pos: i32,
+    // TODO: Should be usize
     pub limit: i32,
 }
 
@@ -516,42 +518,35 @@ pub unsafe fn mp3d_find_frame(
     }
 }
 
-unsafe fn get_bits(bs: &mut Bs, n: i32) -> u32 {
-    let mut next: u32;
+
+// Rewritten; original is on
+// https://github.com/lieff/minimp3/blob/master/minimp3.h#L232
+fn get_bits(bs: &mut Bs, n: u32) -> u32 {
+    let n = n as i32;
+    let s = bs.pos & 7;
     let mut cache: u32 = 0;
-    let s: u32 = (bs.pos & 7) as (u32);
-    let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
-    let mut p: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos >> 3) as isize);
-    if {
-        (*bs).pos = (*bs).pos + n;
-        (*bs).pos
-    } > (*bs).limit
-    {
-        0
-    } else {
-        next = (*{
-            let _old = p;
-            p = p.offset(1);
-            _old
-        } as (i32) & 255 >> s) as (u32);
-        loop {
-            if !({
-                shl = shl - 8;
-                shl
-            } > 0)
-            {
-                break;
-            }
-            cache = cache | next << shl;
-            next = *{
-                let _old = p;
-                p = p.offset(1);
-                _old
-            } as (u32);
-        }
-        cache | next >> -shl
+    let mut shl = n + s;
+    let mut p = (bs.pos >> 3) as usize;
+    bs.pos += n as i32;
+    if bs.pos > bs.limit {
+        return 0;
     }
+    let mut next = bs.buf[p] & ((255 & s) as u8);
+    p += 1;
+    shl -= 8;
+    while shl > 0 {
+        shl -= 8;
+        cache |= (next as u32).wrapping_shl(shl as u32);
+        next  = bs.buf[p];
+        p += 1;
+    }
+    
+    // cache | ((next as u32) >> -shl)
+    // Why on Eris's earth is this shifting by an almost-certainly-negative
+    // number?  
+    cache | ((next as u32).wrapping_shl(shl as u32))
 }
+
 
 #[derive(Copy)]
 #[repr(C)]
@@ -793,7 +788,7 @@ unsafe fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
     let mut subband_alloc: *const L12SubbandAlloc = l12_subband_alloc_table(hdr, &mut *sci);
     let mut i: i32;
     let mut k: i32 = 0;
-    let mut ba_bits: i32 = 0;
+    let mut ba_bits: u32 = 0;
     let mut ba_code_tab: *const u8 = G_BITALLOC_CODE_TAB.as_ptr();
     i = 0;
     loop {
@@ -803,7 +798,7 @@ unsafe fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
         let mut ba: u8;
         if i == k {
             k = k + (*subband_alloc).band_count as (i32);
-            ba_bits = (*subband_alloc).code_tab_width as (i32);
+            ba_bits = (*subband_alloc).code_tab_width as (u32);
             ba_code_tab = G_BITALLOC_CODE_TAB
                 .as_ptr()
                 .offset((*subband_alloc).tab_offset as isize);
@@ -884,13 +879,13 @@ unsafe fn l12_dequantize_granule(
                         if !(k < group_size) {
                             break;
                         }
-                        *dst.offset(k as isize) = (get_bits(bs, ba) as (i32) - half) as f32;
+                        *dst.offset(k as isize) = (get_bits(bs, ba as u32) as (i32) - half) as f32;
                         k = k + 1;
                     }
                 } else {
                     let mod_: u32 = ((2 << ba - 17) + 1) as (u32);
                     let mut code: u32 =
-                        get_bits(bs, mod_.wrapping_add(2).wrapping_sub(mod_ >> 3) as (i32));
+                        get_bits(bs, mod_.wrapping_add(2).wrapping_sub(mod_ >> 3) as (u32));
                     k = 0;
                     loop {
                         if !(k < group_size) {
@@ -1558,7 +1553,7 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
     let mut sr_idx: i32 =
         (hdr[2] as (i32) >> 2 & 3) + ((hdr[1] as (i32) >> 3 & 1) + (hdr[1] as (i32) >> 4 & 1)) * 3;
     sr_idx = sr_idx - (sr_idx != 0) as (i32);
-    let mut gr_count: i32 = if hdr[3] as (i32) & 0xc0 == 0xc0 { 1 } else { 2 };
+    let mut gr_count: u32 = if hdr[3] as (i32) & 0xc0 == 0xc0 { 1 } else { 2 };
     if hdr[1] as (i32) & 0x8 != 0 {
         gr_count = gr_count * 2;
         main_data_begin = get_bits(bs, 9) as (i32);
@@ -1689,7 +1684,7 @@ unsafe fn l3_restore_reservoir(
     ((*h).reserv >= main_data_begin) as (i32)
 }
 
-unsafe fn l3_read_scalefactors(
+fn l3_read_scalefactors(
     mut scf: &mut [u8],
     mut ist_pos: &mut [u8],
     scf_size: &[u8],
@@ -1713,7 +1708,7 @@ unsafe fn l3_read_scalefactors(
             // );
             scf.copy_from_slice(&ist_pos[..cnt]);
         } else {
-            let bits: i32 = scf_size[i] as (i32);
+            let bits: u32 = scf_size[i] as (u32);
             if bits == 0 {
                 // memset(scf as (*mut ::std::os::raw::c_void), 0, cnt as usize);
                 // memset(
@@ -1785,7 +1780,7 @@ fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
     y
 }
 
-unsafe fn l3_decode_scalefactors(
+fn l3_decode_scalefactors(
     hdr: &[u8],
     ist_pos: &mut [u8],
     bs: &mut Bs,
@@ -2781,7 +2776,7 @@ fn l3_change_sign(mut grbuf: &mut [f32]) {
     }
 }
 
-unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
+fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
     let mut ch: i32;
     ch = 0;
     loop {
@@ -2797,6 +2792,7 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
             &mut s.scf,
             ch,
         );
+        unsafe {
         l3_huffman(
             (*s).grbuf[ch as usize].as_mut_ptr(),
             &mut (*s).bs,
@@ -2804,6 +2800,7 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
             (*s).scf.as_mut_ptr() as (*const f32),
             layer3gr_limit,
         );
+        }
         ch = ch + 1;
     }
     if (*h).header[3] as (i32) & 0x10 != 0 {
@@ -3075,7 +3072,7 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 
-    use super::increment_by_mut;
+    use super::*;
     #[test]
     fn test_increment_by_mut() {
         let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
@@ -3098,5 +3095,55 @@ mod tests {
         let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
         let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
         increment_by_mut(&mut slice_to_mongle, 99);
+    }
+
+    #[test]
+    fn test_rewritten_get_bits() {
+        unsafe fn get_bits_corroded(bs: &mut Bs, n: i32) -> u32 {
+            let mut next: u32;
+            let mut cache: u32 = 0;
+            let s: u32 = (bs.pos & 7) as (u32);
+            let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
+            let mut p: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos >> 3) as isize);
+            if {
+                (*bs).pos = (*bs).pos + n;
+                (*bs).pos
+            } > (*bs).limit
+            {
+                0
+            } else {
+                next = (*{
+                    let _old = p;
+                    p = p.offset(1);
+                    _old
+                } as (i32) & 255 >> s) as (u32);
+                loop {
+                    if !({
+                        shl = shl - 8;
+                        shl
+                    } > 0)
+                    {
+                        break;
+                    }
+                    cache = cache | next << shl;
+                    next = *{
+                        let _old = p;
+                        p = p.offset(1);
+                        _old
+                    } as (u32);
+                }
+                cache | next >> -shl
+            }
+        }
+
+        let data = vec![1,2,3,4,5,6,7,8,9,10];
+        let bs = &mut Bs::new(&data, 0);
+        // I'm going to crudely assume 0x8FFF is
+        // Big Enough, I suppose.
+        for i in 0..0x8FFF {
+            let orig = unsafe { get_bits_corroded(bs, i as i32) };
+            let rewritten = get_bits(bs, i);
+            assert_eq!(orig, rewritten);
+        }
     }
 }

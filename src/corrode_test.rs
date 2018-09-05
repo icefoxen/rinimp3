@@ -117,14 +117,15 @@ impl Clone for FrameInfo {
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Bs {
-    pub buf: *const u8,
+pub struct Bs<'a> {
+    // pub buf: *const u8,
+    pub buf: &'a [u8],
     pub pos: i32,
     pub limit: i32,
 }
 
-impl Bs {
-    pub fn new(buf: *const u8, bytes: i32) -> Self {
+impl<'a> Bs<'a> {
+    pub fn new(buf: &'a [u8], bytes: i32) -> Self {
         Self {
             buf,
             pos: 0,
@@ -133,7 +134,7 @@ impl Bs {
     }
 }
 
-impl Clone for Bs {
+impl<'a> Clone for Bs<'a> {
     fn clone(&self) -> Self {
         *self
     }
@@ -168,8 +169,8 @@ impl Clone for L3GrInfo {
 
 #[derive(Copy)]
 #[repr(C)]
-pub struct Mp3DecScratch {
-    pub bs: Bs,
+pub struct Mp3DecScratch<'a> {
+    pub bs: Bs<'a>,
     pub maindata: [u8; 2815],
     pub gr_info: [L3GrInfo; 4],
     pub grbuf: [[f32; 576]; 2],
@@ -178,13 +179,13 @@ pub struct Mp3DecScratch {
     pub ist_pos: [[u8; 39]; 2],
 }
 
-impl Clone for Mp3DecScratch {
+impl<'a> Clone for Mp3DecScratch<'a> {
     fn clone(&self) -> Self {
         *self
     }
 }
 
-impl Mp3DecScratch {
+impl<'a> Mp3DecScratch<'a> {
     fn clear_grbuf(&mut self) {
         self.grbuf = [[0.0; 576]; 2];
     }
@@ -510,7 +511,7 @@ unsafe fn get_bits(bs: &mut Bs, n: i32) -> u32 {
     let mut cache: u32 = 0;
     let s: u32 = (bs.pos & 7) as (u32);
     let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
-    let mut p: *const u8 = (*bs).buf.offset(((*bs).pos >> 3) as isize);
+    let mut p: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos >> 3) as isize);
     if {
         (*bs).pos = (*bs).pos + n;
         (*bs).pos
@@ -1671,40 +1672,38 @@ unsafe fn l3_restore_reservoir(
     );
     memcpy(
         (*s).maindata.as_mut_ptr().offset(bytes_have as isize) as (*mut ::std::os::raw::c_void),
-        (*bs).buf.offset(((*bs).pos / 8) as isize) as (*const ::std::os::raw::c_void),
+        (*bs).buf.as_ptr().offset(((*bs).pos / 8) as isize) as (*const ::std::os::raw::c_void),
         frame_bytes as usize,
     );
-    (*s).bs = Bs::new(
-        (*s).maindata.as_mut_ptr() as (*const u8),
-        bytes_have + frame_bytes,
-    );
+    (*s).bs = Bs::new(&(*s).maindata[..], bytes_have + frame_bytes);
     ((*h).reserv >= main_data_begin) as (i32)
 }
 
 unsafe fn l3_read_scalefactors(
-    mut scf: *mut u8,
-    mut ist_pos: *mut u8,
-    scf_size: *const u8,
-    scf_count: *const u8,
+    mut scf: &mut [u8],
+    mut ist_pos: &mut [u8],
+    scf_size: &[u8],
+    scf_count: &[u8],
     bitbuf: &mut Bs,
     mut scfsi: i32,
 ) {
-    let mut i: i32;
-    let mut k: i32;
+    let mut i: usize;
+    let mut k: usize;
     i = 0;
     loop {
-        if !(i < 4 && (*scf_count.offset(i as isize) != 0)) {
+        if !(i < 4 && (scf_count[i] != 0)) {
             break;
         }
-        let cnt: i32 = *scf_count.offset(i as isize) as (i32);
+        let cnt: usize = scf_count[i] as usize;
         if scfsi & 8 != 0 {
-            memcpy(
-                scf as (*mut ::std::os::raw::c_void),
-                ist_pos as (*const ::std::os::raw::c_void),
-                cnt as usize,
-            );
+            // memcpy(
+            //     scf as (*mut ::std::os::raw::c_void),
+            //     ist_pos as (*const ::std::os::raw::c_void),
+            //     cnt as usize,
+            // );
+            scf.copy_from_slice(&ist_pos[..cnt]);
         } else {
-            let bits: i32 = *scf_size.offset(i as isize) as (i32);
+            let bits: i32 = scf_size[i] as (i32);
             if bits == 0 {
                 // memset(scf as (*mut ::std::os::raw::c_void), 0, cnt as usize);
                 // memset(
@@ -1712,8 +1711,13 @@ unsafe fn l3_read_scalefactors(
                 //     0,
                 //     cnt as usize,
                 // );
-                ::std::ptr::write_bytes(scf, 0, cnt as usize);
-                ::std::ptr::write_bytes(ist_pos, 0, cnt as usize);
+                // ::std::ptr::write_bytes(scf, 0, cnt as usize);
+                // ::std::ptr::write_bytes(ist_pos, 0, cnt as usize);
+                // TODO: Crude, but eh.
+                for i in 0..cnt {
+                    scf[i] = 0;
+                    ist_pos[i] = 0;
+                }
             } else {
                 let max_scf: i32 = if scfsi < 0 { (1 << bits) - 1 } else { -1 };
                 k = 0;
@@ -1722,25 +1726,28 @@ unsafe fn l3_read_scalefactors(
                         break;
                     }
                     let s: i32 = get_bits(bitbuf, bits) as (i32);
-                    *ist_pos.offset(k as isize) = if s == max_scf { -1 } else { s } as (u8);
-                    *scf.offset(k as isize) = s as (u8);
+                    ist_pos[k] = if s == max_scf { -1 } else { s } as (u8);
+                    scf[k] = s as (u8);
                     k = k + 1;
                 }
             }
         }
-        ist_pos = ist_pos.offset(cnt as isize);
-        scf = scf.offset(cnt as isize);
+        // ist_pos = ist_pos.offset(cnt as isize);
+        // scf = scf.offset(cnt as isize);
+        increment_by_mut(&mut ist_pos, cnt);
+        increment_by_mut(&mut scf, cnt);
         i = i + 1;
         scfsi = scfsi * 2;
     }
-    *scf.offset(0) = {
+    // TODO: Clean up this horrible post-increment-y mess.
+    scf[0] = {
         let _rhs = {
             let _rhs = 0;
-            let _lhs = &mut *scf.offset(2);
+            let _lhs = &mut scf[2];
             *_lhs = _rhs as (u8);
             *_lhs
         };
-        let _lhs = &mut *scf.offset(1);
+        let _lhs = &mut scf[1];
         *_lhs = _rhs;
         *_lhs
     };
@@ -1770,10 +1777,10 @@ fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
 
 unsafe fn l3_decode_scalefactors(
     hdr: &[u8],
-    ist_pos: *mut u8,
+    ist_pos: &mut [u8],
     bs: &mut Bs,
     gr: &L3GrInfo,
-    scf: *mut f32,
+    scf: &mut [f32],
     ch: i32,
 ) {
     static G_SCF_PARTITIONS: [[u8; 28]; 3] = [
@@ -1789,9 +1796,8 @@ unsafe fn l3_decode_scalefactors(
             9, 0,
         ],
     ];
-    let mut scf_partition: *const u8 = G_SCF_PARTITIONS
-        [(!((*gr).n_short_sfb == 0) as (i32) + ((*gr).n_long_sfb == 0) as (i32)) as usize]
-        .as_ptr();
+    let scf_partition = G_SCF_PARTITIONS
+        [(!((*gr).n_short_sfb == 0) as (i32) + ((*gr).n_long_sfb == 0) as (i32)) as usize];
     let mut scf_size: [u8; 4] = [0; 4];
     let mut iscf: [u8; 40] = [0; 40];
     let mut i: i32;
@@ -1841,14 +1847,15 @@ unsafe fn l3_decode_scalefactors(
             sfc = sfc - modprod;
             k = k + 4;
         }
-        scf_partition = scf_partition.offset(k as isize);
+        // scf_partition = scf_partition.offset(k as isize);
+        increment_by(&mut &scf_partition[..], k as usize);
         scfsi = -16;
     }
     l3_read_scalefactors(
-        iscf.as_mut_ptr(),
+        &mut iscf[..],
         ist_pos,
-        scf_size.as_mut_ptr() as (*const u8),
-        scf_partition,
+        &scf_size[..],
+        &scf_partition,
         &mut *bs,
         scfsi,
     );
@@ -1901,7 +1908,7 @@ unsafe fn l3_decode_scalefactors(
         if !(i < (*gr).n_long_sfb as (i32) + (*gr).n_short_sfb as (i32)) {
             break;
         }
-        *scf.offset(i as isize) = l3_ldexp_q2(gain, iscf[i as usize] as (i32) << scf_shift);
+        scf[i as usize] = l3_ldexp_q2(gain, iscf[i as usize] as (i32) << scf_shift);
         i = i + 1;
     }
 }
@@ -1983,7 +1990,7 @@ unsafe fn l3_huffman(
     let mut ireg: i32 = 0;
     let mut big_val_cnt: i32 = (*gr_info).big_values as (i32);
     let mut sfb: &[u8] = (*gr_info).sfbtab;
-    let mut bs_next_ptr: *const u8 = (*bs).buf.offset(((*bs).pos / 8) as isize);
+    let mut bs_next_ptr: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos / 8) as isize);
     let mut bs_cache: u32 = (*bs_next_ptr.offset(0) as (u32))
         .wrapping_mul(256)
         .wrapping_add(*bs_next_ptr.offset(1) as (u32))
@@ -2120,7 +2127,7 @@ unsafe fn l3_huffman(
         }
         bs_cache = bs_cache << (leaf & 7);
         bs_sh = bs_sh + (leaf & 7);
-        if (bs_next_ptr as isize).wrapping_sub((*bs).buf as isize)
+        if (bs_next_ptr as isize).wrapping_sub((*bs).buf.as_ptr() as isize)
             / ::std::mem::size_of::<u8>() as isize * 8 - 24 + bs_sh as isize
             > layer3gr_limit as isize
         {
@@ -2216,47 +2223,44 @@ fn l3_midside_stereo(left: &mut [f32], n: i32) {
     }
 }
 
-unsafe fn l3_stereo_top_band(
-    mut right: *const f32,
-    sfb: *const u8,
-    nbands: i32,
-    max_band: *mut i32,
-) {
+fn l3_stereo_top_band(mut right: &[f32], sfb: &[u8], nbands: i32, max_band: &mut [i32]) {
     let mut current_block;
-    let mut i: i32;
-    let mut k: i32;
-    *max_band.offset(0) = {
+    let mut i: usize;
+    let mut k: usize;
+    // TODO: Clean up horrible increment operations.
+    max_band[0] = {
         let _rhs = {
             let _rhs = -1;
-            let _lhs = &mut *max_band.offset(2);
+            let _lhs = &mut max_band[2];
             *_lhs = _rhs;
             *_lhs
         };
-        let _lhs = &mut *max_band.offset(1);
+        let _lhs = &mut max_band[1];
         *_lhs = _rhs;
         *_lhs
     };
     i = 0;
     loop {
-        if !(i < nbands) {
+        if !(i < nbands as usize) {
             break;
         }
         k = 0;
         loop {
-            if !(k < *sfb.offset(i as isize) as (i32)) {
+            if !(k < sfb[i] as usize) {
                 current_block = 8;
                 break;
             }
-            if *right.offset(k as isize) != 0.0 || *right.offset((k + 1) as isize) != 0.0 {
+            if right[k] != 0.0 || right[k + 1] != 0.0 {
                 current_block = 7;
                 break;
             }
             k = k + 2;
         }
         if current_block == 7 {
-            *max_band.offset((i % 3) as isize) = i;
+            max_band[(i % 3)] = i as i32;
         }
-        right = right.offset(*sfb.offset(i as isize) as isize);
+        increment_by(&mut right, sfb[i] as usize);
+
         i = i + 1;
     }
 }
@@ -2322,17 +2326,12 @@ fn l3_stereo_process(
     }
 }
 
-unsafe fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrInfo], hdr: &[u8]) {
+fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrInfo], hdr: &[u8]) {
     let mut max_band: [i32; 3] = [0; 3];
     let n_sfb: i32 = gr[0].n_long_sfb as (i32) + gr[0].n_short_sfb as (i32);
     let mut i: i32;
     let max_blocks: i32 = if gr[0].n_short_sfb != 0 { 3 } else { 1 };
-    l3_stereo_top_band(
-        left[576..].as_ptr(),
-        gr[0].sfbtab.as_ptr(),
-        n_sfb,
-        max_band.as_mut_ptr(),
-    );
+    l3_stereo_top_band(&left[576..], gr[0].sfbtab, n_sfb, &mut max_band);
     if gr[0].n_long_sfb != 0 {
         // TODO: This can be drastically cleaned up,
         // see https://github.com/lieff/minimp3/blob/master/minimp3.h#L926
@@ -2384,52 +2383,100 @@ unsafe fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrIn
     );
 }
 
-unsafe fn l3_reorder(grbuf: *mut f32, scratch: *mut f32, mut sfb: *const u8) {
-    let mut i: i32;
-    let mut len: i32;
-    let mut src: *mut f32 = grbuf;
-    let mut dst: *mut f32 = scratch;
-    loop {
-        if !(0 != {
-            len = *sfb as (i32);
-            len
-        }) {
-            break;
+fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[u8]) {
+    // TODO: This is a horrible C-ish mess of pointers that Rust profoundly
+    // dislikes, and so has been rewritten.  Needs verification and testing
+    // against the original.
+    let mut src = 0;
+    let mut dst = 0;
+    while sfb[0] != 0 {
+        let len = sfb[0] as usize;
+        for _ in 0..len {
+            scratch[dst] = grbuf[src + (0 * len)];
+            dst += 1;
+            scratch[dst] = grbuf[src + (1 * len)];
+            dst += 1;
+            scratch[dst] = grbuf[src + (2 * len)];
+            dst += 1;
+            src += 1;
         }
-        i = 0;
+        increment_by(&mut sfb, 3);
+        increment_by_mut(&mut grbuf, 2 * len as usize);
+    }
+    let l = scratch.len();
+    grbuf[..l].copy_from_slice(scratch);
+
+    /*
+    let mut i: usize;
+    let mut len: usize;
+    {
+        let mut src = &&grbuf;
+        let mut dst = &*scratch;
         loop {
-            if !(i < len) {
+            if !(0 != {
+                len = sfb[0] as usize;
+                len
+            }) {
                 break;
             }
-            // TODO: Ugh, postincrement operators.
-            *{
-                let _old = dst;
-                dst = dst.offset(1);
-                _old
-            } = *src.offset((0 * len) as isize);
-            *{
-                let _old = dst;
-                dst = dst.offset(1);
-                _old
-            } = *src.offset((1 * len) as isize);
-            *{
-                let _old = dst;
-                dst = dst.offset(1);
-                _old
-            } = *src.offset((2 * len) as isize);
-            i = i + 1;
-            src = src.offset(1);
+            i = 0;
+            loop {
+                if !(i < len) {
+                    break;
+                }
+                // TODO: Ugh, postincrement operators.
+                // Double-check all this crap.
+                // https://github.com/lieff/minimp3/blob/master/minimp3.h#L938
+                // *{
+                //     let _old = dst;
+                //     dst = dst.offset(1);
+                //     _old
+                // } = *src.offset((0 * len) as isize);
+                dst[0] = src[0 * len];
+                increment_by_mut(&mut dst, 1);
+                // *{
+                //     let _old = dst;
+                //     dst = dst.offset(1);
+                //     _old
+                // } = *src.offset((1 * len) as isize);
+                dst[1] = src[1 * len];
+                increment_by_mut(&mut dst, 1);
+                // *{
+                //     let _old = dst;
+                //     dst = dst.offset(1);
+                //     _old
+                // } = *src.offset((2 * len) as isize);
+
+                // src = src.offset(1);
+                dst[2] = src[2 * len];
+                increment_by_mut(&mut dst, 1);
+                increment_by_mut(&mut src, 1);
+                i = i + 1;
+            }
+            // sfb = sfb.offset(3);
+            increment_by(&mut sfb, 3);
+            // src = src.offset((2 * len) as isize);
+            increment_by_mut(&mut src, 2 * len);
         }
-        sfb = sfb.offset(3);
-        src = src.offset((2 * len) as isize);
     }
-    memcpy(
-        grbuf as (*mut ::std::os::raw::c_void),
-        scratch as (*const ::std::os::raw::c_void),
-        (((dst as isize).wrapping_sub(scratch as isize) / ::std::mem::size_of::<f32>() as isize)
-            as usize)
-            .wrapping_mul(::std::mem::size_of::<f32>()),
-    );
+    // All this for
+    // memcpy(grbuf, scratch, (dst - scratch)*sizeof(float));
+    // But the implicit fucking assumption here is that dst and
+    // scratch are pointers into the same array.
+    // Yikes.
+    // memcpy(
+    //     grbuf as (*mut ::std::os::raw::c_void),
+    //     scratch as (*const ::std::os::raw::c_void),
+    //     (((dst as isize).wrapping_sub(scratch as isize) / ::std::mem::size_of::<f32>() as isize)
+    //         as usize)
+    //         .wrapping_mul(::std::mem::size_of::<f32>()),
+    // );
+    // let idx = (((dst as isize).wrapping_sub(scratch as isize)
+    //     / ::std::mem::size_of::<f32>() as isize) as usize)
+    //     .wrapping_mul(::std::mem::size_of::<f32>());
+    let len = scratch.len();
+    grbuf[..len].copy_from_slice(scratch);
+    */
 }
 
 fn l3_antialias(mut grbuf: &mut [f32], mut nbands: i32) {
@@ -2690,10 +2737,10 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
         let layer3gr_limit: i32 = (*s).bs.pos + (gr_info[ch as usize]).part_23_length as (i32);
         l3_decode_scalefactors(
             &h.header,
-            (*s).ist_pos[ch as usize].as_mut_ptr(),
+            &mut s.ist_pos[ch as usize],
             &mut (*s).bs,
             &gr_info[ch as usize],
-            (*s).scf.as_mut_ptr(),
+            &mut s.scf,
             ch,
         );
         l3_huffman(
@@ -2727,11 +2774,9 @@ unsafe fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3
         if gr_info[0].n_short_sfb != 0 {
             aa_bands = n_long_bands - 1;
             l3_reorder(
-                (*s).grbuf[ch as usize]
-                    .as_mut_ptr()
-                    .offset((n_long_bands * 18) as isize),
-                (*s).syn[0].as_mut_ptr(),
-                gr_info[0].sfbtab[gr_info[0].n_long_sfb as usize..].as_ptr(),
+                &mut s.grbuf[ch as usize][..(n_long_bands * 18) as usize],
+                &mut s.syn[0][..],
+                &gr_info[0].sfbtab[gr_info[0].n_long_sfb as usize..],
             );
         }
         l3_antialias(&mut s.grbuf[ch as usize][..], aa_bands);
@@ -2785,11 +2830,7 @@ pub unsafe fn mp3dec_decode_frame(
     let mut frame_size: i32 = 0;
     let mut success: i32 = 1;
     let hdr: &[u8];
-    let mut bs_frame: Bs = Bs {
-        buf: ::std::ptr::null(),
-        pos: 0,
-        limit: 0,
-    };
+    let mut bs_frame: Bs = Bs::new(&[], 0);
     let mut scratch: Mp3DecScratch = Mp3DecScratch {
         bs: bs_frame,
         maindata: [0; 2815],
@@ -2842,7 +2883,7 @@ pub unsafe fn mp3dec_decode_frame(
     if pcm.len() == 0 {
         hdr_frame_samples(hdr) as (i32)
     } else {
-        bs_frame = Bs::new((&hdr[4..]).as_ptr(), frame_size - 4);
+        bs_frame = Bs::new(&hdr[4..], frame_size - 4);
         if hdr[1] as (i32) & 1 == 0 {
             get_bits(&mut bs_frame, 16);
         }

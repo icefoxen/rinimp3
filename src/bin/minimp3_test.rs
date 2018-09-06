@@ -56,7 +56,7 @@ extern "C" {
 enum IoFile {}
 
 extern crate rinimp3;
-use rinimp3::corrode_test::*;
+use rinimp3::*;
 
 #[derive(Copy)]
 #[repr(C)]
@@ -89,6 +89,19 @@ unsafe fn mp3dec_skip_id3v2(buf: *const u8, buf_size: usize) -> usize {
             | *buf.offset(9isize) as (i32) & 0x7fi32) + 10i32) as (usize)
     } else {
         0usize
+    }
+}
+
+/// Returns usize but I think the max length an ID3
+/// tag can have is 32 bits?
+fn mp3dec_skip_id3v2_slice(buf: &[u8]) -> usize {
+    if buf.len() > 10 && buf[..3] == b"ID3\0"[..3] {
+        (((buf[6] & 0x7F) as usize) << 21
+            | ((buf[7] & 0x7F) as usize) << 14
+            | ((buf[8] & 0x7F) as usize) << 7
+            | ((buf[9] & 0x7F) as usize) + 10)
+    } else {
+        0
     }
 }
 
@@ -525,7 +538,169 @@ pub unsafe fn mp3dec_ex_open(dec: *mut Mp3decEx, file_name: *const u8, seek_meth
     }
 }
 
+#[macro_use]
+extern crate structopt;
+
+use std::fs;
+use std::io::Read;
+use std::path::PathBuf;
+use structopt::StructOpt;
+
+/// Basic command line stuff...
+#[derive(Debug, StructOpt)]
+#[structopt(name = "minimp3_test")]
+struct Opt {
+    /// Input file.  TODO: Valid input types?
+    #[structopt(parse(from_os_str))]
+    input_file: PathBuf,
+    /// Output file.  TODO: Valid output types?
+    #[structopt(parse(from_os_str))]
+    output_file: Option<PathBuf>,
+}
+
 fn main() {
+    let opt = Opt::from_args();
+    println!("{:?}", opt);
+
+    let mp3d = &mut Mp3Dec::new();
+    let input_buf = &mut Vec::new();
+    {
+        let mut f = fs::File::open(opt.input_file).expect("Input file not found");
+        f.read_to_end(input_buf)
+            .expect("Could not read input file");
+    }
+    let mut data_start = mp3dec_skip_id3v2_slice(&input_buf);
+    let output_buf = &mut Vec::new();
+    let mut total_frames = 1;
+    let mut total_samples = 0;
+    loop {
+        let frame_info = &mut FrameInfo::default();
+        // Meh, allocation junk could be better
+        let buf = &mut Vec::with_capacity(1152);
+        buf.resize(1152, 0);
+        let samples = unsafe {
+            mp3dec_decode_frame(mp3d, &mut input_buf[data_start..], buf, frame_info)
+        };
+        output_buf.extend_from_slice(buf);
+        total_samples += samples;
+        total_frames += 1;
+        println!("Frame info: {:#?}", frame_info);
+        println!("Samples: {}, frames: {}", total_samples, total_frames);
+        data_start += frame_info.frame_bytes as usize;
+        if frame_info.frame_bytes == 0 {
+            break;
+        }
+    }
+
+    /*
+    let mut i: i32;
+    let data_bytes: i32;
+    let mut total_samples: i32 = 0i32;
+    let mut maxdiff: i32 = 0i32;
+    let mut mse: f64 = 0.0f64;
+    let psnr: f64;
+    let mut info: Mp3decFileInfo = ::std::mem::zeroed();
+    unsafe fn callback(
+        _: *mut ::std::os::raw::c_void,
+        _: usize,
+        _: usize,
+        _: *mut FrameInfo,
+    ) -> i32 {
+        0
+    };
+    if mp3dec_load(
+        &mut mp3d as (*mut Mp3Dec),
+        input_file_name,
+        &mut info as (*mut Mp3decFileInfo),
+        callback,
+        0i32 as (*mut ::std::os::raw::c_void),
+    ) != 0
+    {
+        printf((*b"error: file not found or read error\0").as_ptr());
+        exit(1i32);
+    }
+    let buffer: *mut i16 = info.buffer;
+    if wave_out != 0 && !file_out.is_null() {
+        fwrite(
+            wav_header(0i32, 0i32, 0i32, 0i32).as_ptr() as (*const ::std::os::raw::c_void),
+            1usize,
+            44usize,
+            file_out,
+        );
+    }
+    if info.samples != 0 {
+        total_samples = (total_samples as (usize)).wrapping_add(info.samples) as (i32);
+        if !buf_ref.is_null() {
+            let max_samples: i32 = (if (ref_size as (usize)).wrapping_div(2usize) > info.samples {
+                info.samples
+            } else {
+                (ref_size as (usize)).wrapping_div(2usize)
+            }) as (i32);
+            i = 0i32;
+            'loop7: loop {
+                if !(i < max_samples) {
+                    break;
+                }
+                let mse_temp: i32 = abs(*buffer.offset(i as (isize)) as (i32)
+                    - read16le(
+                        &*buf_ref
+                            .offset((i as (usize)).wrapping_mul(::std::mem::size_of::<i16>())
+                                as (isize)) as (*const u8)
+                            as (*const ::std::os::raw::c_void),
+                    ) as (i32));
+                if mse_temp > maxdiff {
+                    maxdiff = mse_temp;
+                }
+                mse = mse + (mse_temp as (f32) * mse_temp as (f32)) as (f64);
+                i = i + 1;
+            }
+        }
+        if !file_out.is_null() {
+            fwrite(
+                buffer as (*const ::std::os::raw::c_void),
+                info.samples,
+                ::std::mem::size_of::<i16>(),
+                file_out,
+            );
+        }
+        free(buffer as (*mut ::std::os::raw::c_void));
+    }
+    mse = mse / if total_samples != 0 {
+        total_samples
+    } else {
+        1i32
+    } as (f64);
+    if 0i32 as (f64) == mse {
+        psnr = 99.0f64;
+    } else {
+        psnr = 10.0f64 * (0x7fffi32 as (f64) * 0x7fffi32 as (f64) / mse);
+    }
+    printf(
+        (*b"rate=%d samples=%d max_diff=%d PSNR=%f\n\0").as_ptr(),
+        info.hz,
+        total_samples,
+        maxdiff,
+        psnr,
+    );
+    if psnr < 96i32 as (f64) {
+        printf((*b"PSNR compliance failed\n\0").as_ptr());
+        exit(1i32);
+    }
+    if wave_out != 0 && !file_out.is_null() {
+        data_bytes = (ftell(file_out) - 44isize) as (i32);
+        rewind(file_out);
+        fwrite(
+            wav_header(info.hz, info.channels, 16i32, data_bytes).as_ptr()
+                as (*const ::std::os::raw::c_void),
+            1usize,
+            44usize,
+            file_out,
+        );
+    }
+
+*/
+
+    return;
     use std::os::unix::ffi::OsStringExt;
     let mut argv_storage = ::std::env::args_os()
         .map(|str| {
@@ -539,7 +714,7 @@ fn main() {
         .map(|vec| vec.as_mut_ptr())
         .chain(Some(::std::ptr::null_mut()))
         .collect::<Vec<_>>();
-    let ret = unsafe { _c_other_main(argv_storage.len() as (i32), argv.as_mut_ptr()) };
+    let ret = unsafe { _c_main(argv_storage.len() as (i32), argv.as_mut_ptr()) };
     ::std::process::exit(ret);
 }
 
@@ -718,7 +893,7 @@ unsafe fn decode_file(
 }
 
 #[no_mangle]
-pub unsafe fn _c_other_main(argc: i32, argv: *mut *mut u8) -> i32 {
+pub unsafe fn _c_main(argc: i32, argv: *mut *mut u8) -> i32 {
     let mut wave_out: i32 = 0i32;
     let mut ref_size: i32 = 0;
     let ref_file_name: *mut u8 = if argc > 2i32 {

@@ -253,8 +253,8 @@ pub unsafe fn mp3dec_iterate_buf(
             let i: i32 = mp3d_find_frame(
                 buf_slice,
                 buf_size as (i32),
-                &mut free_format_bytes as (*mut i32),
-                &mut frame_size as (*mut i32),
+                &mut free_format_bytes,
+                &mut frame_size,
             );
             buf = buf.offset(i as (isize));
             buf_size = buf_size.wrapping_sub(i as (usize));

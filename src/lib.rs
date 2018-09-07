@@ -1775,10 +1775,10 @@ fn l3_pow_43(mut x: i32) -> f32 {
 }
 
 unsafe fn l3_huffman(
-    mut dst: *mut f32,
+    mut dst: &mut [f32],
     bs: &mut Bs,
     gr_info: &L3GrInfo,
-    mut scf: *const f32,
+    mut scf: &[f32],
     layer3gr_limit: i32,
 ) {
     static TABS: [i16; 512] = [
@@ -1866,11 +1866,13 @@ unsafe fn l3_huffman(
                 _old[0]
             } as (i32) / 2;
             pairs_to_decode = if big_val_cnt > np { np } else { big_val_cnt };
-            one = *{
-                let _old = scf;
-                scf = scf.offset(1);
-                _old
-            };
+            // one = *{
+            //     let _old = scf;
+            //     scf = scf.offset(1);
+            //     _old
+            // };
+            one = scf[0];
+            increment_by(&mut scf, 1);
             loop {
                 let mut j: i32;
                 let mut w: i32 = 5;
@@ -1912,18 +1914,19 @@ unsafe fn l3_huffman(
                             } as (u32) << bs_sh;
                             bs_sh = bs_sh - 8;
                         }
-                        *dst = one
+                        dst[0] = one
                             * l3_pow_43(lsb)
                             * if bs_cache as (i32) < 0 { -1 } else { 1 } as f32;
                     } else {
-                        *dst = GPOW43[((16 + lsb) as (u32))
-                                          .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
-                                          as usize] * one;
+                        dst[0] = GPOW43[((16 + lsb) as (u32))
+                                            .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
+                                            as usize] * one;
                     }
                     bs_cache = bs_cache << if lsb != 0 { 1 } else { 0 };
                     bs_sh = bs_sh + if lsb != 0 { 1 } else { 0 };
                     j = j + 1;
-                    dst = dst.offset(1);
+                    // dst = dst.offset(1);
+                    increment_by_mut(&mut dst, 1);
                     leaf = leaf >> 4;
                 }
                 loop {
@@ -1992,19 +1995,21 @@ unsafe fn l3_huffman(
             if np == 0 {
                 break;
             }
-            one = *{
-                let _old = scf;
-                scf = scf.offset(1);
-                _old
-            };
+            // one = *{
+            //     let _old = scf;
+            //     scf = scf.offset(1);
+            //     _old
+            // };
+            one = scf[0];
+            increment_by(&mut scf, 1);
         }
         if leaf & 128 >> 0 != 0 {
-            *dst.offset(0) = if bs_cache as (i32) < 0 { -one } else { one };
+            dst[0] = if bs_cache as (i32) < 0 { -one } else { one };
             bs_cache = bs_cache << 1;
             bs_sh = bs_sh + 1;
         }
         if leaf & 128 >> 1 != 0 {
-            *dst.offset(1) = if bs_cache as (i32) < 0 { -one } else { one };
+            dst[1] = if bs_cache as (i32) < 0 { -one } else { one };
             bs_cache = bs_cache << 1;
             bs_sh = bs_sh + 1;
         }
@@ -2021,19 +2026,21 @@ unsafe fn l3_huffman(
             if np == 0 {
                 break;
             }
-            one = *{
-                let _old = scf;
-                scf = scf.offset(1);
-                _old
-            };
+            // one = *{
+            //     let _old = scf;
+            //     scf = scf.offset(1);
+            //     _old
+            // };
+            one = scf[0];
+            increment_by(&mut scf, 1);
         }
         if leaf & 128 >> 2 != 0 {
-            *dst.offset(2) = if bs_cache as (i32) < 0 { -one } else { one };
+            dst[2] = if bs_cache as (i32) < 0 { -one } else { one };
             bs_cache = bs_cache << 1;
             bs_sh = bs_sh + 1;
         }
         if leaf & 128 >> 3 != 0 {
-            *dst.offset(3) = if bs_cache as (i32) < 0 { -one } else { one };
+            dst[3] = if bs_cache as (i32) < 0 { -one } else { one };
             bs_cache = bs_cache << 1;
             bs_sh = bs_sh + 1;
         }
@@ -2048,7 +2055,8 @@ unsafe fn l3_huffman(
             } as (u32) << bs_sh;
             bs_sh = bs_sh - 8;
         }
-        dst = dst.offset(4);
+        // dst = dst.offset(4);
+        increment_by_mut(&mut dst, 4);
     }
     (*bs).pos = layer3gr_limit;
 }
@@ -2631,10 +2639,10 @@ fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo]
         );
         unsafe {
             l3_huffman(
-                (*s).grbuf[ch as usize].as_mut_ptr(),
+                &mut s.grbuf[ch as usize],
                 &mut (*s).bs,
                 &gr_info[ch as usize],
-                (*s).scf.as_mut_ptr() as (*const f32),
+                &s.scf,
                 layer3gr_limit,
             );
         }

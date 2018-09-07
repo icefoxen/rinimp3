@@ -577,8 +577,7 @@ fn main() {
         // Meh, allocation junk could be better
         let buf = &mut Vec::with_capacity(1152);
         buf.resize(1152, 0);
-        let samples =
-            unsafe { mp3dec_decode_frame(mp3d, &mut input_buf[data_start..], buf, frame_info) };
+        let samples = mp3dec_decode_frame(mp3d, &mut input_buf[data_start..], buf, frame_info);
         output_buf.extend_from_slice(buf);
         total_samples += samples;
         total_frames += 1;

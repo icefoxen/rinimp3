@@ -1,11 +1,3 @@
-extern "C" {
-    fn memcpy(
-        __dest: *mut ::std::os::raw::c_void,
-        __src: *const ::std::os::raw::c_void,
-        __n: usize,
-    ) -> *mut ::std::os::raw::c_void;
-}
-
 /// Silly helper function
 // fn fill<T>(slice: &mut [T], val: T)
 // where
@@ -142,7 +134,7 @@ impl<'a> Clone for Bs<'a> {
     }
 }
 
-#[derive(Copy)]
+#[derive(Copy, Default)]
 #[repr(C)]
 pub struct L3GrInfo {
     pub sfbtab: &'static [u8],
@@ -561,6 +553,18 @@ pub struct L12ScaleInfo {
 impl Clone for L12ScaleInfo {
     fn clone(&self) -> Self {
         *self
+    }
+}
+
+impl Default for L12ScaleInfo {
+    fn default() -> Self {
+        Self {
+            scf: [0.0; 192],
+            total_bands: 0,
+            stereo_bands: 0,
+            bitalloc: [0; 64],
+            scfcod: [0; 64],
+        }
     }
 }
 
@@ -1065,7 +1069,7 @@ fn mp3d_scale_pcm(sample: f32) -> i16 {
     }
 }
 
-unsafe fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
+fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
     let mut a: f32;
     a = z[14 * 64] - z[0] * 29.0;
     a = a + z[1 * 64] + z[13 * 64] * 213.0;
@@ -1089,10 +1093,11 @@ unsafe fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
     pcm[16 * nch] = mp3d_scale_pcm(a)
 }
 
-unsafe fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f32]) {
-    let mut i: i32;
-    let xr = &xl[(576 * (nch - 1)) as usize..];
-    let dstr = &mut dstl[(nch - 1) as usize..];
+fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f32]) {
+    // let xr = &xl[(576 * (nch - 1)) as usize..];
+    let (xl, xr) = xl.split_at(576 * (nch - 1) as usize);
+    // let dstr = &mut dstl[(nch - 1) as usize..];
+    let dstr_offset = (nch - 1) as usize;
     static G_WIN: [f32; 240] = [
         -1.0, 26.0, -31.0, 208.0, 218.0, 401.0, -519.0, 2063.0, 2000.0, 4788.0, -5517.0, 7134.0,
         5959.0, 35640.0, -39336.0, 74992.0, -1.0, 24.0, -35.0, 202.0, 222.0, 347.0, -581.0, 2080.0,
@@ -1117,24 +1122,31 @@ unsafe fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f
         163.0, -127.0, -1498.0, 1634.0, 185.0, 288.0, -9585.0, 9838.0, -8540.0, 11455.0, -62684.0,
         65290.0,
     ];
-    let zlin = &lins[(15 * 64)..];
-    let mut w: &[f32] = &G_WIN[..];
-    zlin[4 * 15] = xl[(18 * 16)];
-    zlin[4 * 15 + 1] = xr[(18 * 16)];
-    zlin[4 * 15 + 2] = xl[0];
-    zlin[4 * 15 + 3] = xr[0];
-    zlin[4 * 31] = xl[(1 + 18 * 16)];
-    zlin[4 * 31 + 1] = xr[(1 + 18 * 16)];
-    zlin[4 * 31 + 2] = xl[1];
-    zlin[4 * 31 + 3] = xr[1];
-    mp3d_synth_pair(dstr, nch as usize, &lins[((4 * 15) + 1)..]);
+    {
+        let zlin = &mut lins[(15 * 64)..];
+        zlin[4 * 15] = xl[(18 * 16)];
+        zlin[4 * 15 + 1] = xr[(18 * 16)];
+        zlin[4 * 15 + 2] = xl[0];
+        zlin[4 * 15 + 3] = xr[0];
+        zlin[4 * 31] = xl[(1 + 18 * 16)];
+        zlin[4 * 31 + 1] = xr[(1 + 18 * 16)];
+        zlin[4 * 31 + 2] = xl[1];
+        zlin[4 * 31 + 3] = xr[1];
+    }
     mp3d_synth_pair(
-        &mut dstr[32 * nch..],
+        &mut dstl[dstr_offset..],
+        nch as usize,
+        &mut lins[((4 * 15) + 1)..],
+    );
+    mp3d_synth_pair(
+        &mut dstl[dstr_offset + 32 * nch..],
         nch as usize,
         &lins[4 * 15 + 64 + 1..],
     );
     mp3d_synth_pair(dstl, nch, &lins[4 * 15..]);
     mp3d_synth_pair(&mut dstl[32 * nch..], nch, &lins[4 * 15 + 64..]);
+    let mut w: &[f32] = &G_WIN[..];
+    let zlin = &mut lins[(15 * 64)..];
     for i in (0..14).rev() {
         let mut a: [f32; 4] = [0.0; 4];
         let mut b: [f32; 4] = [0.0; 4];
@@ -1146,285 +1158,126 @@ unsafe fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f
         zlin[4 * (i + 16) + 1] = xr[1 + 18 * (1 + i)];
         zlin[4 * (i - 16) + 2] = xl[18 * (1 + i)];
         zlin[4 * (i - 16) + 3] = xr[18 * (1 + i)];
-        let mut j: i32;
-        // START WITH THIS MADNESS
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 0 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 0) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
+        // All this nonsense with `w` is from SIMD-replacing macros;
+        // I think the code we're actually getting is here:
+        // https://github.com/lieff/minimp3/blob/master/minimp3.h#L1534
+        // Seems simplest to just rewrite it entirely.
+        // I rewrote it using macros 'cause using closures caused lifetime
+        // kerfuffles.
+        // TODO: Doublecheck all this.
+        {
+            macro_rules! load {
+                ($k:expr) => {{
+                    let w0: f32 = w[0];
+                    increment_by(&mut w, 1);
+                    let w1: f32 = w[1];
+                    increment_by(&mut w, 1);
+                    let vz = &zlin[4 * i - $k * 64..];
+                    let vy = &zlin[4 * i - (15 - $k) * 64..];
+                    (w0, w1, vz, vy)
+                }};
             }
-            b[j as usize] = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            a[j as usize] = *vz.offset(j as isize) * w0 - *vy.offset(j as isize) * w1;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 1 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 1) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
+            macro_rules! S0 {
+                ($k:expr) => {{
+                    let (w0, w1, vz, vy) = load!($k);
+                    for j in 0..4 {
+                        b[j] = vz[j] * w1 + vy[j] * w0;
+                        a[j] = vz[j] * w0 - vy[j] * w1;
+                    }
+                }};
             }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vy.offset(j as isize) * w1 - *vz.offset(j as isize) * w0;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 2 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 2) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
+            macro_rules! S1 {
+                ($k:expr) => {{
+                    let (w0, w1, vz, vy) = load!($k);
+                    for j in 0..4 {
+                        b[j] += vz[j] * w1 + vy[j] * w0;
+                        a[j] += vz[j] * w0 - vy[j] * w1;
+                    }
+                }};
             }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vz.offset(j as isize) * w0 - *vy.offset(j as isize) * w1;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 3 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 3) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
+            macro_rules! S2 {
+                ($k:expr) => {{
+                    let (w0, w1, vz, vy) = load!($k);
+                    for j in 0..4 {
+                        b[j] += vz[j] * w1 + vy[j] * w0;
+                        a[j] += vz[j] * w1 - vy[j] * w0;
+                    }
+                }};
             }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vy.offset(j as isize) * w1 - *vz.offset(j as isize) * w0;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
+            S0!(0);
+            S2!(1);
+            S1!(2);
+            S2!(3);
+            S1!(4);
+            S2!(5);
+            S1!(6);
+            S2!(7);
         }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 4 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 4) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
-            }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vz.offset(j as isize) * w0 - *vy.offset(j as isize) * w1;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 5 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 5) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
-            }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vy.offset(j as isize) * w1 - *vz.offset(j as isize) * w0;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 6 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 6) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
-            }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vz.offset(j as isize) * w0 - *vy.offset(j as isize) * w1;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        let mut j: i32;
-        let w0: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let w1: f32 = *{
-            let _old = w;
-            w = w.offset(1);
-            _old
-        };
-        let vz: *mut f32 = &mut *zlin.offset((4 * i - 7 * 64) as isize) as (*mut f32);
-        let vy: *mut f32 = &mut *zlin.offset((4 * i - (15 - 7) * 64) as isize) as (*mut f32);
-        j = 0;
-        loop {
-            if !(j < 4) {
-                break;
-            }
-            let _rhs = *vz.offset(j as isize) * w1 + *vy.offset(j as isize) * w0;
-            let _lhs = &mut b[j as usize];
-            *_lhs = *_lhs + _rhs;
-            let _rhs = *vy.offset(j as isize) * w1 - *vz.offset(j as isize) * w0;
-            let _lhs = &mut a[j as usize];
-            *_lhs = *_lhs + _rhs;
-            j = j + 1;
-        }
-        dstr[(15 - i) * nch] = mp3d_scale_pcm(a[1]);
-        dstr[(17 + i) * nch] = mp3d_scale_pcm(b[1]);
+        dstl[dstr_offset + (15 - i) * nch] = mp3d_scale_pcm(a[1]);
+        dstl[dstr_offset + (17 + i) * nch] = mp3d_scale_pcm(b[1]);
         dstl[(15 - i) * nch] = mp3d_scale_pcm(a[0]);
         dstl[(17 + i) * nch] = mp3d_scale_pcm(b[0]);
-        dstr[(47 - i) * nch] = mp3d_scale_pcm(a[3]);
-        dstr[(49 + i) * nch] = mp3d_scale_pcm(b[3]);
+        dstl[dstr_offset + (47 - i) * nch] = mp3d_scale_pcm(a[3]);
+        dstl[dstr_offset + (49 + i) * nch] = mp3d_scale_pcm(b[3]);
         dstl[(47 - i) * nch] = mp3d_scale_pcm(a[2]);
         dstl[(49 + i) * nch] = mp3d_scale_pcm(b[2]);
-        i = i - 1;
     }
 }
 
-unsafe fn mp3d_synth_granule(
-    qmf_state: *mut f32,
-    grbuf: *mut f32,
+fn mp3d_synth_granule(
+    qmf_state: &mut [f32],
+    grbuf: &mut [f32],
     nbands: i32,
     nch: i32,
     pcm: &mut [i16],
-    lins: *mut f32,
+    lins: &mut [f32],
 ) {
-    let mut i: i32;
-    i = 0;
-    loop {
-        if !(i < nch) {
-            break;
-        }
-        let grbuf_slice = ::std::slice::from_raw_parts_mut(grbuf, 576);
+    for i in 0..(nch as usize) {
+        // let grbuf_slice = ::std::slice::from_raw_parts_mut(grbuf, 576);
         // mp3d_DCT_II(grbuf.offset((576 * i) as isize), nbands);
-        mp3d_DCT_II(grbuf_slice, nbands);
-        i = i + 1;
+        mp3d_DCT_II(&mut grbuf[..576 * i], nbands);
     }
-    memcpy(
-        lins as (*mut ::std::os::raw::c_void),
-        qmf_state as (*const ::std::os::raw::c_void),
-        ::std::mem::size_of::<f32>()
-            .wrapping_mul(15)
-            .wrapping_mul(64),
-    );
-    i = 0;
-    loop {
-        if !(i < nbands) {
-            break;
-        }
+    // memcpy(
+    //     lins as (*mut ::std::os::raw::c_void),
+    //     qmf_state as (*const ::std::os::raw::c_void),
+    //     ::std::mem::size_of::<f32>()
+    //         .wrapping_mul(15)
+    //         .wrapping_mul(64),
+    // );
+    let len = 15 * 64;
+    lins[..len].copy_from_slice(&qmf_state[..len]);
+    let mut i: i32 = 0;
+    while i < nbands {
         let offset = (32 * nch * i) as usize;
         mp3d_synth(
-            grbuf.offset(i as isize),
-            pcm[offset..].as_mut_ptr(),
-            nch,
-            lins.offset((i * 64) as isize),
+            &mut grbuf[i as usize..],
+            &mut pcm[offset..],
+            nch as usize,
+            &mut lins[(i * 64) as usize..],
         );
         i = i + 2;
     }
     if nch == 1 {
         i = 0;
-        loop {
-            if !(i < 15 * 64) {
-                break;
-            }
-            *qmf_state.offset(i as isize) = *lins.offset((nbands * 64 + i) as isize);
+        while i < 15 * 64 {
+            qmf_state[i as usize] = lins[(nbands * 64 + i) as usize];
             i = i + 2;
         }
     } else {
-        memcpy(
-            qmf_state as (*mut ::std::os::raw::c_void),
-            lins.offset((nbands * 64) as isize) as (*const ::std::os::raw::c_void),
-            ::std::mem::size_of::<f32>()
-                .wrapping_mul(15)
-                .wrapping_mul(64),
-        );
+        let len: i32 = 15 * 64;
+        // memcpy(
+        //     qmf_state as (*mut ::std::os::raw::c_void),
+        //     lins.offset((nbands * 64) as isize) as (*const ::std::os::raw::c_void),
+        //     ::std::mem::size_of::<f32>()
+        //         .wrapping_mul(15)
+        //         .wrapping_mul(64),
+        // );
+        qmf_state[..len as usize]
+            .copy_from_slice(&lins[(nbands * 64) as usize..(nbands * 64 + len) as usize]);
     }
 }
 
-/// TODO: The gr pointer is apparently actually an array
-unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i32 {
+fn l3_read_side_info(bs: &mut Bs, mut gr: &mut [L3GrInfo], hdr: &[u8]) -> i32 {
     let current_block;
     static G_SCF_LONG: [[u8; 23]; 8] = [
         [
@@ -1540,67 +1393,68 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
         if hdr[3] as (i32) & 0xc0 == 0xc0 {
             scfsi = scfsi << 4;
         }
-        (*gr).part_23_length = get_bits(bs, 12) as (u16);
-        part_23_sum = part_23_sum + (*gr).part_23_length as (i32);
-        (*gr).big_values = get_bits(bs, 9) as (u16);
-        if (*gr).big_values as (i32) > 288 {
+        gr[0].part_23_length = get_bits(bs, 12) as (u16);
+        part_23_sum = part_23_sum + gr[0].part_23_length as (i32);
+        gr[0].big_values = get_bits(bs, 9) as (u16);
+        if gr[0].big_values as (i32) > 288 {
             current_block = 20;
             break;
         }
-        (*gr).global_gain = get_bits(bs, 8) as (u8);
-        (*gr).scalefac_compress =
+        gr[0].global_gain = get_bits(bs, 8) as (u8);
+        gr[0].scalefac_compress =
             get_bits(bs, if hdr[1] as (i32) & 0x8 != 0 { 4 } else { 9 }) as (u16);
-        (*gr).sfbtab = &G_SCF_LONG[sr_idx as usize];
-        (*gr).n_long_sfb = 22;
-        (*gr).n_short_sfb = 0;
+        gr[0].sfbtab = &G_SCF_LONG[sr_idx as usize];
+        gr[0].n_long_sfb = 22;
+        gr[0].n_short_sfb = 0;
         if get_bits(bs, 1) != 0 {
-            (*gr).block_type = get_bits(bs, 2) as (u8);
-            if (*gr).block_type == 0 {
+            gr[0].block_type = get_bits(bs, 2) as (u8);
+            if gr[0].block_type == 0 {
                 current_block = 19;
                 break;
             }
-            (*gr).mixed_block_flag = get_bits(bs, 1) as (u8);
-            (*gr).region_count[0] = 7;
-            (*gr).region_count[1] = 255;
-            if (*gr).block_type as (i32) == 2 {
+            gr[0].mixed_block_flag = get_bits(bs, 1) as (u8);
+            gr[0].region_count[0] = 7;
+            gr[0].region_count[1] = 255;
+            if gr[0].block_type as (i32) == 2 {
                 scfsi = scfsi & 0xf0fu32;
-                if (*gr).mixed_block_flag == 0 {
-                    (*gr).region_count[0] = 8;
-                    (*gr).sfbtab = &G_SCF_SHORT[sr_idx as usize];
-                    (*gr).n_long_sfb = 0;
-                    (*gr).n_short_sfb = 39;
+                if gr[0].mixed_block_flag == 0 {
+                    gr[0].region_count[0] = 8;
+                    gr[0].sfbtab = &G_SCF_SHORT[sr_idx as usize];
+                    gr[0].n_long_sfb = 0;
+                    gr[0].n_short_sfb = 39;
                 } else {
-                    (*gr).sfbtab = &G_SCF_MIXED[sr_idx as usize];
-                    (*gr).n_long_sfb = if hdr[1] as (i32) & 0x8 != 0 { 8 } else { 6 } as (u8);
-                    (*gr).n_short_sfb = 30;
+                    gr[0].sfbtab = &G_SCF_MIXED[sr_idx as usize];
+                    gr[0].n_long_sfb = if hdr[1] as (i32) & 0x8 != 0 { 8 } else { 6 } as (u8);
+                    gr[0].n_short_sfb = 30;
                 }
             }
             tables = get_bits(bs, 10);
             tables = tables << 5;
-            (*gr).subblock_gain[0] = get_bits(bs, 3) as (u8);
-            (*gr).subblock_gain[1] = get_bits(bs, 3) as (u8);
-            (*gr).subblock_gain[2] = get_bits(bs, 3) as (u8);
+            gr[0].subblock_gain[0] = get_bits(bs, 3) as (u8);
+            gr[0].subblock_gain[1] = get_bits(bs, 3) as (u8);
+            gr[0].subblock_gain[2] = get_bits(bs, 3) as (u8);
         } else {
-            (*gr).block_type = 0;
-            (*gr).mixed_block_flag = 0;
+            gr[0].block_type = 0;
+            gr[0].mixed_block_flag = 0;
             tables = get_bits(bs, 15);
-            (*gr).region_count[0] = get_bits(bs, 4) as (u8);
-            (*gr).region_count[1] = get_bits(bs, 3) as (u8);
-            (*gr).region_count[2] = 255;
+            gr[0].region_count[0] = get_bits(bs, 4) as (u8);
+            gr[0].region_count[1] = get_bits(bs, 3) as (u8);
+            gr[0].region_count[2] = 255;
         }
-        (*gr).table_select[0] = (tables >> 10) as (u8);
-        (*gr).table_select[1] = (tables >> 5 & 31) as (u8);
-        (*gr).table_select[2] = (tables & 31) as (u8);
-        (*gr).preflag = if hdr[1] as (i32) & 0x8 != 0 {
+        gr[0].table_select[0] = (tables >> 10) as (u8);
+        gr[0].table_select[1] = (tables >> 5 & 31) as (u8);
+        gr[0].table_select[2] = (tables & 31) as (u8);
+        gr[0].preflag = if hdr[1] as (i32) & 0x8 != 0 {
             get_bits(bs, 1)
         } else {
-            ((*gr).scalefac_compress as (i32) >= 500) as (u32)
+            (gr[0].scalefac_compress as (i32) >= 500) as (u32)
         } as (u8);
-        (*gr).scalefac_scale = get_bits(bs, 1) as (u8);
-        (*gr).count1_table = get_bits(bs, 1) as (u8);
-        (*gr).scfsi = (scfsi >> 12 & 15) as (u8);
+        gr[0].scalefac_scale = get_bits(bs, 1) as (u8);
+        gr[0].count1_table = get_bits(bs, 1) as (u8);
+        gr[0].scfsi = (scfsi >> 12 & 15) as (u8);
         scfsi = scfsi << 4;
-        gr = gr.offset(1);
+        // gr = gr.offset(1);
+        increment_by_mut(&mut gr, 1);
         if {
             gr_count = gr_count - 1;
             gr_count
@@ -1623,40 +1477,48 @@ unsafe fn l3_read_side_info(bs: &mut Bs, mut gr: *mut L3GrInfo, hdr: &[u8]) -> i
     }
 }
 
-unsafe fn l3_restore_reservoir(
+/// BUGGO: The lifetimes here between
+/// Bs and Mp3DecScratch are not entirely
+/// obvious; double-check.
+fn l3_restore_reservoir<'a>(
     h: &mut Mp3Dec,
-    bs: &mut Bs,
-    s: *mut Mp3DecScratch,
+    bs: &'a mut Bs,
+    s: &'a mut Mp3DecScratch<'a>,
     main_data_begin: i32,
-) -> i32 {
-    let frame_bytes: i32 = ((*bs).limit - (*bs).pos) / 8;
-    let bytes_have: i32 = if (*h).reserv > main_data_begin {
-        main_data_begin
+) -> bool {
+    let frame_bytes = (((*bs).limit - (*bs).pos) / 8) as usize;
+    let bytes_have = if (*h).reserv > main_data_begin {
+        main_data_begin as usize
     } else {
-        (*h).reserv
+        h.reserv as usize
     };
-    memcpy(
-        (*s).maindata.as_mut_ptr() as (*mut ::std::os::raw::c_void),
-        (*h).reserv_buf
-            .as_mut_ptr()
-            .offset(if 0 < (*h).reserv - main_data_begin {
-                (*h).reserv - main_data_begin
-            } else {
-                0
-            } as isize) as (*const ::std::os::raw::c_void),
-        if (*h).reserv > main_data_begin {
-            main_data_begin
-        } else {
-            (*h).reserv
-        } as usize,
-    );
-    memcpy(
-        (*s).maindata.as_mut_ptr().offset(bytes_have as isize) as (*mut ::std::os::raw::c_void),
-        (*bs).buf.as_ptr().offset(((*bs).pos / 8) as isize) as (*const ::std::os::raw::c_void),
-        frame_bytes as usize,
-    );
-    (*s).bs = Bs::new(&(*s).maindata[..], bytes_have + frame_bytes);
-    ((*h).reserv >= main_data_begin) as (i32)
+    // memcpy(
+    //     (*s).maindata.as_mut_ptr() as (*mut ::std::os::raw::c_void),
+    //     (*h).reserv_buf
+    //         .as_mut_ptr()
+    //         .offset(if 0 < (*h).reserv - main_data_begin {
+    //             (*h).reserv - main_data_begin
+    //         } else {
+    //             0
+    //         } as isize) as (*const ::std::os::raw::c_void),
+    //     if (*h).reserv > main_data_begin {
+    //         main_data_begin
+    //     } else {
+    //         (*h).reserv
+    //     } as usize,
+    // );
+    let end = i32::max(0, h.reserv - main_data_begin) as usize;
+    let len = i32::min(h.reserv, main_data_begin) as usize;
+    s.maindata[..len].copy_from_slice(&h.reserv_buf[end..(end + len)]);
+    // memcpy(
+    //     (*s).maindata.as_mut_ptr().offset(bytes_have as isize) as (*mut ::std::os::raw::c_void),
+    //     (*bs).buf.as_ptr().offset(((*bs).pos / 8) as isize) as (*const ::std::os::raw::c_void),
+    //     frame_bytes as usize,
+    // );
+    s.maindata[bytes_have..(bytes_have + frame_bytes)]
+        .copy_from_slice(&bs.buf[(bs.pos / 8) as usize..(bs.pos as usize / 8 + frame_bytes)]);
+    s.bs = Bs::new(&(*s).maindata[..], (bytes_have + frame_bytes) as i32);
+    (*h).reserv >= main_data_begin
 }
 
 fn l3_read_scalefactors(
@@ -2844,7 +2706,7 @@ fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
 }
 
 #[no_mangle]
-pub unsafe fn mp3dec_decode_frame(
+pub fn mp3dec_decode_frame(
     dec: &mut Mp3Dec,
     mp3: &[u8],
     mut pcm: &mut [i16],
@@ -2855,13 +2717,13 @@ pub unsafe fn mp3dec_decode_frame(
     let mut i: i32 = 0;
     let mut igr: i32;
     let mut frame_size: i32 = 0;
-    let mut success: i32 = 1;
+    let mut success = true;
     let hdr: &[u8];
     let mut bs_frame: Bs = Bs::new(&[], 0);
     let mut scratch: Mp3DecScratch = Mp3DecScratch {
         bs: bs_frame,
         maindata: [0; 2815],
-        gr_info: ::std::mem::zeroed(),
+        gr_info: [L3GrInfo::default(); 4],
         grbuf: [[0.0; 576]; 2],
         scf: [0.0; 40],
         syn: [[0.0; 64]; 33],
@@ -2916,18 +2778,21 @@ pub unsafe fn mp3dec_decode_frame(
         }
         if (*info).layer == 3 {
             let main_data_begin: i32 =
-                l3_read_side_info(&mut bs_frame, scratch.gr_info.as_mut_ptr(), hdr);
+                l3_read_side_info(&mut bs_frame, &mut scratch.gr_info[..], hdr);
             if main_data_begin < 0 || bs_frame.pos > bs_frame.limit {
                 *dec = Mp3Dec::new();
                 return 0;
             } else {
-                success = l3_restore_reservoir(
-                    &mut *dec,
-                    &mut bs_frame,
-                    &mut scratch as (*mut Mp3DecScratch),
-                    main_data_begin,
-                );
-                if success != 0 {
+                unsafe {
+                    success = l3_restore_reservoir(
+                        &mut *dec,
+                        &mut bs_frame,
+                        // BUGGO: Defeat borrow checker
+                        &mut *(&mut scratch as *mut Mp3DecScratch),
+                        main_data_begin,
+                    );
+                }
+                if success {
                     igr = 0;
                     loop {
                         if !(igr < if hdr[1] as (i32) & 0x8 != 0 { 2 } else { 1 }) {
@@ -2940,20 +2805,22 @@ pub unsafe fn mp3dec_decode_frame(
                         // );
                         scratch.clear_grbuf();
                         let gr_offset = (igr * (*info).channels) as usize;
-                        l3_decode(
-                            &mut *dec,
-                            // BUGGO: Defeat borrow checker
-                            &mut *(&mut scratch as *mut Mp3DecScratch),
-                            &mut scratch.gr_info[gr_offset..],
-                            (*info).channels,
-                        );
+                        unsafe {
+                            l3_decode(
+                                &mut *dec,
+                                // BUGGO: Defeat borrow checker
+                                &mut *(&mut scratch as *mut Mp3DecScratch),
+                                &mut scratch.gr_info[gr_offset..],
+                                (*info).channels,
+                            );
+                        }
                         mp3d_synth_granule(
-                            (*dec).qmf_state.as_mut_ptr(),
-                            scratch.grbuf[0].as_mut_ptr(),
+                            &mut dec.qmf_state,
+                            &mut scratch.grbuf[0][..],
                             18,
                             (*info).channels,
                             pcm,
-                            scratch.syn[0].as_mut_ptr(),
+                            &mut scratch.syn[0],
                         );
                         igr = igr + 1;
                         // pcm = pcm.offset((576 * (*info).channels) as isize);
@@ -2968,7 +2835,7 @@ pub unsafe fn mp3dec_decode_frame(
                 l3_save_reservoir(&mut *dec, &mut scratch);
             }
         } else {
-            let mut sci: L12ScaleInfo = ::std::mem::uninitialized();
+            let mut sci: L12ScaleInfo = L12ScaleInfo::default();
             l12_read_scale_info(hdr, &mut bs_frame, &mut sci);
             // memset(
             //     scratch.grbuf[0].as_mut_ptr() as (*mut ::std::os::raw::c_void),
@@ -2996,18 +2863,20 @@ pub unsafe fn mp3dec_decode_frame(
                     i = 0;
                     // BUGGO Gotta defeat the borrow checker here;
                     // borrowing both sci and sci.scf
-                    l12_apply_scf_384(
-                        &mut *(&mut sci as *mut L12ScaleInfo),
-                        &mut sci.scf[igr as usize..],
-                        &mut scratch.grbuf[0],
-                    );
+                    unsafe {
+                        l12_apply_scf_384(
+                            &mut *(&mut sci as *mut L12ScaleInfo),
+                            &mut sci.scf[igr as usize..],
+                            &mut scratch.grbuf[0],
+                        );
+                    }
                     mp3d_synth_granule(
-                        (*dec).qmf_state.as_mut_ptr(),
-                        scratch.grbuf[0].as_mut_ptr(),
+                        &mut dec.qmf_state,
+                        &mut scratch.grbuf[0][..],
                         12,
                         (*info).channels,
                         pcm,
-                        scratch.syn[0].as_mut_ptr(),
+                        &mut scratch.syn[0],
                     );
                     // memset(
                     //     scratch.grbuf[0].as_mut_ptr() as (*mut ::std::os::raw::c_void),

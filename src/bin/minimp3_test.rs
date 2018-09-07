@@ -566,8 +566,7 @@ fn main() {
     let input_buf = &mut Vec::new();
     {
         let mut f = fs::File::open(opt.input_file).expect("Input file not found");
-        f.read_to_end(input_buf)
-            .expect("Could not read input file");
+        f.read_to_end(input_buf).expect("Could not read input file");
     }
     let mut data_start = mp3dec_skip_id3v2_slice(&input_buf);
     let output_buf = &mut Vec::new();
@@ -578,9 +577,8 @@ fn main() {
         // Meh, allocation junk could be better
         let buf = &mut Vec::with_capacity(1152);
         buf.resize(1152, 0);
-        let samples = unsafe {
-            mp3dec_decode_frame(mp3d, &mut input_buf[data_start..], buf, frame_info)
-        };
+        let samples =
+            unsafe { mp3dec_decode_frame(mp3d, &mut input_buf[data_start..], buf, frame_info) };
         output_buf.extend_from_slice(buf);
         total_samples += samples;
         total_frames += 1;

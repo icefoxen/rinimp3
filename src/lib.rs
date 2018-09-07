@@ -515,32 +515,40 @@ pub fn mp3d_find_frame(
     }
 }
 
-// Rewritten; original is on
-// https://github.com/lieff/minimp3/blob/master/minimp3.h#L232
+/// Rewritten by hand; original is on
+/// https://github.com/lieff/minimp3/blob/master/minimp3.h#L232
 pub(crate) fn get_bits(bs: &mut Bs, n: u32) -> u32 {
-    let n = n as i32;
-    let s = bs.pos & 7;
+    let n: i32 = n as i32;
+
+    let mut next: u32;
     let mut cache: u32 = 0;
-    let mut shl = n + s;
-    let mut p = (bs.pos >> 3) as usize;
-    bs.pos += n as i32;
+    let s: i32 = bs.pos & 7;
+
+    let mut shl: i32 = n + s;
+    let mut p: usize = (bs.pos >> 3) as usize;
+    bs.pos += n;
     if bs.pos > bs.limit {
         return 0;
     }
-    let mut next = bs.buf[p] & ((255 & s) as u8);
+    next = (bs.buf[p] & (255 & s) as u8) as u32;
     p += 1;
     shl -= 8;
     while shl > 0 {
-        shl -= 8;
-        cache |= (next as u32).wrapping_shl(shl as u32);
-        next = bs.buf[p];
+        // println!("cache, next, shl: {}, {}, {}", cache, next, shl);
+        cache |= next.wrapping_shl(shl as u32);
+        next = bs.buf[p] as u32;
         p += 1;
+        shl -= 8;
     }
 
     // cache | ((next as u32) >> -shl)
     // Why on Eris's earth is this shifting by an almost-certainly-negative
     // number?
-    cache | ((next as u32).wrapping_shl(shl as u32))
+    // Pretty sure that's undefined behavior in C.
+    // OH!  It's because shl is negative here after we've fallen out
+    // of the while loop!
+    // println!("cache, next, res: {}, {}, {}", cache, next, cache | ((next as u32).wrapping_shl(shl as u32)));
+    cache | ((next as u32).wrapping_shr(-shl as u32))
 }
 
 #[derive(Copy)]
@@ -758,12 +766,12 @@ pub(crate) fn l12_read_scalefactors(
             break;
         }
         let mut s: f32 = 0.0;
-        let ba: i32 = {
+        let ba: u32 = {
             let _old = pba[0];
             // pba = pba.offset(1);
             increment_by_mut(&mut pba, 1);
             _old
-        } as (i32);
+        } as u32;
         let mask: i32 = if ba != 0 {
             4 + (19 >> scfcod[i] as (i32) & 3)
         } else {
@@ -775,8 +783,8 @@ pub(crate) fn l12_read_scalefactors(
                 break;
             }
             if mask & m != 0 {
-                let b: i32 = get_bits(bs, 6) as (i32);
-                s = G_DEQ_L12[(ba * 3 - 6 + b % 3) as usize] * (1 << 21 >> b / 3) as f32;
+                let b: u32 = get_bits(bs, 6);
+                s = G_DEQ_L12[(ba * 3 - 6 + b % 3) as usize] * ((1u32 << 21).wrapping_shr(b / 3)) as f32;
             }
             // *{
             //     let _old = scf;
@@ -817,7 +825,10 @@ pub(crate) fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInf
             // subband_alloc = subband_alloc.offset(1);
             increment_by(&mut subband_alloc, 1);
         }
-        ba = ba_code_tab[get_bits(bs, ba_bits) as usize];
+        {
+        }
+        let idx = get_bits(bs, ba_bits);
+        ba = ba_code_tab[idx as usize];
         (*sci).bitalloc[(2 * i) as usize] = ba;
         if i < (*sci).stereo_bands as (i32) {
             ba = ba_code_tab[get_bits(bs, ba_bits) as usize];
@@ -877,7 +888,10 @@ pub(crate) fn l12_dequantize_granule(
                 if ba < 17 {
                     let half: i32 = (1 << ba - 1) - 1;
                     for k in 0..group_size {
-                        dst[k as usize] = get_bits(bs, (ba - half) as u32) as f32;
+                        println!("DST: {:?}, {}, {}", dst, k, group_size);
+                        // TODO: Crash happening here,
+                        // dst is size 0.  Investigate.
+                        dst[k as usize] = (get_bits(bs, ba as u32) as i32 - half) as f32;
                     }
                 } else {
                     let mod_: u32 = ((2 << ba - 17) + 1) as (u32);
@@ -2898,6 +2912,10 @@ pub fn mp3dec_decode_frame(
                     break;
                 }
                 if 12 == {
+                    println!("ARGS: {:?}, {:?}, {}",
+                        &mut scratch.grbuf[0][i as usize..].len(),
+                        &mut sci.total_bands,
+                        (*info).layer | 1,);
                     i = i + l12_dequantize_granule(
                         &mut scratch.grbuf[0][i as usize..],
                         &mut bs_frame,

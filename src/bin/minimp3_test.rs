@@ -91,21 +91,6 @@ unsafe fn mp3dec_skip_id3v2(buf: *const u8, buf_size: usize) -> usize {
         0usize
     }
 }
-
-/// Returns usize but I think the max length an ID3
-/// tag can have is 32 bits?
-fn mp3dec_skip_id3v2_slice(buf: &[u8]) -> usize {
-    if buf.len() > 10 && buf[..3] == b"ID3\0"[..3] {
-        (((buf[6] & 0x7F) as usize) << 21
-            | ((buf[7] & 0x7F) as usize) << 14
-            | ((buf[8] & 0x7F) as usize) << 7
-            | ((buf[9] & 0x7F) as usize) + 10)
-    } else {
-        0
-    }
-}
-
-#[no_mangle]
 pub unsafe fn mp3dec_load_buf(
     dec: *mut Mp3Dec,
     mut buf: *const u8,
@@ -240,7 +225,6 @@ pub unsafe fn mp3dec_load_buf(
     }
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_iterate_buf(
     mut buf: *const u8,
     mut buf_size: usize,
@@ -335,7 +319,6 @@ impl Clone for Mp3decEx {
     }
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_ex_open_buf(
     dec: *mut Mp3decEx,
     buf: *const u8,
@@ -450,7 +433,6 @@ unsafe fn mp3dec_close_file(map_info: *mut Mp3decMapInfo) {
     (*map_info).size = 0usize;
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_load(
     dec: *mut Mp3Dec,
     file_name: *const u8,
@@ -480,7 +462,6 @@ pub unsafe fn mp3dec_load(
     }
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_iterate(
     file_name: *const u8,
     callback: unsafe fn(*mut ::std::os::raw::c_void, *const u8, i32, usize, *mut FrameInfo) -> i32,
@@ -501,7 +482,6 @@ pub unsafe fn mp3dec_iterate(
     }
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_ex_close(dec: *mut Mp3decEx) {
     if (*dec).is_file != 0 {
         mp3dec_close_file(&mut (*dec).file as (*mut Mp3decMapInfo));
@@ -515,7 +495,6 @@ pub unsafe fn mp3dec_ex_close(dec: *mut Mp3decEx) {
     );
 }
 
-#[no_mangle]
 pub unsafe fn mp3dec_ex_open(dec: *mut Mp3decEx, file_name: *const u8, seek_method: i32) -> i32 {
     let ret: i32;
     memset(
@@ -698,6 +677,7 @@ fn main() {
 */
 
     return;
+    /*
     use std::os::unix::ffi::OsStringExt;
     let mut argv_storage = ::std::env::args_os()
         .map(|str| {
@@ -713,6 +693,7 @@ fn main() {
         .collect::<Vec<_>>();
     let ret = unsafe { _c_main(argv_storage.len() as (i32), argv.as_mut_ptr()) };
     ::std::process::exit(ret);
+    */
 }
 
 unsafe fn preload(file: *mut IoFile, data_size: *mut i32) -> *mut u8 {
@@ -889,7 +870,6 @@ unsafe fn decode_file(
     }
 }
 
-#[no_mangle]
 pub unsafe fn _c_main(argc: i32, argv: *mut *mut u8) -> i32 {
     let mut wave_out: i32 = 0i32;
     let mut ref_size: i32 = 0;

@@ -1,5 +1,8 @@
+#[cfg(test)]
+mod tests;
+
 /// Silly helper function
-// fn fill<T>(slice: &mut [T], val: T)
+// pub(crate) fn fill<T>(slice: &mut [T], val: T)
 // where
 //     T: Copy,
 // {
@@ -17,7 +20,7 @@
 /// this helper does takes a `&mut` to the slice(!) and does
 /// it for us.  Panics if you try to increment past the end
 /// of the slice.
-fn increment_by_mut<T>(slice: &mut &mut [T], amount: usize) {
+pub(crate) fn increment_by_mut<T>(slice: &mut &mut [T], amount: usize) {
     let lifetime_hack = unsafe {
         let slice_ptr = slice.as_mut_ptr();
         ::std::slice::from_raw_parts_mut(slice_ptr, slice.len())
@@ -32,7 +35,7 @@ fn increment_by_mut<T>(slice: &mut &mut [T], amount: usize) {
 /// we're usually stepping down buffers that are being filled,
 /// or altered, but let's follow std's convention of naming
 /// const vs. mut.
-fn increment_by<T>(slice: &mut &[T], amount: usize) {
+pub(crate) fn increment_by<T>(slice: &mut &[T], amount: usize) {
     let lifetime_hack = unsafe {
         let slice_ptr = slice.as_ptr();
         ::std::slice::from_raw_parts(slice_ptr, slice.len())
@@ -180,7 +183,7 @@ impl<'a> Clone for Mp3DecScratch<'a> {
 }
 
 impl<'a> Mp3DecScratch<'a> {
-    fn clear_grbuf(&mut self) {
+    pub(crate) fn clear_grbuf(&mut self) {
         self.grbuf = [[0.0; 576]; 2];
     }
 }
@@ -336,7 +339,7 @@ impl Hdr {
 // TODO: All the horrible bit-tests in the `hdr_` functions
 // are macros in the C version; can we translate them back to
 // functions?
-fn hdr_valid(h: &[u8]) -> i32 {
+pub(crate) fn hdr_valid(h: &[u8]) -> i32 {
     (h[0] as (i32) == 0xffi32
         && (h[1] as (i32) & 0xf0 == 0xf0 || h[1] as (i32) & 0xfei32 == 0xe2)
         && (h[1] as (i32) >> 1 & 3 != 0)
@@ -344,7 +347,7 @@ fn hdr_valid(h: &[u8]) -> i32 {
         && (h[2] as (i32) >> 2 & 3 != 3)) as (i32)
 }
 
-fn hdr_compare(h1: &[u8], h2: &[u8]) -> i32 {
+pub(crate) fn hdr_compare(h1: &[u8], h2: &[u8]) -> i32 {
     (hdr_valid(h2) != 0
         && ((h1[1] as (i32) ^ h2[1] as (i32)) & 0xfei32 == 0)
         && ((h1[2] as (i32) ^ h2[2] as (i32)) & 0xci32 == 0)
@@ -352,7 +355,7 @@ fn hdr_compare(h1: &[u8], h2: &[u8]) -> i32 {
         as (i32)
 }
 
-fn hdr_frame_samples(h: &[u8]) -> u32 {
+pub(crate) fn hdr_frame_samples(h: &[u8]) -> u32 {
     (if h[1] as (i32) & 6 == 6 {
         384
     } else {
@@ -417,7 +420,7 @@ pub fn hdr_padding(h: &[u8]) -> i32 {
     }
 }
 
-fn mp3d_match_frame(hdr: &[u8], mp3_bytes: i32, frame_bytes: i32) -> i32 {
+pub(crate) fn mp3d_match_frame(hdr: &[u8], mp3_bytes: i32, frame_bytes: i32) -> i32 {
     let current_block;
     let mut i: i32;
     let mut nmatch: i32;
@@ -514,7 +517,7 @@ pub fn mp3d_find_frame(
 
 // Rewritten; original is on
 // https://github.com/lieff/minimp3/blob/master/minimp3.h#L232
-fn get_bits(bs: &mut Bs, n: u32) -> u32 {
+pub(crate) fn get_bits(bs: &mut Bs, n: u32) -> u32 {
     let n = n as i32;
     let s = bs.pos & 7;
     let mut cache: u32 = 0;
@@ -584,7 +587,10 @@ impl Clone for L12SubbandAlloc {
 
 /// TODO: This *const it returns is actually an array,
 /// make it return a proper slice if possible.
-fn l12_subband_alloc_table(hdr: &[u8], sci: &mut L12ScaleInfo) -> &'static [L12SubbandAlloc] {
+pub(crate) fn l12_subband_alloc_table(
+    hdr: &[u8],
+    sci: &mut L12ScaleInfo,
+) -> &'static [L12SubbandAlloc] {
     let mut alloc: &[L12SubbandAlloc];
     let mode: i32 = hdr[3] as (i32) >> 6 & 3;
     let mut nbands: i32;
@@ -681,7 +687,7 @@ fn l12_subband_alloc_table(hdr: &[u8], sci: &mut L12ScaleInfo) -> &'static [L12S
     alloc
 }
 
-fn l12_read_scalefactors(
+pub(crate) fn l12_read_scalefactors(
     bs: &mut Bs,
     mut pba: &mut [u8],
     scfcod: &mut [u8],
@@ -786,7 +792,7 @@ fn l12_read_scalefactors(
     }
 }
 
-fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
+pub(crate) fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
     static G_BITALLOC_CODE_TAB: [u8; 92] = [
         0, 17, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 0, 17, 18, 3, 19, 4, 5, 6, 7, 8, 9,
         10, 11, 12, 13, 16, 0, 17, 18, 3, 19, 4, 5, 16, 0, 17, 18, 16, 0, 17, 18, 19, 4, 5, 6, 7,
@@ -856,7 +862,7 @@ fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInfo) {
     }
 }
 
-fn l12_dequantize_granule(
+pub(crate) fn l12_dequantize_granule(
     grbuf: &mut [f32],
     bs: &mut Bs,
     sci: &mut L12ScaleInfo,
@@ -891,7 +897,7 @@ fn l12_dequantize_granule(
     group_size * 4
 }
 
-fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: &[f32], mut dst: &mut [f32]) {
+pub(crate) fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: &[f32], mut dst: &mut [f32]) {
     // memcpy(
     //     dst.offset(576)
     //         .offset(((*sci).stereo_bands as (i32) * 18) as isize)
@@ -928,7 +934,7 @@ fn l12_apply_scf_384(sci: &mut L12ScaleInfo, mut scf: &[f32], mut dst: &mut [f32
 }
 
 #[allow(non_snake_case)]
-fn mp3d_DCT_II(grbuf: &mut [f32], n: i32) {
+pub(crate) fn mp3d_DCT_II(grbuf: &mut [f32], n: i32) {
     static G_SEC: [f32; 24] = [
         10.19000816,
         0.50060302,
@@ -1057,7 +1063,7 @@ fn mp3d_DCT_II(grbuf: &mut [f32], n: i32) {
     }
 }
 
-fn mp3d_scale_pcm(sample: f32) -> i16 {
+pub(crate) fn mp3d_scale_pcm(sample: f32) -> i16 {
     if sample as (f64) >= 32766.5f64 {
         32767
     } else if sample as (f64) <= -32767.5f64 {
@@ -1069,7 +1075,7 @@ fn mp3d_scale_pcm(sample: f32) -> i16 {
     }
 }
 
-fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
+pub(crate) fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
     let mut a: f32;
     a = z[14 * 64] - z[0] * 29.0;
     a = a + z[1 * 64] + z[13 * 64] * 213.0;
@@ -1093,7 +1099,7 @@ fn mp3d_synth_pair(pcm: &mut [i16], nch: usize, mut z: &[f32]) {
     pcm[16 * nch] = mp3d_scale_pcm(a)
 }
 
-fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f32]) {
+pub(crate) fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f32]) {
     // let xr = &xl[(576 * (nch - 1)) as usize..];
     let (xl, xr) = xl.split_at(576 * (nch - 1) as usize);
     // let dstr = &mut dstl[(nch - 1) as usize..];
@@ -1224,7 +1230,7 @@ fn mp3d_synth(xl: &mut [f32], dstl: &mut [i16], nch: usize, lins: &mut [f32]) {
     }
 }
 
-fn mp3d_synth_granule(
+pub(crate) fn mp3d_synth_granule(
     qmf_state: &mut [f32],
     grbuf: &mut [f32],
     nbands: i32,
@@ -1277,7 +1283,7 @@ fn mp3d_synth_granule(
     }
 }
 
-fn l3_read_side_info(bs: &mut Bs, mut gr: &mut [L3GrInfo], hdr: &[u8]) -> i32 {
+pub(crate) fn l3_read_side_info(bs: &mut Bs, mut gr: &mut [L3GrInfo], hdr: &[u8]) -> i32 {
     let current_block;
     static G_SCF_LONG: [[u8; 23]; 8] = [
         [
@@ -1480,7 +1486,7 @@ fn l3_read_side_info(bs: &mut Bs, mut gr: &mut [L3GrInfo], hdr: &[u8]) -> i32 {
 /// BUGGO: The lifetimes here between
 /// Bs and Mp3DecScratch are not entirely
 /// obvious; double-check.
-fn l3_restore_reservoir<'a>(
+pub(crate) fn l3_restore_reservoir<'a>(
     h: &mut Mp3Dec,
     bs: &'a mut Bs,
     s: &'a mut Mp3DecScratch<'a>,
@@ -1521,7 +1527,7 @@ fn l3_restore_reservoir<'a>(
     (*h).reserv >= main_data_begin
 }
 
-fn l3_read_scalefactors(
+pub(crate) fn l3_read_scalefactors(
     mut scf: &mut [u8],
     mut ist_pos: &mut [u8],
     scf_size: &[u8],
@@ -1595,7 +1601,7 @@ fn l3_read_scalefactors(
     };
 }
 
-fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
+pub(crate) fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
     static G_EXPFRAC: [f32; 4] = [
         9.31322575e-10,
         7.83145814e-10,
@@ -1617,7 +1623,7 @@ fn l3_ldexp_q2(mut y: f32, mut exp_q2: i32) -> f32 {
     y
 }
 
-fn l3_decode_scalefactors(
+pub(crate) fn l3_decode_scalefactors(
     hdr: &[u8],
     ist_pos: &mut [u8],
     bs: &mut Bs,
@@ -1755,7 +1761,7 @@ fn l3_decode_scalefactors(
     }
 }
 
-fn l3_pow_43(mut x: i32) -> f32 {
+pub(crate) fn l3_pow_43(mut x: i32) -> f32 {
     let frac: f32;
     let sign: i32;
     let mut mult: i32 = 256;
@@ -1774,7 +1780,7 @@ fn l3_pow_43(mut x: i32) -> f32 {
     }
 }
 
-unsafe fn l3_huffman(
+pub(crate) unsafe fn l3_huffman(
     mut dst: &mut [f32],
     bs: &mut Bs,
     gr_info: &L3GrInfo,
@@ -2061,7 +2067,7 @@ unsafe fn l3_huffman(
     (*bs).pos = layer3gr_limit;
 }
 
-fn l3_midside_stereo(left: &mut [f32], n: i32) {
+pub(crate) fn l3_midside_stereo(left: &mut [f32], n: i32) {
     let mut i: usize = 0;
     println!("LEN: {}", left.len());
     // let right = &mut left[576..];
@@ -2082,7 +2088,7 @@ fn l3_midside_stereo(left: &mut [f32], n: i32) {
 /// it seems, passed a float array of length >= 1152.  We now
 /// have two different functions for the different cases of this.
 /// TODO: Can we get rid of the previous version of this?
-fn l3_midside_stereo_b(left: &mut [f32], right: &mut [f32], n: i32) {
+pub(crate) fn l3_midside_stereo_b(left: &mut [f32], right: &mut [f32], n: i32) {
     let mut i: usize = 0;
     loop {
         if !(i < (n as usize)) {
@@ -2096,7 +2102,7 @@ fn l3_midside_stereo_b(left: &mut [f32], right: &mut [f32], n: i32) {
     }
 }
 
-fn l3_stereo_top_band(mut right: &[f32], sfb: &[u8], nbands: i32, max_band: &mut [i32]) {
+pub(crate) fn l3_stereo_top_band(mut right: &[f32], sfb: &[u8], nbands: i32, max_band: &mut [i32]) {
     let mut current_block;
     let mut i: usize;
     let mut k: usize;
@@ -2138,7 +2144,7 @@ fn l3_stereo_top_band(mut right: &[f32], sfb: &[u8], nbands: i32, max_band: &mut
     }
 }
 
-fn l3_intensity_stereo_band(left: &mut [f32], n: i32, kl: f32, kr: f32) {
+pub(crate) fn l3_intensity_stereo_band(left: &mut [f32], n: i32, kl: f32, kr: f32) {
     let mut i: usize;
     i = 0;
     loop {
@@ -2151,7 +2157,7 @@ fn l3_intensity_stereo_band(left: &mut [f32], n: i32, kl: f32, kr: f32) {
     }
 }
 
-fn l3_stereo_process(
+pub(crate) fn l3_stereo_process(
     mut left: &mut [f32],
     ist_pos: &[u8],
     sfb: &[u8],
@@ -2199,7 +2205,12 @@ fn l3_stereo_process(
     }
 }
 
-fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrInfo], hdr: &[u8]) {
+pub(crate) fn l3_intensity_stereo(
+    left: &mut [f32],
+    ist_pos: &mut [u8],
+    gr: &[L3GrInfo],
+    hdr: &[u8],
+) {
     let mut max_band: [i32; 3] = [0; 3];
     let n_sfb: i32 = gr[0].n_long_sfb as (i32) + gr[0].n_short_sfb as (i32);
     let mut i: i32;
@@ -2256,7 +2267,7 @@ fn l3_intensity_stereo(left: &mut [f32], ist_pos: &mut [u8], gr: &[L3GrInfo], hd
     );
 }
 
-fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[u8]) {
+pub(crate) fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[u8]) {
     // TODO: This is a horrible C-ish mess of pointers that Rust profoundly
     // dislikes, and so has been rewritten.  Needs verification and testing
     // against the original.
@@ -2358,7 +2369,7 @@ fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[u8]) {
     */
 }
 
-fn l3_antialias(mut grbuf: &mut [f32], mut nbands: i32) {
+pub(crate) fn l3_antialias(mut grbuf: &mut [f32], mut nbands: i32) {
     static G_AA: [[f32; 8]; 2] = [
         [
             0.85749293, 0.88174200, 0.94962865, 0.98331459, 0.99551782, 0.99916056, 0.99989920,
@@ -2390,7 +2401,7 @@ fn l3_antialias(mut grbuf: &mut [f32], mut nbands: i32) {
 }
 
 /// Y is apparently an [f32;9] ?
-fn l3_dct3_9(y: &mut [f32; 9]) {
+pub(crate) fn l3_dct3_9(y: &mut [f32; 9]) {
     let mut s0: f32;
     let mut s1: f32;
     let mut s2: f32;
@@ -2441,7 +2452,12 @@ fn l3_dct3_9(y: &mut [f32; 9]) {
     y[8] = s4 + s7;
 }
 
-fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nbands: i32) {
+pub(crate) fn l3_imdct36(
+    mut grbuf: &mut [f32],
+    mut overlap: &mut [f32],
+    window: &[f32],
+    nbands: i32,
+) {
     let mut i: usize;
     let mut j: i32;
     static G_TWID9: [f32; 18] = [
@@ -2493,7 +2509,7 @@ fn l3_imdct36(mut grbuf: &mut [f32], mut overlap: &mut [f32], window: &[f32], nb
     }
 }
 
-fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
+pub(crate) fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
     let m1: f32 = x1 * 0.86602540;
     let a1: f32 = x0 - x2 * 0.5;
     dst[1] = x0 + x2;
@@ -2501,7 +2517,7 @@ fn l3_idct3(x0: f32, x1: f32, x2: f32, dst: &mut [f32; 3]) {
     dst[2] = a1 - m1;
 }
 
-fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
+pub(crate) fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
     static G_TWID3: [f32; 6] = [
         0.79335334, 0.92387953, 0.99144486, 0.60876143, 0.38268343, 0.13052619,
     ];
@@ -2525,7 +2541,7 @@ fn l3_imdct12(x: &mut [f32], dst: &mut [f32], overlap: &mut [f32]) {
     }
 }
 
-fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i32) {
+pub(crate) fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i32) {
     loop {
         if !(nbands > 0) {
             break;
@@ -2555,7 +2571,12 @@ fn l3_imdct_short(mut grbuf: &mut [f32], mut overlap: &mut [f32], mut nbands: i3
     }
 }
 
-fn l3_imdct_gr(mut grbuf: &mut [f32], mut overlap: &mut [f32], block_type: u32, n_long_bands: u32) {
+pub(crate) fn l3_imdct_gr(
+    mut grbuf: &mut [f32],
+    mut overlap: &mut [f32],
+    block_type: u32,
+    n_long_bands: u32,
+) {
     static G_MDCT_WINDOW: [[f32; 18]; 2] = [
         [
             0.99904822, 0.99144486, 0.97629601, 0.95371695, 0.92387953, 0.88701083, 0.84339145,
@@ -2586,7 +2607,7 @@ fn l3_imdct_gr(mut grbuf: &mut [f32], mut overlap: &mut [f32], block_type: u32, 
 
 /// I am rather confused about why this function uses two
 /// nested loops instead of one.
-fn l3_change_sign(mut grbuf: &mut [f32]) {
+pub(crate) fn l3_change_sign(mut grbuf: &mut [f32]) {
     // let mut b: i32;
     // let mut i: usize;
     // b = 0;
@@ -2621,7 +2642,12 @@ fn l3_change_sign(mut grbuf: &mut [f32]) {
     }
 }
 
-fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo], nch: i32) {
+pub(crate) fn l3_decode(
+    h: &mut Mp3Dec,
+    s: &mut Mp3DecScratch,
+    mut gr_info: &mut [L3GrInfo],
+    nch: i32,
+) {
     let mut ch: i32;
     ch = 0;
     loop {
@@ -2690,7 +2716,7 @@ fn l3_decode(h: &mut Mp3Dec, s: &mut Mp3DecScratch, mut gr_info: &mut [L3GrInfo]
     }
 }
 
-fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
+pub(crate) fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
     let mut pos: i32 = (((*s).bs.pos + 7) as (u32)).wrapping_div(8) as (i32);
     let mut remains: i32 = ((*s).bs.limit as (u32))
         .wrapping_div(8)
@@ -2713,7 +2739,19 @@ fn l3_save_reservoir(h: &mut Mp3Dec, s: &mut Mp3DecScratch) {
     (*h).reserv = remains;
 }
 
-#[no_mangle]
+/// Returns usize but I think the max length an ID3
+/// tag can have is 32 bits?
+pub fn mp3dec_skip_id3v2_slice(buf: &[u8]) -> usize {
+    if buf.len() > 10 && buf[..3] == b"ID3\0"[..3] {
+        (((buf[6] & 0x7F) as usize) << 21
+            | ((buf[7] & 0x7F) as usize) << 14
+            | ((buf[8] & 0x7F) as usize) << 7
+            | ((buf[9] & 0x7F) as usize) + 10)
+    } else {
+        0
+    }
+}
+
 pub fn mp3dec_decode_frame(
     dec: &mut Mp3Dec,
     mp3: &[u8],
@@ -2914,88 +2952,5 @@ pub fn mp3dec_decode_frame(
             }
         }
         (success as (u32)).wrapping_mul(hdr_frame_samples(&dec.header)) as (i32)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-
-    use super::*;
-    #[test]
-    fn test_increment_by_mut() {
-        let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
-        let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
-        increment_by_mut(&mut slice_to_mongle, 1);
-        assert_eq!(&slice[1..], slice_to_mongle);
-        increment_by_mut(&mut slice_to_mongle, 1);
-        assert_eq!(&slice[2..], slice_to_mongle);
-        increment_by_mut(&mut slice_to_mongle, 2);
-        assert_eq!(&slice[4..], slice_to_mongle);
-        increment_by_mut(&mut slice_to_mongle, 2);
-        let empty: &[i32] = &[];
-        assert_eq!(empty, slice_to_mongle);
-        assert_eq!(&slice[6..], slice_to_mongle);
-    }
-
-    #[test]
-    #[should_panic]
-    fn test_increment_too_far() {
-        let slice: Vec<i32> = vec![1, 2, 3, 4, 5, 6];
-        let mut slice_to_mongle: &mut [i32] = &mut slice.clone();
-        increment_by_mut(&mut slice_to_mongle, 99);
-    }
-
-    #[test]
-    fn test_rewritten_get_bits() {
-        unsafe fn get_bits_corroded(bs: &mut Bs, n: i32) -> u32 {
-            let mut next: u32;
-            let mut cache: u32 = 0;
-            let s: u32 = (bs.pos & 7) as (u32);
-            let mut shl: i32 = (n as (u32)).wrapping_add(s) as (i32);
-            let mut p: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos >> 3) as isize);
-            if {
-                (*bs).pos = (*bs).pos + n;
-                (*bs).pos
-            } > (*bs).limit
-            {
-                0
-            } else {
-                next = (*{
-                    let _old = p;
-                    p = p.offset(1);
-                    _old
-                } as (i32) & 255 >> s) as (u32);
-                loop {
-                    if !({
-                        shl = shl - 8;
-                        shl
-                    } > 0)
-                    {
-                        break;
-                    }
-                    cache = cache | next << shl;
-                    next = *{
-                        let _old = p;
-                        p = p.offset(1);
-                        _old
-                    } as (u32);
-                }
-                cache | next >> -shl
-            }
-        }
-
-        let data = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-        let bs = &mut Bs::new(&data, 0);
-        // I'm going to crudely assume 0x8FFF is
-        // Big Enough, I suppose.
-        for i in 0..0x8FFF {
-            let orig = unsafe { get_bits_corroded(bs, i as i32) };
-            let rewritten = get_bits(bs, i);
-            assert_eq!(orig, rewritten);
-        }
     }
 }

@@ -784,7 +784,8 @@ pub(crate) fn l12_read_scalefactors(
             }
             if mask & m != 0 {
                 let b: u32 = get_bits(bs, 6);
-                s = G_DEQ_L12[(ba * 3 - 6 + b % 3) as usize] * ((1u32 << 21).wrapping_shr(b / 3)) as f32;
+                s = G_DEQ_L12[(ba * 3 - 6 + b % 3) as usize]
+                    * ((1u32 << 21).wrapping_shr(b / 3)) as f32;
             }
             // *{
             //     let _old = scf;
@@ -825,8 +826,7 @@ pub(crate) fn l12_read_scale_info(hdr: &[u8], bs: &mut Bs, sci: &mut L12ScaleInf
             // subband_alloc = subband_alloc.offset(1);
             increment_by(&mut subband_alloc, 1);
         }
-        {
-        }
+        {}
         let idx = get_bits(bs, ba_bits);
         ba = ba_code_tab[idx as usize];
         (*sci).bitalloc[(2 * i) as usize] = ba;
@@ -2912,10 +2912,12 @@ pub fn mp3dec_decode_frame(
                     break;
                 }
                 if 12 == {
-                    println!("ARGS: {:?}, {:?}, {}",
+                    println!(
+                        "ARGS: {:?}, {:?}, {}",
                         &mut scratch.grbuf[0][i as usize..].len(),
                         &mut sci.total_bands,
-                        (*info).layer | 1,);
+                        (*info).layer | 1,
+                    );
                     i = i + l12_dequantize_granule(
                         &mut scratch.grbuf[0][i as usize..],
                         &mut bs_frame,

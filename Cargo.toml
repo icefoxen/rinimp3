@@ -17,4 +17,6 @@ maintenance = { status = "experimental" }
 
 [dependencies]
 structopt = "0.2"
+
+[dev-dependencies]
 minimp3 = "0.3"

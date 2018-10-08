@@ -10,6 +10,9 @@ readme = "README.md"
 
 keywords = []
 categories = []
+exclude = [
+    "vectors",
+]
 
 
 [badges]

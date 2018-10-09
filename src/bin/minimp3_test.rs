@@ -58,7 +58,7 @@ enum IoFile {}
 extern crate rinimp3;
 use rinimp3::*;
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Mp3decFileInfo {
     pub buffer: *mut i16,
@@ -67,12 +67,6 @@ pub struct Mp3decFileInfo {
     pub hz: i32,
     pub layer: i32,
     pub avg_bitrate_kbps: i32,
-}
-
-impl Clone for Mp3decFileInfo {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 unsafe fn mp3dec_skip_id3v2(buf: *const u8, buf_size: usize) -> usize {
@@ -291,32 +285,20 @@ pub unsafe fn mp3dec_iterate_buf(
     })
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Mp3decMapInfo {
     pub buffer: *const u8,
     pub size: usize,
 }
 
-impl Clone for Mp3decMapInfo {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Mp3decEx {
     pub mp3d: Mp3Dec,
     pub file: Mp3decMapInfo,
     pub seek_method: i32,
     pub is_file: i32,
-}
-
-impl Clone for Mp3decEx {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 pub unsafe fn mp3dec_ex_open_buf(
@@ -338,20 +320,14 @@ pub unsafe fn mp3dec_ex_open_buf(
     0i32
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct timespec {
     pub tv_sec: isize,
     pub tv_nsec: isize,
 }
 
-impl Clone for timespec {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct stat {
     pub st_dev: usize,
@@ -369,12 +345,6 @@ pub struct stat {
     pub st_mtim: timespec,
     pub st_ctim: timespec,
     pub __glibc_reserved: [isize; 3],
-}
-
-impl Clone for stat {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 unsafe fn mp3dec_open_file(file_name: *const u8, map_info: *mut Mp3decMapInfo) -> i32 {

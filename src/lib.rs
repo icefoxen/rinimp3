@@ -64,7 +64,7 @@ static GPOW43: [f32; 145] = [
     611.702349, 618.342238, 625.000000, 631.675540, 638.368763, 645.079578,
 ];
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Mp3Dec {
     pub mdct_overlap: [[f32; 288]; 2],
@@ -73,12 +73,6 @@ pub struct Mp3Dec {
     pub free_format_bytes: i32,
     pub header: [u8; 4],
     pub reserv_buf: [u8; 511],
-}
-
-impl Clone for Mp3Dec {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 impl Mp3Dec {
@@ -94,7 +88,7 @@ impl Mp3Dec {
     }
 }
 
-#[derive(Copy, Default, Debug)]
+#[derive(Copy, Clone, Default, Debug)]
 #[repr(C)]
 pub struct FrameInfo {
     pub frame_bytes: i32,
@@ -104,13 +98,7 @@ pub struct FrameInfo {
     pub bitrate_kbps: i32,
 }
 
-impl Clone for FrameInfo {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-#[derive(Copy, Debug, Default)]
+#[derive(Copy, Clone, Debug, Default)]
 #[repr(C)]
 pub struct Bs<'a> {
     // pub buf: *const u8,
@@ -131,13 +119,7 @@ impl<'a> Bs<'a> {
     }
 }
 
-impl<'a> Clone for Bs<'a> {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-#[derive(Copy, Default)]
+#[derive(Copy, Clone, Default)]
 #[repr(C)]
 pub struct L3GrInfo {
     pub sfbtab: &'static [u8],
@@ -158,13 +140,7 @@ pub struct L3GrInfo {
     pub scfsi: u8,
 }
 
-impl Clone for L3GrInfo {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct Mp3DecScratch<'a> {
     pub bs: Bs<'a>,
@@ -174,12 +150,6 @@ pub struct Mp3DecScratch<'a> {
     pub scf: [f32; 40],
     pub syn: [[f32; 64]; 33],
     pub ist_pos: [[u8; 39]; 2],
-}
-
-impl<'a> Clone for Mp3DecScratch<'a> {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 impl<'a> Mp3DecScratch<'a> {
@@ -551,7 +521,7 @@ pub(crate) fn get_bits(bs: &mut Bs, n: u32) -> u32 {
     cache | ((next as u32).wrapping_shr(-shl as u32))
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct L12ScaleInfo {
     pub scf: [f32; 192],
@@ -559,12 +529,6 @@ pub struct L12ScaleInfo {
     pub stereo_bands: u8,
     pub bitalloc: [u8; 64],
     pub scfcod: [u8; 64],
-}
-
-impl Clone for L12ScaleInfo {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 impl Default for L12ScaleInfo {
@@ -579,18 +543,12 @@ impl Default for L12ScaleInfo {
     }
 }
 
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct L12SubbandAlloc {
     pub tab_offset: u8,
     pub code_tab_width: u8,
     pub band_count: u8,
-}
-
-impl Clone for L12SubbandAlloc {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 /// TODO: This *const it returns is actually an array,

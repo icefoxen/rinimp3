@@ -1,5 +1,5 @@
 use super::*;
-use byteorder::{BE, ByteOrder};
+use byteorder::{ByteOrder, BE};
 
 fn next_byte(buf: &mut &[u8]) -> u8 {
     let head = buf[0];
@@ -7,7 +7,7 @@ fn next_byte(buf: &mut &[u8]) -> u8 {
     head
 }
 
-pub (crate) fn l3_huffman(
+pub(crate) fn l3_huffman(
     mut dst: &mut [f32],
     bs: &mut Bs,
     gr_info: &L3GrInfo,
@@ -76,11 +76,12 @@ pub (crate) fn l3_huffman(
             break;
         }
         let tab_num: i32 = (*gr_info).table_select[ireg as usize] as (i32);
-        let mut sfb_cnt: i32 = (*gr_info).region_count[{
-            let _old = ireg;
-            ireg = ireg + 1;
-            _old
-        } as usize] as (i32);
+        let mut sfb_cnt: i32 =
+            (*gr_info).region_count[{
+                                        let _old = ireg;
+                                        ireg = ireg + 1;
+                                        _old
+                                    } as usize] as (i32);
         let codebook: &[i16] = &TABS[TABINDEX[tab_num as usize] as usize..];
         let linbits: i32 = G_LINBITS[tab_num as usize] as (i32);
         loop {
@@ -111,10 +112,9 @@ pub (crate) fn l3_huffman(
                     bs_sh = bs_sh + w;
                     w = leaf & 7;
                     // TODO: Check that this shouldn't be `wrapping_shr(32) - w, though that doesn't seem sensible.
-                    leaf = codebook[
-                        (bs_cache.wrapping_shr((32 - w) as u32)).wrapping_sub((leaf >> 3) as (u32))
-                            as usize
-                    ] as i32;
+                    leaf = codebook[(bs_cache.wrapping_shr((32 - w) as u32))
+                                        .wrapping_sub((leaf >> 3) as (u32))
+                                        as usize] as i32;
                 }
                 // bs_cache = bs_cache << (leaf >> 8);
                 bs_cache = bs_cache.wrapping_shl((leaf >> 8) as u32);
@@ -126,16 +126,14 @@ pub (crate) fn l3_huffman(
                     }
                     let mut lsb: i32 = leaf & 0xfi32;
                     if lsb == 15 && (linbits != 0) {
-                        lsb = (lsb as (u32)).wrapping_add(bs_cache >> 32 - linbits) as (i32);
+                        lsb = (lsb as (u32)).wrapping_add(bs_cache >> (32 - linbits)) as (i32);
                         bs_cache = bs_cache << linbits;
                         bs_sh = bs_sh + linbits;
                         loop {
                             if !(bs_sh >= 0) {
                                 break;
                             }
-                            bs_cache = bs_cache
-                                | next_byte(&mut bs_next_ptr) as (u32)
-                                    << bs_sh;
+                            bs_cache = bs_cache | next_byte(&mut bs_next_ptr) as (u32) << bs_sh;
                             bs_sh = bs_sh - 8;
                         }
                         dst[0] = one
@@ -143,8 +141,8 @@ pub (crate) fn l3_huffman(
                             * if bs_cache as (i32) < 0 { -1 } else { 1 } as f32;
                     } else {
                         dst[0] = GPOW43[((16 + lsb) as (u32))
-                            .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
-                            as usize]
+                                            .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
+                                            as usize]
                             * one;
                     }
                     bs_cache = bs_cache << if lsb != 0 { 1 } else { 0 };
@@ -190,11 +188,11 @@ pub (crate) fn l3_huffman(
         } else {
             &TAB32
         };
-        let mut leaf: i32 = codebook_count1[(bs_cache >> 32 - 4) as usize] as (i32);
+        let mut leaf: i32 = codebook_count1[(bs_cache >> (32 - 4)) as usize] as (i32);
         if leaf & 8 == 0 {
-            leaf = codebook_count1[
-                ((leaf >> 3) as (u32)).wrapping_add(bs_cache << 4 >> 32 - (leaf & 3)) as usize
-            ] as (i32);
+            leaf = codebook_count1
+                [((leaf >> 3) as (u32)).wrapping_add(bs_cache << 4 >> (32 - (leaf & 3))) as usize]
+                as (i32);
         }
         bs_cache = bs_cache << (leaf & 7);
         bs_sh = bs_sh + (leaf & 7);
@@ -275,9 +273,7 @@ pub (crate) fn l3_huffman(
             if !(bs_sh >= 0) {
                 break;
             }
-            bs_cache = bs_cache
-                | next_byte(&mut bs_next_ptr) as (u32)
-                    << bs_sh;
+            bs_cache = bs_cache | next_byte(&mut bs_next_ptr) as (u32) << bs_sh;
             bs_sh = bs_sh - 8;
         }
         // dst = dst.offset(4);

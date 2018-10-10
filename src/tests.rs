@@ -45,7 +45,8 @@ fn test_rewritten_get_bits() {
                 let _old = p;
                 p = p.offset(1);
                 _old
-            } as (i32) & 255 >> s) as (u32);
+            } as (i32)
+                & 255 >> s) as (u32);
             loop {
                 if !({
                     shl = shl - 8;

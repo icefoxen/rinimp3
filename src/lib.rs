@@ -1,5 +1,15 @@
+extern crate byteorder;
+
+#[cfg(test)]
+extern crate structopt;
+
+#[cfg(test)]
+extern crate minimp3;
+
 #[cfg(test)]
 mod tests;
+
+pub mod huffman;
 
 /// Silly helper function
 // pub(crate) fn fill<T>(slice: &mut [T], val: T)
@@ -44,24 +54,24 @@ pub(crate) fn increment_by<T>(slice: &mut &[T], amount: usize) {
 }
 
 static GPOW43: [f32; 145] = [
-    0.0, -1.0, -2.519842, -4.326749, -6.349604, -8.549880, -10.902724, -13.390518, -16.000000,
-    -18.720754, -21.544347, -24.463781, -27.473142, -30.567351, -33.741992, -36.993181, 0.0, 1.0,
-    2.519842, 4.326749, 6.349604, 8.549880, 10.902724, 13.390518, 16.000000, 18.720754, 21.544347,
-    24.463781, 27.473142, 30.567351, 33.741992, 36.993181, 40.317474, 43.711787, 47.173345,
-    50.699631, 54.288352, 57.937408, 61.644865, 65.408941, 69.227979, 73.100443, 77.024898,
-    81.000000, 85.024491, 89.097188, 93.216975, 97.382800, 101.593667, 105.848633, 110.146801,
-    114.487321, 118.869381, 123.292209, 127.755065, 132.257246, 136.798076, 141.376907, 145.993119,
-    150.646117, 155.335327, 160.060199, 164.820202, 169.614826, 174.443577, 179.305980, 184.201575,
-    189.129918, 194.090580, 199.083145, 204.107210, 209.162385, 214.248292, 219.364564, 224.510845,
-    229.686789, 234.892058, 240.126328, 245.389280, 250.680604, 256.000000, 261.347174, 266.721841,
-    272.123723, 277.552547, 283.008049, 288.489971, 293.998060, 299.532071, 305.091761, 310.676898,
-    316.287249, 321.922592, 327.582707, 333.267377, 338.976394, 344.709550, 350.466646, 356.247482,
-    362.051866, 367.879608, 373.730522, 379.604427, 385.501143, 391.420496, 397.362314, 403.326427,
-    409.312672, 415.320884, 421.350905, 427.402579, 433.475750, 439.570269, 445.685987, 451.822757,
-    457.980436, 464.158883, 470.357960, 476.577530, 482.817459, 489.077615, 495.357868, 501.658090,
-    507.978156, 514.317941, 520.677324, 527.056184, 533.454404, 539.871867, 546.308458, 552.764065,
-    559.238575, 565.731879, 572.243870, 578.774440, 585.323483, 591.890898, 598.476581, 605.080431,
-    611.702349, 618.342238, 625.000000, 631.675540, 638.368763, 645.079578,
+    0.0, -1.0, -2.519_842, -4.326_749, -6.349_604, -8.549_88, -10.902_724, -13.390_518, -16.000_000,
+    -18.720_754, -21.544_347, -24.463_781, -27.473_142, -30.567_351, -33.741_992, -36.993_181, 0.0, 1.0,
+    2.519_842, 4.326_749, 6.349_604, 8.549_880, 10.902_724, 13.390_518, 16.000_000, 18.720_754, 21.544_347,
+    24.463_781, 27.473_142, 30.567_351, 33.741_992, 36.993_181, 40.317_474, 43.711_787, 47.173_345,
+    50.699_631, 54.288_352, 57.937_408, 61.644_865, 65.408_941, 69.227_979, 73.100_443, 77.024_898,
+    81.000_000, 85.024_491, 89.097_188, 93.216_975, 97.382_800, 101.593_667, 105.848_633, 110.146_801,
+    114.487_321, 118.869_381, 123.292_209, 127.755_065, 132.257_246, 136.798_076, 141.376_907, 145.993_119,
+    150.646_117, 155.335_327, 160.060_199, 164.820_202, 169.614_826, 174.443_577, 179.305_980, 184.201_575,
+    189.129_918, 194.090_580, 199.083_145, 204.107_210, 209.162_385, 214.248_292, 219.364_564, 224.510_845,
+    229.686_789, 234.892_058, 240.126_328, 245.389_280, 250.680_604, 256.000_000, 261.347_174, 266.721_841,
+    272.123_723, 277.552_547, 283.008_049, 288.489_971, 293.998_060, 299.532_071, 305.091_761, 310.676_898,
+    316.287_249, 321.922_592, 327.582_707, 333.267_377, 338.976_394, 344.709_550, 350.466_646, 356.247_482,
+    362.051_866, 367.879_608, 373.730_522, 379.604_427, 385.501_143, 391.420_496, 397.362_314, 403.326_427,
+    409.312_672, 415.320_884, 421.350_905, 427.402_579, 433.475_750, 439.570_269, 445.685_987, 451.822_757,
+    457.980_436, 464.158_883, 470.357_960, 476.577_530, 482.817_459, 489.077_615, 495.357_868, 501.658_090,
+    507.978_156, 514.317_941, 520.677_324, 527.056_184, 533.454_404, 539.871_867, 546.308_458, 552.764_065,
+    559.238_575, 565.731_879, 572.243_870, 578.774_440, 585.323_483, 591.890_898, 598.476_581, 605.080_431,
+    611.702_349, 618.342_238, 625.000_000, 631.675_540, 638.368_763, 645.079_578,
 ];
 
 #[derive(Copy, Clone)]
@@ -85,6 +95,12 @@ impl Mp3Dec {
             header: [0; 4],
             reserv_buf: [0; 511],
         }
+    }
+}
+
+impl Default for Mp3Dec {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -309,27 +325,29 @@ impl Hdr {
 // TODO: All the horrible bit-tests in the `hdr_` functions
 // are macros in the C version; can we translate them back to
 // functions?
-pub(crate) fn hdr_valid(h: &[u8]) -> i32 {
-    (h[0] as (i32) == 0xffi32
-        && (h[1] as (i32) & 0xf0 == 0xf0 || h[1] as (i32) & 0xfei32 == 0xe2)
-        && (h[1] as (i32) >> 1 & 3 != 0)
-        && (h[2] as (i32) >> 4 != 15)
-        && (h[2] as (i32) >> 2 & 3 != 3)) as (i32)
+pub(crate) fn hdr_valid(h: &[u8]) -> bool {
+    (h[0] == 0xff
+        && (h[1] & 0xf0 == 0xf0 || h[1] & 0xfe == 0xe2)
+        && (h[1] >> 1 & 3 != 0)
+        && (h[2] >> 4 != 15)
+        && (h[2] >> 2 & 3 != 3))
 }
 
-pub(crate) fn hdr_compare(h1: &[u8], h2: &[u8]) -> i32 {
-    (hdr_valid(h2) != 0
-        && ((h1[1] as (i32) ^ h2[1] as (i32)) & 0xfei32 == 0)
-        && ((h1[2] as (i32) ^ h2[2] as (i32)) & 0xci32 == 0)
-        && ((h1[2] as (i32) & 0xf0 == 0) as (i32) ^ (h2[2] as (i32) & 0xf0 == 0) as (i32) == 0))
-        as (i32)
+pub(crate) fn hdr_compare(h1: &[u8], h2: &[u8]) -> bool {
+    (hdr_valid(h2)
+        && ((h1[1] ^ h2[1]) & 0xfe == 0)
+        && ((h1[2] ^ h2[2]) & 0xc == 0)
+        && ((h1[2] & 0xf0 == 0) == (h2[2] & 0xf0 == 0)))
 }
 
 pub(crate) fn hdr_frame_samples(h: &[u8]) -> u32 {
-    (if h[1] as (i32) & 6 == 6 {
+    (if h[1] & 6 == 6 {
         384
     } else {
-        1152 >> (h[1] as (i32) & 14 == 2) as (i32)
+        match h[1] & 14 {
+            2 => 1152 / 2,
+            _ => 1152,
+        }
     }) as (u32)
 }
 
@@ -407,7 +425,7 @@ pub(crate) fn mp3d_match_frame(hdr: &[u8], mp3_bytes: i32, frame_bytes: i32) -> 
             current_block = 7;
             break;
         }
-        if hdr_compare(hdr, &hdr[i as usize..]) == 0 {
+        if !hdr_compare(hdr, &hdr[i as usize..]) {
             current_block = 6;
             break;
         }
@@ -441,7 +459,7 @@ pub fn mp3d_find_frame(
             current_block = 2;
             break;
         }
-        if hdr_valid(mp3) != 0 {
+        if hdr_valid(mp3) {
             frame_bytes = hdr_frame_bytes(mp3, *free_format_bytes);
             frame_and_padding = frame_bytes + hdr_padding(mp3);
             k = 4;
@@ -449,12 +467,12 @@ pub fn mp3d_find_frame(
                 if !(frame_bytes == 0 && (k < 2304) && (i + 2 * k < mp3_bytes - 4)) {
                     break;
                 }
-                if hdr_compare(mp3, &mp3[k as usize..]) != 0 {
+                if hdr_compare(mp3, &mp3[k as usize..]) {
                     let fb: i32 = k - hdr_padding(mp3);
                     let nextfb: i32 = fb + hdr_padding(&mp3[k as usize..]);
                     // TODO: Double-check the hdr_compare()
                     if !(i + k + nextfb + 4 > mp3_bytes
-                        || hdr_compare(mp3, &mp3[(k + nextfb) as usize..]) == 0)
+                        || !hdr_compare(mp3, &mp3[(k + nextfb) as usize..]))
                     {
                         frame_and_padding = k;
                         frame_bytes = fb;
@@ -844,7 +862,7 @@ pub(crate) fn l12_dequantize_granule(
             let ba: i32 = (*sci).bitalloc[i as usize] as (i32);
             if ba != 0 {
                 if ba < 17 {
-                    let half: i32 = (1 << ba - 1) - 1;
+                    let half: i32 = (1 << (ba - 1)) - 1;
                     for k in 0..group_size {
                         println!("DST: {:?}, {}, {}", dst, k, group_size);
                         // TODO: Crash happening here,
@@ -852,7 +870,7 @@ pub(crate) fn l12_dequantize_granule(
                         dst[k as usize] = (get_bits(bs, ba as u32) as i32 - half) as f32;
                     }
                 } else {
-                    let mod_: u32 = ((2 << ba - 17) + 1) as (u32);
+                    let mod_: u32 = ((2 << (ba - 17)) + 1) as (u32);
                     let mut code: u32 =
                         get_bits(bs, mod_.wrapping_add(2).wrapping_sub(mod_ >> 3) as (u32));
                     for k in 0..group_size {
@@ -1720,8 +1738,8 @@ pub(crate) fn l3_decode_scalefactors(
         - 210
         - if hdr[3] as (i32) & 0xe0 == 0x60 { 2 } else { 0 };
     gain = l3_ldexp_q2(
-        (1 << (255 + -1 * 4 - 210 + 3 & !3) / 4) as f32,
-        (255 + -1 * 4 - 210 + 3 & !3) - gain_exp,
+        (1i64 << (((255 + -1 * 4 - 210 + 3) & !3 / 4))) as f32,
+        ((255 + -1 * 4 - 210 + 3) & !3) - gain_exp,
     );
     i = 0;
     loop {
@@ -1744,299 +1762,12 @@ pub(crate) fn l3_pow_43(mut x: i32) -> f32 {
             mult = 16;
             x = x << 3;
         }
-        sign = 2 * x & 64;
+        sign = (2 * x) & 64;
         frac = ((x & 63) - sign) as f32 / ((x & !63) + sign) as f32;
-        GPOW43[(16 + (x + sign >> 6)) as usize]
+        GPOW43[(16 + ((x + sign) >> 6)) as usize]
             * (1.0 + frac * (4.0 / 3.0 + frac * (2.0 / 9.0)))
             * mult as f32
     }
-}
-
-pub(crate) unsafe fn l3_huffman(
-    mut dst: &mut [f32],
-    bs: &mut Bs,
-    gr_info: &L3GrInfo,
-    mut scf: &[f32],
-    layer3gr_limit: i32,
-) {
-    static TABS: [i16; 512] = [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 785, 785, 785, 785, 784, 784, 784, 784, 513, 513, 513, 513, 513, 513, 513, 513, 256,
-        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -255, 1313,
-        1298, 1282, 785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256,
-        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 290, 288, -255, 1313, 1298,
-        1282, 769, 769, 769, 769, 529, 529, 529, 529, 529, 529, 529, 529, 528, 528, 528, 528, 528,
-        528, 528, 528, 512, 512, 512, 512, 512, 512, 512, 512, 290, 288, -253, -318, -351, -367,
-        785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256, 256, 256,
-        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 819, 818, 547, 547, 275, 275, 275, 275,
-        561, 560, 515, 546, 289, 274, 288, 258, -254, -287, 1329, 1299, 1314, 1312, 1057, 1057,
-        1042, 1042, 1026, 1026, 784, 784, 784, 784, 529, 529, 529, 529, 529, 529, 529, 529, 769,
-        769, 769, 769, 768, 768, 768, 768, 563, 560, 306, 306, 291, 259, -252, -413, -477, -542,
-        1298, -575, 1041, 1041, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256, 256, 256,
-        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -383, -399, 1107, 1092, 1106, 1061,
-        849, 849, 789, 789, 1104, 1091, 773, 773, 1076, 1075, 341, 340, 325, 309, 834, 804, 577,
-        577, 532, 532, 516, 516, 832, 818, 803, 816, 561, 561, 531, 531, 515, 546, 289, 289, 288,
-        258, -252, -429, -493, -559, 1057, 1057, 1042, 1042, 529, 529, 529, 529, 529, 529, 529,
-        529, 784, 784, 784, 784, 769, 769, 769, 769, 512, 512, 512, 512, 512, 512, 512, 512, -382,
-        1077, -415, 1106, 1061, 1104, 849, 849, 789, 789, 1091, 1076, 1029, 1075, 834, 834, 597,
-        581, 340, 340, 339, 324, 804, 833, 532, 532, 832, 772, 818, 803, 817, 787, 816, 771, 290,
-        290, 290, 290, 288, 258, -253, -349, -414, -447, -463, 1329, 1299, -479, 1314, 1312, 1057,
-        1057, 1042, 1042, 1026, 1026, 785, 785, 785, 785, 784, 784, 784, 784, 769, 769, 769, 769,
-        768, 768, 768, 768, -319, 851, 821, -335, 836, 850, 805, 849, 341, 340, 325, 336, 533, 533,
-        579, 579, 564, 564, 773, 832, 578, 548, 563, 516, 321, 276, 306, 291, 304, 259, -251, -572,
-        -733, -830, -863, -879, 1041, 1041, 784, 784, 784, 784, 769, 769, 769, 769, 256, 256, 256,
-        256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, -511, -527, -543, 1396,
-        1351, 1381, 1366, 1395, 1335, 1380, -559, 1334, 1138, 1138, 1063, 1063, 1350, 1392, 1031,
-        1031, 1062, 1062, 1364, 1363, 1120, 1120, 1333, 1348, 881, 881, 881, 881, 375, 374, 359,
-        373, 343, 358, 341, 325, 791, 791, 1123, 1122, -703, 1105, 1045, -719, 865, 865, 790, 790,
-        774, 774,
-    ];
-    static TAB32: [u8; 28] = [
-        130, 162, 193, 209, 44, 28, 76, 140, 9, 9, 9, 9, 9, 9, 9, 9, 190, 254, 222, 238, 126, 94,
-        157, 157, 109, 61, 173, 205,
-    ];
-    static TAB33: [u8; 16] = [
-        252, 236, 220, 204, 188, 172, 156, 140, 124, 108, 92, 76, 60, 44, 28, 12,
-    ];
-    static TABINDEX: [i16; 32] = [
-        0, 32, 64, 98, 0, 132, 180, 218, 292, 364, 426, 538, 648, 746, 0, 1126, 1460, 1460, 1460,
-        1460, 1460, 1460, 1460, 1460, 1842, 1842, 1842, 1842, 1842, 1842, 1842, 1842,
-    ];
-    static G_LINBITS: [u8; 32] = [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 6, 8, 10, 13, 4, 5, 6, 7, 8, 9,
-        11, 13,
-    ];
-    let mut one: f32 = 0.0;
-    let mut ireg: i32 = 0;
-    let mut big_val_cnt: i32 = (*gr_info).big_values as (i32);
-    let mut sfb: &[u8] = (*gr_info).sfbtab;
-    let mut bs_next_ptr: *const u8 = (*bs).buf.as_ptr().offset(((*bs).pos / 8) as isize);
-    let mut bs_cache: u32 = (*bs_next_ptr.offset(0) as (u32))
-        .wrapping_mul(256)
-        .wrapping_add(*bs_next_ptr.offset(1) as (u32))
-        .wrapping_mul(256)
-        .wrapping_add(*bs_next_ptr.offset(2) as (u32))
-        .wrapping_mul(256)
-        .wrapping_add(*bs_next_ptr.offset(3) as (u32))
-        << ((*bs).pos & 7);
-    let mut pairs_to_decode: i32;
-    let mut np: i32;
-    let mut bs_sh: i32 = ((*bs).pos & 7) - 8;
-    bs_next_ptr = bs_next_ptr.offset(4);
-    loop {
-        if !(big_val_cnt > 0) {
-            break;
-        }
-        let tab_num: i32 = (*gr_info).table_select[ireg as usize] as (i32);
-        let mut sfb_cnt: i32 =
-            (*gr_info).region_count[{
-                                        let _old = ireg;
-                                        ireg = ireg + 1;
-                                        _old
-                                    } as usize] as (i32);
-        let codebook: *const i16 = TABS.as_ptr().offset(TABINDEX[tab_num as usize] as isize);
-        let linbits: i32 = G_LINBITS[tab_num as usize] as (i32);
-        loop {
-            np = {
-                let _old = sfb;
-                // sfb = sfb.offset(1);
-                increment_by(&mut sfb, 1);
-                _old[0]
-            } as (i32) / 2;
-            pairs_to_decode = if big_val_cnt > np { np } else { big_val_cnt };
-            // one = *{
-            //     let _old = scf;
-            //     scf = scf.offset(1);
-            //     _old
-            // };
-            one = scf[0];
-            increment_by(&mut scf, 1);
-            loop {
-                let mut j: i32;
-                let mut w: i32 = 5;
-                let mut leaf: i32 = *codebook.offset((bs_cache >> 32 - w) as isize) as (i32);
-                loop {
-                    if !(leaf < 0) {
-                        break;
-                    }
-                    bs_cache = bs_cache << w;
-                    bs_sh = bs_sh + w;
-                    w = leaf & 7;
-                    // TODO: Check that this shouldn't be `wrapping_shr(32) - w, though that doesn't seem sensible.
-                    leaf = *codebook.offset(
-                        (bs_cache.wrapping_shr((32 - w) as u32)).wrapping_sub((leaf >> 3) as (u32))
-                            as isize,
-                    ) as (i32);
-                }
-                // bs_cache = bs_cache << (leaf >> 8);
-                bs_cache = bs_cache.wrapping_shl((leaf >> 8) as u32);
-                bs_sh = bs_sh + (leaf >> 8);
-                j = 0;
-                loop {
-                    if !(j < 2) {
-                        break;
-                    }
-                    let mut lsb: i32 = leaf & 0xfi32;
-                    if lsb == 15 && (linbits != 0) {
-                        lsb = (lsb as (u32)).wrapping_add(bs_cache >> 32 - linbits) as (i32);
-                        bs_cache = bs_cache << linbits;
-                        bs_sh = bs_sh + linbits;
-                        loop {
-                            if !(bs_sh >= 0) {
-                                break;
-                            }
-                            bs_cache = bs_cache | *{
-                                let _old = bs_next_ptr;
-                                bs_next_ptr = bs_next_ptr.offset(1);
-                                _old
-                            } as (u32) << bs_sh;
-                            bs_sh = bs_sh - 8;
-                        }
-                        dst[0] = one
-                            * l3_pow_43(lsb)
-                            * if bs_cache as (i32) < 0 { -1 } else { 1 } as f32;
-                    } else {
-                        dst[0] = GPOW43[((16 + lsb) as (u32))
-                                            .wrapping_sub(16u32.wrapping_mul(bs_cache >> 31))
-                                            as usize] * one;
-                    }
-                    bs_cache = bs_cache << if lsb != 0 { 1 } else { 0 };
-                    bs_sh = bs_sh + if lsb != 0 { 1 } else { 0 };
-                    j = j + 1;
-                    // dst = dst.offset(1);
-                    increment_by_mut(&mut dst, 1);
-                    leaf = leaf >> 4;
-                }
-                loop {
-                    if !(bs_sh >= 0) {
-                        break;
-                    }
-                    bs_cache = (bs_cache | *{
-                        let _old = bs_next_ptr;
-                        bs_next_ptr = bs_next_ptr.offset(1);
-                        _old
-                    } as (u32))
-                        .wrapping_shl(bs_sh as u32);
-                    bs_sh = bs_sh - 8;
-                }
-                if {
-                    pairs_to_decode = pairs_to_decode - 1;
-                    pairs_to_decode
-                } == 0
-                {
-                    break;
-                }
-            }
-            if !({
-                big_val_cnt = big_val_cnt - np;
-                big_val_cnt
-            } > 0 && ({
-                sfb_cnt = sfb_cnt - 1;
-                sfb_cnt
-            } >= 0))
-            {
-                break;
-            }
-        }
-    }
-    np = 1 - big_val_cnt;
-    loop {
-        let codebook_count1: *const u8 = if (*gr_info).count1_table != 0 {
-            TAB33.as_ptr()
-        } else {
-            TAB32.as_ptr()
-        };
-        let mut leaf: i32 = *codebook_count1.offset((bs_cache >> 32 - 4) as isize) as (i32);
-        if leaf & 8 == 0 {
-            leaf = *codebook_count1.offset(
-                ((leaf >> 3) as (u32)).wrapping_add(bs_cache << 4 >> 32 - (leaf & 3)) as isize,
-            ) as (i32);
-        }
-        bs_cache = bs_cache << (leaf & 7);
-        bs_sh = bs_sh + (leaf & 7);
-        if (bs_next_ptr as isize).wrapping_sub((*bs).buf.as_ptr() as isize)
-            / ::std::mem::size_of::<u8>() as isize * 8 - 24 + bs_sh as isize
-            > layer3gr_limit as isize
-        {
-            break;
-        }
-        if {
-            np = np - 1;
-            np
-        } == 0
-        {
-            np = {
-                let _old = sfb[0];
-                increment_by(&mut sfb, 1);
-                _old
-            } as (i32) / 2;
-            if np == 0 {
-                break;
-            }
-            // one = *{
-            //     let _old = scf;
-            //     scf = scf.offset(1);
-            //     _old
-            // };
-            one = scf[0];
-            increment_by(&mut scf, 1);
-        }
-        if leaf & 128 >> 0 != 0 {
-            dst[0] = if bs_cache as (i32) < 0 { -one } else { one };
-            bs_cache = bs_cache << 1;
-            bs_sh = bs_sh + 1;
-        }
-        if leaf & 128 >> 1 != 0 {
-            dst[1] = if bs_cache as (i32) < 0 { -one } else { one };
-            bs_cache = bs_cache << 1;
-            bs_sh = bs_sh + 1;
-        }
-        if {
-            np = np - 1;
-            np
-        } == 0
-        {
-            np = {
-                let _old = sfb[0];
-                increment_by(&mut sfb, 1);
-                _old
-            } as (i32) / 2;
-            if np == 0 {
-                break;
-            }
-            // one = *{
-            //     let _old = scf;
-            //     scf = scf.offset(1);
-            //     _old
-            // };
-            one = scf[0];
-            increment_by(&mut scf, 1);
-        }
-        if leaf & 128 >> 2 != 0 {
-            dst[2] = if bs_cache as (i32) < 0 { -one } else { one };
-            bs_cache = bs_cache << 1;
-            bs_sh = bs_sh + 1;
-        }
-        if leaf & 128 >> 3 != 0 {
-            dst[3] = if bs_cache as (i32) < 0 { -one } else { one };
-            bs_cache = bs_cache << 1;
-            bs_sh = bs_sh + 1;
-        }
-        loop {
-            if !(bs_sh >= 0) {
-                break;
-            }
-            bs_cache = bs_cache | *{
-                let _old = bs_next_ptr;
-                bs_next_ptr = bs_next_ptr.offset(1);
-                _old
-            } as (u32) << bs_sh;
-            bs_sh = bs_sh - 8;
-        }
-        // dst = dst.offset(4);
-        increment_by_mut(&mut dst, 4);
-    }
-    (*bs).pos = layer3gr_limit;
 }
 
 pub(crate) fn l3_midside_stereo(left: &mut [f32], n: i32) {
@@ -2308,7 +2039,7 @@ pub(crate) fn l3_reorder(mut grbuf: &mut [f32], scratch: &mut [f32], mut sfb: &[
                 //     dst = dst.offset(1);
                 //     _old
                 // } = *src.offset((2 * len) as isize);
-
+    
                 // src = src.offset(1);
                 dst[2] = src[2 * len];
                 increment_by_mut(&mut dst, 1);
@@ -2635,15 +2366,13 @@ pub(crate) fn l3_decode(
             &mut s.scf,
             ch,
         );
-        unsafe {
-            l3_huffman(
-                &mut s.grbuf[ch as usize],
-                &mut (*s).bs,
-                &gr_info[ch as usize],
-                &s.scf,
-                layer3gr_limit,
-            );
-        }
+        huffman::l3_huffman(
+            &mut s.grbuf[ch as usize],
+            &mut (*s).bs,
+            &gr_info[ch as usize],
+            &s.scf,
+            layer3gr_limit,
+        );
         ch = ch + 1;
     }
     if (*h).header[3] as (i32) & 0x10 != 0 {
@@ -2662,10 +2391,9 @@ pub(crate) fn l3_decode(
             2
         } else {
             0
-        })
-            << (((*h).header[2] as (i32) >> 2 & 3)
-                + (((*h).header[1] as (i32) >> 3 & 1) + ((*h).header[1] as (i32) >> 4 & 1)) * 3
-                == 2) as (i32);
+        }) << (((*h).header[2] as (i32) >> 2 & 3)
+            + (((*h).header[1] as (i32) >> 3 & 1) + ((*h).header[1] as (i32) >> 4 & 1)) * 3
+            == 2) as (i32);
         if gr_info[0].n_short_sfb != 0 {
             aa_bands = n_long_bands - 1;
             l3_reorder(
@@ -2717,8 +2445,7 @@ pub fn mp3dec_skip_id3v2_slice(buf: &[u8]) -> usize {
     if buf.len() > 10 && buf[..3] == b"ID3\0"[..3] {
         (((buf[6] & 0x7F) as usize) << 21
             | ((buf[7] & 0x7F) as usize) << 14
-            | ((buf[8] & 0x7F) as usize) << 7
-            | ((buf[9] & 0x7F) as usize) + 10)
+            | ((buf[8] & 0x7F) as usize) << 7 | (((buf[9] & 0x7F) as usize) + 10))
     } else {
         0
     }
@@ -2747,11 +2474,11 @@ pub fn mp3dec_decode_frame(
         syn: [[0.0; 64]; 33],
         ist_pos: [[0; 39]; 2],
     };
-    if mp3_bytes > 4 && ((*dec).header[0] as (i32) == 0xff) && (hdr_compare(&dec.header, mp3) != 0)
+    if mp3_bytes > 4 && ((*dec).header[0] as (i32) == 0xff) && hdr_compare(&dec.header, mp3)
     {
         frame_size = hdr_frame_bytes(mp3, (*dec).free_format_bytes) + hdr_padding(mp3);
         if frame_size != mp3_bytes
-            && (frame_size + 4 > mp3_bytes || hdr_compare(mp3, &mp3[frame_size as usize..]) == 0)
+            && (frame_size + 4 > mp3_bytes || !hdr_compare(mp3, &mp3[frame_size as usize..]))
         {
             frame_size = 0;
         }
@@ -2840,7 +2567,7 @@ pub fn mp3dec_decode_frame(
                             pcm,
                             &mut scratch.syn[0],
                         );
-                        igr = igr + 1;
+                        igr += 1;
                         // pcm = pcm.offset((576 * (*info).channels) as isize);
                         // let pcm_lifetime_hack = unsafe {
                         //     let pcm_ptr = pcm.as_mut_ptr();
@@ -2921,7 +2648,7 @@ pub fn mp3dec_decode_frame(
                     current_block = 15;
                     break;
                 }
-                igr = igr + 1;
+                igr += 1;
             }
             if current_block == 21 {
             } else {

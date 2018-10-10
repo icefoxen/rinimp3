@@ -56,6 +56,7 @@ extern "C" {
 enum IoFile {}
 
 extern crate rinimp3;
+#[macro_use] extern crate structopt;
 use rinimp3::*;
 
 #[derive(Copy, Clone)]
@@ -486,9 +487,6 @@ pub unsafe fn mp3dec_ex_open(dec: *mut Mp3decEx, file_name: *const u8, seek_meth
         0i32
     }
 }
-
-#[macro_use]
-extern crate structopt;
 
 use std::fs;
 use std::io::Read;

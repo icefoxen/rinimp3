@@ -1,6 +1,6 @@
 use super::*;
-
-extern crate minimp3;
+use minimp3;
+//extern crate minimp3;
 
 #[test]
 fn test_increment_by_mut() {

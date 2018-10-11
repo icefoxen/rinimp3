@@ -56,6 +56,9 @@ extern "C" {
 enum IoFile {}
 
 extern crate rinimp3;
+#[allow(unused_imports)]
+#[macro_use]
+extern crate structopt;
 use rinimp3::*;
 
 #[derive(Copy, Clone)]
@@ -80,7 +83,8 @@ unsafe fn mp3dec_skip_id3v2(buf: *const u8, buf_size: usize) -> usize {
         (((*buf.offset(6isize) as (i32) & 0x7fi32) << 21i32
             | (*buf.offset(7isize) as (i32) & 0x7fi32) << 14i32
             | (*buf.offset(8isize) as (i32) & 0x7fi32) << 7i32
-            | *buf.offset(9isize) as (i32) & 0x7fi32) + 10i32) as (usize)
+            | *buf.offset(9isize) as (i32) & 0x7fi32)
+            + 10i32) as (usize)
     } else {
         0usize
     }
@@ -487,9 +491,6 @@ pub unsafe fn mp3dec_ex_open(dec: *mut Mp3decEx, file_name: *const u8, seek_meth
     }
 }
 
-#[macro_use]
-extern crate structopt;
-
 use std::fs;
 use std::io::Read;
 use std::path::PathBuf;
@@ -689,7 +690,8 @@ unsafe fn preload(file: *mut IoFile, data_size: *mut i32) -> *mut u8 {
                     1usize,
                     *data_size as (usize),
                     file,
-                ) as (i32) != *data_size
+                ) as (i32)
+                    != *data_size
                 {
                     exit(1i32);
                 }
